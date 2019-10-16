@@ -9,6 +9,7 @@
 #include <string.h> //for memcopy
 
 
+
 //R-G-B Clamp dark value - used in determining what the 8 bit cutoff is for "dark"
 short clampRGB = 112; 
 
@@ -358,10 +359,10 @@ void ScaleRect(RGBAType *Target, RGBAType *Source, int SrcWidth, int SrcHeight,
 
 void fillbuffer24(Image *imgBuffer, RGBType *color)
 {
-    uint xa = 0;
-    uint ya = 0;
+    unsigned int xa = 0;
+    unsigned int ya = 0;
 
-    uint pixIdx = 0;
+    unsigned int pixIdx = 0;
     //char* pixItr = 0;
 
     // printf("## fillbuffer24 color is %i %i %i \n", color->r, color->g, color->b);
@@ -375,8 +376,8 @@ void fillbuffer24(Image *imgBuffer, RGBType *color)
     //         image->data[i+2]  = (unsigned int)255; //temp;
     //     }
 
-    uint width = imgBuffer->sizeX;    
-    uint height = imgBuffer->sizeY; 
+    unsigned int width = imgBuffer->sizeX;    
+    unsigned int height = imgBuffer->sizeY; 
 
     for (ya=0;ya<height;ya+=3)
     {

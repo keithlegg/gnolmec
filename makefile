@@ -10,8 +10,13 @@ INC = -I "./"
 MOAR = point_op.c framebuffer.c image_util.c
 
 semraster:$(OBJ)
-	# 
+	 
+	#LINUX
 	g++ $(OBJ) -o semraster $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
+	
+	#OSX
+	#g++ $(OBJ) -o semraster $(INC) $(MOAR) -lm -lz -framework Glut -framework OpenGL
+
 	rm -f $(OBJ)
 
 main.o:
