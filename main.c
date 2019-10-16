@@ -34,14 +34,9 @@
 ////////////////////////
 
 
-
-
 #include "point_op.h"    // vector operations
 #include "framebuffer.h" // raster operations
 #include "image_util.h"  // experimental features, etc 
-
-
-
 
 
 typedef int BOOL;
@@ -77,30 +72,30 @@ void SelectFromMenu(int idCommand)
 {
   switch (idCommand)
     {
-    case MENU_ABOUT:
-      g_bLightingEnabled = !g_bLightingEnabled;
-      if (g_bLightingEnabled)
-         glEnable(GL_LIGHTING);
-      else
-         glDisable(GL_LIGHTING);
-      break;
+        case MENU_ABOUT:
+          g_bLightingEnabled = !g_bLightingEnabled;
+          if (g_bLightingEnabled)
+             glEnable(GL_LIGHTING);
+          else
+             glDisable(GL_LIGHTING);
+        break;
 
-    case MENU_POLYMODE:
-      g_bFillPolygons = !g_bFillPolygons;
-      glPolygonMode (GL_FRONT_AND_BACK, g_bFillPolygons ? GL_FILL : GL_LINE);
-      break;      
+        case MENU_POLYMODE:
+          g_bFillPolygons = !g_bFillPolygons;
+          glPolygonMode (GL_FRONT_AND_BACK, g_bFillPolygons ? GL_FILL : GL_LINE);
+        break;      
 
-    case MENU_TEXTURING:
-      g_bTexture = !g_bTexture;
-      if (g_bTexture)
-         glEnable(GL_TEXTURE_2D);
-      else
-         glDisable(GL_TEXTURE_2D);
-      break;    
+        case MENU_TEXTURING:
+          g_bTexture = !g_bTexture;
+          if (g_bTexture)
+             glEnable(GL_TEXTURE_2D);
+          else
+             glDisable(GL_TEXTURE_2D);
+        break;    
 
-    case MENU_EXIT:
-      exit (0);
-      break;
+        case MENU_EXIT:
+          exit (0);
+        break;
     }
 
   // Almost any menu selection requires a redraw
@@ -167,10 +162,14 @@ void makeTestImage()
     char image_name[] = "diagnostic.bmp"; 
 
     RGBType bgcolor;
-    bgcolor.r=255;bgcolor.g=45;bgcolor.b=30;
+    bgcolor.r=255;
+    bgcolor.g=45;
+    bgcolor.b=30;
 
     RGBType linecol;
-    linecol.r=0;linecol.g=0;linecol.b=0;
+    linecol.r=0;
+    linecol.g=0;
+    linecol.b=0;
 
     int locwidth  = 100;
     int locheight = 100;
@@ -199,6 +198,7 @@ void makeTestImage()
     free(pixels); 
 
 }
+
 
 /***************************************/
 
@@ -284,7 +284,73 @@ int ImageLoad(char *filename, Image *image)
 }
     
 /***************************************/
+
+
+int dynamicImage(Image *image) 
+{
+    FILE *file;
+    unsigned long size;                 // size of the image in bytes.
+    unsigned long i;                    // standard counter.
+    unsigned short int planes;          // number of planes in image (must be 1) 
+    unsigned short int bpp;             // number of bits per pixel (must be 24)
+    char temp;                          // temporary color storage for bgr-rgb conversion.
    
+
+    image->sizeX = 256;
+    image->sizeY = 256;
+    
+    // calculate the size (assuming 24 bits or 3 bytes per pixel).
+    size = image->sizeX * image->sizeY * 3;
+
+    //printf("#### image mem size is %lu \n", size );
+
+    // read the data. 
+    image->data = (char *) malloc(size);
+
+    if (image->data == NULL) {
+        printf("Error allocating memory for color-corrected image data");
+        return 0; 
+    }
+ 
+    // iterate data and do something 
+    for (i=0;i<size;i+=3) { 
+        image->data[i]    = (unsigned int)0;
+        image->data[i+1]  = (unsigned int)255; //image->data[i+2];
+        image->data[i+2]  = (unsigned int)255; //temp;
+    }
+
+    return 1;
+}
+
+void dynamicUpdateTextures()
+{
+    Image *pixels;
+    pixels = (Image *) malloc(sizeof(Image));
+
+    if (pixels == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    if (!dynamicImage(pixels )) {
+      exit(1);
+    }        
+    
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, pixels->sizeX, pixels->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels->data);
+
+}
+
+/***************************************/
+
 // Load Bitmaps And Convert To Textures
 void LoadGLTextures(char* filename) 
 {   
@@ -505,13 +571,20 @@ void keyPressed(unsigned char key, int x, int y)
         LoadGLTextures("textures/generated2.bmp");       
     }
 
+    if (key == 102) //f
+    { 
+        printf("you pressed f\n");
+        glutFullScreen();
+    }
+
     if (key == 119) //w
     { 
         printf("you pressed w\n");
-        makeTestImage();       
+        //makeTestImage();       
+        dynamicUpdateTextures();
     }
 
-    if (key == 119) //q
+    if (key == 113) //q
     { 
         printf("you pressed q\n");
         testLoadBinary();      
@@ -565,7 +638,7 @@ void MouseMotion(int x, int y)
 /***************************************/
 
 //top level opengl loop 
-void openGlMain(int *argc, char** argv){
+void spinningCubeDemo(int *argc, char** argv){
     
     int screenSize = 512; //defaults to 512
     if (argv[1]){
@@ -621,6 +694,56 @@ void openGlMain(int *argc, char** argv){
    
 }
 
+/***************************************/
+
+// top level opengl loop 
+void flatImageDemo(int *argc, char** argv){
+    
+    int screenSize = 512; //defaults to 512
+    if (argv[1]){
+       screenSize = atoi(argv[1]);
+    }
+
+    printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
+
+    // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
+    glutInit(argc, argv);  
+
+
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
+    glutInitWindowSize(screenSize, screenSize);  //window size
+
+    // the window starts at the upper left corner of the screen  
+    glutInitWindowPosition(0, 0);  
+     
+    window = glutCreateWindow("SEM raster display"); //create an opengl window 
+
+    glutDisplayFunc(&DrawGLScene);//register display callback       
+
+    // Even if there are no events, redraw our gl scene.  
+    glutIdleFunc(&DrawGLScene);
+
+    glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
+    glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
+    
+    InitGL(screenSize, screenSize); // Initialize window. 
+    
+    ///////////////////////////
+    //test of BMP saving 
+    //create_Image("generated1.bmp");  
+    //create_Image2("generated2.bmp"); 
+    
+    glutMouseFunc (MouseButton);
+    glutMotionFunc (MouseMotion);
+  
+    // Create our popup menu
+    BuildPopupMenu ();
+    glutAttachMenu (GLUT_RIGHT_BUTTON);
+
+    glutMainLoop();// Start Event Processing Engine   
+   
+}
+
 
 
 /***************************************/
@@ -628,7 +751,11 @@ void openGlMain(int *argc, char** argv){
 
 int main(int argc, char **argv) 
 {  
-    openGlMain(&argc, argv); //start up openGL 
+    
+    //spinningCubeDemo(&argc, argv); //start up openGL 
+    
+    flatImageDemo(&argc, argv); //start up openGL 
+
     return 1;
 }
 
