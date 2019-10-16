@@ -496,13 +496,13 @@ void keyPressed(unsigned char key, int x, int y)
     if (key == 99) //c
     { 
         printf("you pressed c\n");
-        LoadGLTextures("generated1.bmp");       
+        LoadGLTextures("textures/generated1.bmp");       
     }
 
     if (key == 100) //d
     { 
         printf("you pressed d\n");
-        LoadGLTextures("generated2.bmp");       
+        LoadGLTextures("textures/generated2.bmp");       
     }
 
     if (key == 119) //w
