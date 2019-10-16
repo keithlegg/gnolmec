@@ -62,10 +62,10 @@ static float g_lightPos[4] = { 10, 10, -100, 1 };  // Position of light
 
 
 enum {
-  MENU_ABOUT = 1,
-  MENU_POLYMODE,
-  MENU_TEXTURING,
-  MENU_EXIT
+    MENU_ABOUT = 1,
+    MENU_POLYMODE,
+    MENU_TEXTURING,
+    MENU_EXIT
 };
 
 void SelectFromMenu(int idCommand)
@@ -115,11 +115,12 @@ int steps[8] = {1024,512,256,128,64,32,16,8};
 int step_idx = 2;
 
 
-typedef struct Image{
-    unsigned int sizeX;
-    unsigned int sizeY;
-    char *data;
-} Image ;
+// moved to framebuffer.h 
+// typedef struct Image{
+//     unsigned int sizeX;
+//     unsigned int sizeY;
+//     char *data;
+// } Image ;
 
 
 /***************************************/
@@ -285,7 +286,7 @@ int ImageLoad(char *filename, Image *image)
     
 /***************************************/
 
-
+//example to manually create a buffer and fill it with a color 
 int dynamicImage(Image *image) 
 {
     FILE *file;
@@ -298,17 +299,15 @@ int dynamicImage(Image *image)
 
     image->sizeX = 256;
     image->sizeY = 256;
-    
+
     // calculate the size (assuming 24 bits or 3 bytes per pixel).
     size = image->sizeX * image->sizeY * 3;
 
     //printf("#### image mem size is %lu \n", size );
-
-    // read the data. 
     image->data = (char *) malloc(size);
 
     if (image->data == NULL) {
-        printf("Error allocating memory for color-corrected image data");
+        printf("Error allocating memory for image data");
         return 0; 
     }
  
@@ -322,6 +321,36 @@ int dynamicImage(Image *image)
     return 1;
 }
 
+//second example to use a builtin util to fill a buffer with color 
+int dynamicImage2(Image *image) 
+{
+    unsigned long size; 
+
+    image->sizeX = 256;
+    image->sizeY = 256;
+
+    // calculate the size (assuming 24 bits or 3 bytes per pixel).
+    size = image->sizeX * image->sizeY * 3;
+
+    //printf("#### image mem size is %lu \n", size );
+    image->data = (char *) malloc(size);
+    //printf("## Image size is %u %u \n", image->sizeX, image->sizeY);
+
+    RGBType *color  = createBuffer24( image->sizeX, image->sizeY ); 
+    color->r = 0;
+    color->g = 0;
+    color->b = 255;
+
+    //printf("## color is %i %i %i \n", color->r, color->g, color->b);
+    
+    fillbuffer24(image, color);
+
+
+    return 1;
+}
+
+
+
 void dynamicUpdateTextures()
 {
     Image *pixels;
@@ -332,10 +361,18 @@ void dynamicUpdateTextures()
       exit(0);
     }
 
-    if (!dynamicImage(pixels )) {
+    //example 1
+    // if (!dynamicImage(pixels )) {
+    //   exit(1);
+    // }        
+
+    //example 2
+    if (!dynamicImage2(pixels )) {
       exit(1);
-    }        
+    }  
+
     
+
     // Create Texture   
     glGenTextures(1, &texture[0]);
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)

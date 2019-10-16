@@ -21,6 +21,15 @@ void abort_(const char * s, ...);
 
 //the "pixel" objects (struct) to fill "framebuffer" objects (grids of these) 
 
+
+// another image type 
+typedef struct Image{
+    unsigned int sizeX;
+    unsigned int sizeY;
+    char *data;
+} Image ;
+
+
 //24 bit color 
 typedef struct{
     int r=0;
@@ -71,7 +80,7 @@ void ScaleRect(RGBAType *Target, RGBAType *Source, int SrcWidth, int SrcHeight,
 
 RGBAType* blitBuffer32( RGBAType *pixels, int* w, int* h, int startx, int starty,  int endx, int endy );
 
-
+void fillbuffer24(Image *imgBuffer, RGBType *color);
 void fillbuffer24(RGBType *pixBuffer , int width, int height, int rval, int gval, int bval);
 void fillbuffer24(RGBType *pixBuffer , int width, int height, RGBType *color);
 void fillbuffer32(RGBAType *pixBuffer, int width, int height, RGBType *color);

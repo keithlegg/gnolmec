@@ -352,6 +352,50 @@ void ScaleRect(RGBAType *Target, RGBAType *Source, int SrcWidth, int SrcHeight,
   }//while
 }
 
+
+/*****************************/
+//fill RGB buffer with a solid color - from "Image" type
+
+void fillbuffer24(Image *imgBuffer, RGBType *color)
+{
+    uint xa = 0;
+    uint ya = 0;
+
+    uint pixIdx = 0;
+    //char* pixItr = 0;
+
+    // printf("## fillbuffer24 color is %i %i %i \n", color->r, color->g, color->b);
+    // printf("## fillbuffer24 size  is %u %u \n", imgBuffer->sizeX, imgBuffer->sizeY );
+
+
+    //     size = image->sizeX * image->sizeY * 3;
+    //     for (i=0;i<size;i+=3) { 
+    //         image->data[i]    = (unsigned int)0;
+    //         image->data[i+1]  = (unsigned int)255; //image->data[i+2];
+    //         image->data[i+2]  = (unsigned int)255; //temp;
+    //     }
+
+    uint width = imgBuffer->sizeX;    
+    uint height = imgBuffer->sizeY; 
+
+    for (ya=0;ya<height;ya+=3)
+    {
+        for (xa=0;xa<width;xa+=3)
+        {
+            //pixItr = &( imgBuffer->data[ (ya*imgBuffer->sizeX) + xa] );
+            pixIdx = (ya*width) + xa ;
+
+            imgBuffer->data[pixIdx]    = color->r;
+            imgBuffer->data[pixIdx+1]  = color->g;
+            imgBuffer->data[pixIdx+2]  = color->b;
+
+        }
+    }
+
+
+}
+
+
 /*****************************/
 //fill RGB buffer with a solid color - from RGBType
 
@@ -377,6 +421,7 @@ void fillbuffer24(RGBType *pixBuffer, int width, int height, RGBType *color)
 
 
 }
+
 
 /*****************************/
 void fillbuffer32(RGBAType *pixBuffer, int width, int height, RGBType *color)
