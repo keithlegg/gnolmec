@@ -55,7 +55,7 @@ static BOOL g_bTexture = FALSE;
 //static GLfloat g_farPlane = 1000;
 
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
-static int g_Width = 600;                          // Initial window width
+static int g_Width  = 600;                          // Initial window width
 static int g_Height = 600;                         // Initial window height
 static int g_yClick = 0;
 static float g_lightPos[4] = { 10, 10, -100, 1 };  // Position of light
@@ -111,16 +111,18 @@ GLuint texture[1]; // storage for one texture
 
 float xrot, yrot, zrot;// floats for x rotation, y rotation, z rotation 
 
-int steps[8] = {1024,512,256,128,64,32,16,8};
-int step_idx = 2;
+// data for animated "pong" texture 
+unsigned int upos = 100;
+unsigned int vpos = 320;  
+unsigned int dir_u = 0;
+unsigned int dir_v = 0;
+unsigned int pong_speed = 5;
+unsigned int pong_size  = 15;
+unsigned int img_usize  = 512;
+unsigned int img_vsize  = 512;
 
-
-// moved to framebuffer.h 
-// typedef struct Image{
-//     unsigned int sizeX;
-//     unsigned int sizeY;
-//     char *data;
-// } Image ;
+// int steps[8] = {1024,512,256,128,64,32,16,8};
+// int step_idx = 2;
 
 
 /***************************************/
@@ -264,7 +266,7 @@ int ImageLoad(char *filename, Image *image)
     fseek(file, 24, SEEK_CUR);
 
     // read the data. 
-    image->data = (char *) malloc(size);
+    image->data = (char *) malloc(size);  
     if (image->data == NULL) {
       printf("Error allocating memory for color-corrected image data");
       return 0; 
@@ -281,6 +283,7 @@ int ImageLoad(char *filename, Image *image)
       image->data[i+2] = temp;
     }
 
+    free(image->data);
     return 1;
 }
     
@@ -318,6 +321,7 @@ int dynamicImage(Image *image)
         image->data[i+2]  = (unsigned int)255; //temp;
     }
 
+    free(image->data);
     return 1;
 }
 
@@ -326,12 +330,12 @@ int dynamicImage2(Image *image)
 {
     unsigned long size; 
 
-    image->sizeX = 512;
-    image->sizeY = 512;
+    image->sizeX = img_usize;
+    image->sizeY = img_vsize;
 
     size = image->sizeX * image->sizeY * 3;
 
-    image->data = (char *) malloc(size);
+    image->data = (char *) malloc(size);  
 
     RGBType bgcolor;
     RGBType *pt_bgcolor = &bgcolor;
@@ -352,15 +356,99 @@ int dynamicImage2(Image *image)
     draw_point ( image, image->sizeX, 511, 511, pt_linecolor  );
     draw_point ( image, image->sizeX, 511, 0, pt_linecolor  );
 
+    //origin is bottom left - grr 
+    int tl[2] = {10,10};
+    int br[2] = {50,50};
+
+    draw_square( image, image->sizeX, tl, br, pt_linecolor );
+
+    free(image->data);
     return 1;
 }
 
+
+// same as dynamicUpdateTextures but test of animation 
+// without free() - all sorts of overflows are sure to happen 
+
+void animateTextures()
+{
+    Image *image;
+    image = (Image *) malloc(sizeof(Image));  
+
+    if (image == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    //// 
+
+
+    unsigned long size; 
+
+    image->sizeX = img_usize;
+    image->sizeY = img_vsize;
+
+    size = image->sizeX * image->sizeY * 3;
+
+    image->data = (char *) malloc(size);
+
+    RGBType bgcolor;
+    RGBType *pt_bgcolor = &bgcolor;
+
+    pt_bgcolor->r = 45;
+    pt_bgcolor->g = 50;
+    pt_bgcolor->b = 50;
+
+
+    RGBType linecolor;
+    RGBType *pt_linecolor = &linecolor;
+    pt_linecolor->g = 230;
+    pt_linecolor->b = 130;
+
+
+    RGBType bordercolor;
+    RGBType *pt_bordercolor = &bordercolor;
+    pt_bordercolor->b = 255;
+
+    fillbuffer24(image, pt_bgcolor);
+    
+    // draw_point ( image, image->sizeX, 0          , 0           , pt_linecolor  );
+    // draw_point ( image, image->sizeX, img_usize-1, img_vsize-1 , pt_linecolor  );
+    // draw_point ( image, image->sizeX, img_usize-1, 0           , pt_linecolor  );
+
+    //origin is bottom left - grr 
+    int tl[2] = { 0, 0 };
+    int br[2] = { image->sizeX-2, image->sizeY-2 };
+    draw_square( image, image->sizeX, tl, br, pt_bordercolor );
+   
+
+    draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
+
+
+    ////
+
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, image->sizeX, image->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
+
+    free( image );
+
+}
+
+/***************************************/
 
 
 void dynamicUpdateTextures()
 {
     Image *pixels;
-    pixels = (Image *) malloc(sizeof(Image));
+    pixels = (Image *) malloc(sizeof(Image));  
 
     if (pixels == NULL) {
       printf("Error allocating space for image");
@@ -390,6 +478,7 @@ void dynamicUpdateTextures()
     // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
     glTexImage2D(GL_TEXTURE_2D, 0, 3, pixels->sizeX, pixels->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels->data);
 
+    free(pixels);
 }
 
 /***************************************/
@@ -399,7 +488,7 @@ void LoadGLTextures(char* filename)
 {   
     
     Image *pixels;
-    pixels = (Image *) malloc(sizeof(Image));
+    pixels = (Image *) malloc(sizeof(Image));  
     //RGBType *pixels  = createBuffer24(100, 100); 
 
     if (pixels == NULL) {
@@ -421,6 +510,9 @@ void LoadGLTextures(char* filename)
     // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
     // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
     glTexImage2D(GL_TEXTURE_2D, 0, 3, pixels->sizeX, pixels->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels->data);
+    
+    free(pixels);
+
 }
 
 
@@ -476,21 +568,18 @@ void ReSizeGLScene(int Width, int Height)
 void DrawGLScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
-    glLoadIdentity();               // Reset The View
-
+    glLoadIdentity(); // Reset The View
     glTranslatef(0.0f, 0.0f, -3.7f);    // move 5 units into the screen.
-
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
-    //DEFINE GEOMETRY HERE 
+    //define geometry 
     glBegin(GL_QUADS);//draw a four sided polygon(s)
         glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // BL texture and quad
         glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // BR texture and quad
         glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // TR texture and quad
         glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // TL texture and quad
-    glEnd(); // done with the polygon.
+    glEnd(); // end polygon.
     
-
     /*
     glBegin(GL_POINTS);
         glVertex2f(0.0, 0.0);
@@ -507,6 +596,21 @@ void DrawGLScene()
         glVertex2f(1.0, 0.0);
     glEnd();
     */
+
+    unsigned int u_edge = img_usize - (pong_size/2);
+    unsigned int v_edge = img_vsize - (pong_size/2);
+
+    // animate some numbers 
+    if(upos>=u_edge)    { dir_u = 1; }
+    if(upos<=pong_size) { dir_u = 0; }
+    if(vpos>=u_edge)    { dir_v = 1; }
+    if(vpos<=pong_size) { dir_v = 0; }
+    if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
+    if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
+
+    //usleep(200000); //if you want to slow it down 
+
+    animateTextures();
 
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
@@ -567,11 +671,44 @@ void DrawGLScene3D()
     
     glEnd();  // done with the polygon.
 
-    xrot+=15.0f;                        // X Axis Rotation  
-    yrot+=15.0f;                        // Y Axis Rotation
-    zrot+=15.0f;                        // Z Axis Rotation
+    if (yrot<100){
+        //xrot+=.1f;  // X Axis Rotation  
+        yrot+=.2f;    // Y Axis Rotation
+        //zrot+=.1f;  // Z Axis Rotation
+    }
+    
+    if (yrot>=100 && yrot<200){
+        xrot+=.2f;    // X Axis Rotation  
+        yrot+=.2f;    // Y Axis Rotation
+        //zrot+=.1f;  // Z Axis Rotation
+        pong_size = 30;
+    }
 
-    usleep(100000); 
+    if (yrot>=200){
+        xrot-=.2f;    // X Axis Rotation  
+        //yrot+=.2f;    // Y Axis Rotation
+        zrot+=.1f;  // Z Axis Rotation
+        pong_size = 100;        
+    }
+
+    /**********/
+
+    unsigned int u_edge = img_usize - (pong_size/2);
+    unsigned int v_edge = img_vsize - (pong_size/2);
+
+    // animate some numbers 
+    if(upos>=u_edge)    { dir_u = 1; }
+    if(upos<=pong_size) { dir_u = 0; }
+
+    if(vpos>=u_edge)    { dir_v = 1; }
+    if(vpos<=pong_size) { dir_v = 0; }
+
+    if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
+    if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
+
+    animateTextures();
+    //usleep(100000); 
+
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
 }
@@ -785,16 +922,16 @@ void flatImageDemo(int *argc, char** argv){
 
 
     // attempt to turn off antialiasing 
-    glDisable(GL_BLEND);
-    glDisable(GL_DITHER);
-    glDisable(GL_POINT_SMOOTH);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_POLYGON_SMOOTH);
-    glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
-    glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
-    #define GL_MULTISAMPLE_ARB 0x809D
-    glDisable( GL_MULTISAMPLE_ARB) ;
+    // glDisable(GL_BLEND);
+    // glDisable(GL_DITHER);
+    // glDisable(GL_POINT_SMOOTH);
+    // glDisable(GL_LINE_SMOOTH);
+    // glDisable(GL_POLYGON_SMOOTH);
+    // glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
+    // glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
+    // glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+    // #define GL_MULTISAMPLE_ARB 0x809D
+    // glDisable( GL_MULTISAMPLE_ARB) ;
 
     glutMainLoop();// Start Event Processing Engine   
    
@@ -808,9 +945,9 @@ void flatImageDemo(int *argc, char** argv){
 int main(int argc, char **argv) 
 {  
     
-    //spinningCubeDemo(&argc, argv); //start up openGL 
+    spinningCubeDemo(&argc, argv); //start up openGL 
     
-    flatImageDemo(&argc, argv); //start up openGL 
+    // flatImageDemo(&argc, argv); //start up openGL 
 
     return 1;
 }

@@ -489,36 +489,6 @@ short scanner_darkly(int *pix){
 
 /*****************************/
 
-// void fillbuffer24(Image *imgBuffer, RGBType *color)
-// {
-//     unsigned int xa = 0;
-//     unsigned int ya = 0;
-// 
-//     unsigned int pixIdx = 0;
-//     //char* pixItr = 0;
-// 
-//     // printf("## fillbuffer24 color is %i %i %i \n", color->r, color->g, color->b);
-//     // printf("## fillbuffer24 size  is %u %u \n", imgBuffer->sizeX, imgBuffer->sizeY );
-// 
-//     unsigned int width = imgBuffer->sizeX;    
-//     unsigned int height = imgBuffer->sizeY; 
-// 
-//     for (ya=0;ya<(height*3);ya+=3)
-//     {
-//         for (xa=0;xa<(width*3);xa+=3)
-//         {
-//             //pixItr = &( imgBuffer->data[ (ya*imgBuffer->sizeX) + xa] );
-//             pixIdx = (ya*width) + xa ;
-// 
-//             imgBuffer->data[pixIdx]    = color->r;
-//             imgBuffer->data[pixIdx+1]  = color->g;
-//             imgBuffer->data[pixIdx+2]  = color->b;
-// 
-//         }
-//     }
-// 
-// }
-
 void draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBType *color  ){
     unsigned int  pixIdx = ((ycoord*3)*imagewidth) + (xcoord*3)  ;
     imgBuffer->data[pixIdx]    = color->r;
@@ -722,6 +692,27 @@ void gaussBlur (RGBAType *pixbuffer, RGBAType *pix2buffer, int imagewidth, int i
 
 /*****************************/
 
+// void draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBType *color  ){
+
+void draw_square( Image *imgBuffer, int width, int tl[2], int br[2], RGBType *color )
+{
+  int plot_x = 0;
+  int plot_y = 0;
+  int px     = 0;
+
+  int tl_x = tl[0];
+  int tl_y = tl[1];
+  int br_x = br[0];
+  int br_y = br[1];
+  
+  for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , br_y, color); }
+  for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , tl_y, color); }
+  for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, br_x, px  , color); }
+  for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, tl_x, px  , color); }
+}
+
+/*****************************/
+
 void draw_square( RGBAType *row_pt, int width, int tl[2], int br[2], int color[3] )
 {
   int plot_x = 0;
@@ -738,6 +729,35 @@ void draw_square( RGBAType *row_pt, int width, int tl[2], int br[2], int color[3
   for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, br_x, px, color); }
   for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, tl_x, px, color); }
 }
+
+
+/*****************************/
+
+//void draw_square( Image *imgBuffer, int width, int tl[2], int br[2], RGBType *color )
+
+void draw_fill_square( Image *imgBuffer, int x_orig, int y_orig, int dia, RGBType *color)
+{
+   int tl[2] = {0};
+   int br[2] = {0};
+
+   for (int a=0;a<dia;a++)
+   {
+
+       if (x_orig-a>0){
+           tl[0] = x_orig-a;
+           tl[1] = y_orig-a;
+       }
+       
+       br[0] = x_orig+a;
+       br[1] = y_orig+a;
+
+       //draw_square( row_pt, width, tl, br, color );
+       draw_square( imgBuffer, imgBuffer->sizeX, tl, br, color );
+
+   }
+
+}
+
 
 /*****************************/
 

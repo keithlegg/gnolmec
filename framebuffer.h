@@ -102,7 +102,10 @@ void threshold (RGBType *pixbuffer, int imagewidth, int imageheight, int threshv
  
 void gaussBlur (RGBAType *pixbuffer, RGBAType *pix2buffer, int imagewidth, int height, int r, bool do_threshold, int threshval); 
 
+void draw_square( Image *imgBuffer, int width, int tl[2], int br[2], RGBType *color );
 void draw_square( RGBAType *row_pt, int width, int tl[2], int br[2], int color[3] );
+
+void draw_fill_square( Image *imgBuffer, int x_orig, int y_orig, int dia, RGBType *color);
 void draw_fill_square( RGBAType *row_pt, int width, int x_orig, int y_orig, int dia, int color[3]);
 
 void draw_line( RGBAType *fb_image, int imagewidth, int x1, int y1, int x2, int y2, RGBType *color);
