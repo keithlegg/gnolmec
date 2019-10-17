@@ -745,11 +745,17 @@ void draw_fill_square( Image *imgBuffer, int x_orig, int y_orig, int dia, RGBTyp
 
        if (x_orig-a>0){
            tl[0] = x_orig-a;
+       }
+       if (y_orig-a>0){
            tl[1] = y_orig-a;
        }
-       
-       br[0] = x_orig+a;
-       br[1] = y_orig+a;
+
+       if (x_orig+a<imgBuffer->sizeX){
+           br[0] = x_orig+a;
+       }
+       if (y_orig+a<imgBuffer->sizeY){
+           br[1] = y_orig+a;
+       }
 
        //draw_square( row_pt, width, tl, br, color );
        draw_square( imgBuffer, imgBuffer->sizeX, tl, br, color );
