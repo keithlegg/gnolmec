@@ -89,6 +89,7 @@ short scanner_darkly(int *pix);
 short scanner_darkly(RGBType* pixel24);
 short scanner_darkly(RGBAType* pixel32);
 
+void draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBType *color  );
 void draw_point ( RGBAType *fb_image, int imagewidth, int pt[2], int color[3] );//untested 
 void draw_point ( RGBAType *fb_image, int imagewidth, int xcoord, int ycoord, int color[3]  );
 void draw_point ( RGBType *fb_image , int imagewidth, int xcoord, int ycoord, int color[3]  );

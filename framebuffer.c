@@ -368,20 +368,12 @@ void fillbuffer24(Image *imgBuffer, RGBType *color)
     // printf("## fillbuffer24 color is %i %i %i \n", color->r, color->g, color->b);
     // printf("## fillbuffer24 size  is %u %u \n", imgBuffer->sizeX, imgBuffer->sizeY );
 
-
-    //     size = image->sizeX * image->sizeY * 3;
-    //     for (i=0;i<size;i+=3) { 
-    //         image->data[i]    = (unsigned int)0;
-    //         image->data[i+1]  = (unsigned int)255; //image->data[i+2];
-    //         image->data[i+2]  = (unsigned int)255; //temp;
-    //     }
-
     unsigned int width = imgBuffer->sizeX;    
     unsigned int height = imgBuffer->sizeY; 
 
-    for (ya=0;ya<height;ya+=3)
+    for (ya=0;ya<(height*3);ya+=3)
     {
-        for (xa=0;xa<width;xa+=3)
+        for (xa=0;xa<(width*3);xa+=3)
         {
             //pixItr = &( imgBuffer->data[ (ya*imgBuffer->sizeX) + xa] );
             pixIdx = (ya*width) + xa ;
@@ -392,7 +384,6 @@ void fillbuffer24(Image *imgBuffer, RGBType *color)
 
         }
     }
-
 
 }
 
@@ -494,6 +485,45 @@ short scanner_darkly(int *pix){
      return 1;
    }
    return 0;
+}
+
+/*****************************/
+
+// void fillbuffer24(Image *imgBuffer, RGBType *color)
+// {
+//     unsigned int xa = 0;
+//     unsigned int ya = 0;
+// 
+//     unsigned int pixIdx = 0;
+//     //char* pixItr = 0;
+// 
+//     // printf("## fillbuffer24 color is %i %i %i \n", color->r, color->g, color->b);
+//     // printf("## fillbuffer24 size  is %u %u \n", imgBuffer->sizeX, imgBuffer->sizeY );
+// 
+//     unsigned int width = imgBuffer->sizeX;    
+//     unsigned int height = imgBuffer->sizeY; 
+// 
+//     for (ya=0;ya<(height*3);ya+=3)
+//     {
+//         for (xa=0;xa<(width*3);xa+=3)
+//         {
+//             //pixItr = &( imgBuffer->data[ (ya*imgBuffer->sizeX) + xa] );
+//             pixIdx = (ya*width) + xa ;
+// 
+//             imgBuffer->data[pixIdx]    = color->r;
+//             imgBuffer->data[pixIdx+1]  = color->g;
+//             imgBuffer->data[pixIdx+2]  = color->b;
+// 
+//         }
+//     }
+// 
+// }
+
+void draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBType *color  ){
+    unsigned int  pixIdx = ((ycoord*3)*imagewidth) + (xcoord*3)  ;
+    imgBuffer->data[pixIdx]    = color->r;
+    imgBuffer->data[pixIdx+1]  = color->g;
+    imgBuffer->data[pixIdx+2]  = color->b;
 }
 
 /*****************************/

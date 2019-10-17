@@ -326,25 +326,31 @@ int dynamicImage2(Image *image)
 {
     unsigned long size; 
 
-    image->sizeX = 256;
-    image->sizeY = 256;
+    image->sizeX = 512;
+    image->sizeY = 512;
 
-    // calculate the size (assuming 24 bits or 3 bytes per pixel).
     size = image->sizeX * image->sizeY * 3;
 
-    //printf("#### image mem size is %lu \n", size );
     image->data = (char *) malloc(size);
-    //printf("## Image size is %u %u \n", image->sizeX, image->sizeY);
 
-    RGBType *color  = createBuffer24( image->sizeX, image->sizeY ); 
-    color->r = 0;
-    color->g = 0;
-    color->b = 255;
+    RGBType bgcolor;
+    RGBType *pt_bgcolor = &bgcolor;
 
-    //printf("## color is %i %i %i \n", color->r, color->g, color->b);
+    pt_bgcolor->r = 25;
+    pt_bgcolor->g = 30;
+    pt_bgcolor->b = 40;
+
+
+    RGBType linecolor;
+    RGBType *pt_linecolor = &linecolor;
+    pt_linecolor->g = 230;
+    pt_linecolor->b = 130;
+   
+    fillbuffer24(image, pt_bgcolor);
     
-    fillbuffer24(image, color);
-
+    draw_point ( image, image->sizeX, 0, 0, pt_linecolor  );
+    draw_point ( image, image->sizeX, 511, 511, pt_linecolor  );
+    draw_point ( image, image->sizeX, 511, 0, pt_linecolor  );
 
     return 1;
 }
@@ -588,7 +594,7 @@ void keyPressed(unsigned char key, int x, int y)
     
     if (key == 97) //a
     { 
-        printf("you pressed a\n");  
+        printf("you pressed a\n");
     }
  
     if (key == 98) //b
@@ -743,9 +749,9 @@ void flatImageDemo(int *argc, char** argv){
 
     printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
 
+
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
     glutInit(argc, argv);  
-
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(screenSize, screenSize);  //window size
@@ -776,6 +782,19 @@ void flatImageDemo(int *argc, char** argv){
     // Create our popup menu
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
+
+
+    // attempt to turn off antialiasing 
+    glDisable(GL_BLEND);
+    glDisable(GL_DITHER);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH);
+    glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
+    glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+    #define GL_MULTISAMPLE_ARB 0x809D
+    glDisable( GL_MULTISAMPLE_ARB) ;
 
     glutMainLoop();// Start Event Processing Engine   
    
