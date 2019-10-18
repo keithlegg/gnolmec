@@ -3,15 +3,24 @@
 
 One of the first tests I did to learn about writing an openGL app on Linux in C.
 
-It makes a spinning cube and dynamically loads a texture.
 
-Compile with "make"
+The original motirvation for writing this was I needed a way to display an image on the screen. 
 
-When you run it press "d" or "c" to dynamically load textures on the cube. 
+The image was for a "real time" view of image data that was coming in over a serial port 
+for a DIY scanning electron microscope. 
+
+That propject ended, but this continues to live as a set of tools for playing with graphics and general nerdery.
+
+Testes on Linux and OSX. 
+
+clone, and simply compile with "make"
+
+There are various hotkeys to do things, read main.py to see those. 
 
 
 
-This was the first test of some code I wrote to give a "real time" view of image data 
-that was coming in over a serial port for a DIY scanning electron microscope. 
+
+
+
 
 

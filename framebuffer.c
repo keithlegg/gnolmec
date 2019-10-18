@@ -307,6 +307,52 @@ void copyBuffer24( Image* inBuffer , Image* outBuffer, int tl[2], int br[2] )
 
 
 /*****************************/
+ /*
+RGBAType* blitBuffer24( RGBAType *pixels, int* w, int* h, int startx, int starty,  
+                        int endx, int endy )
+{
+
+  
+   //    make sure you call free() on the result when you are done 
+  
+
+   RGBAType *pixItr1 = 0;  
+   RGBAType *pixItr2 = 0;    
+
+   int new_w = (endx-startx);
+   int new_h = (endy-starty);
+
+   RGBAType *output = createBuffer32( new_w, new_h );  
+
+   int cnt_x = 0;
+   int cnt_y = 0;
+
+   for (int y = starty; y < endy; y++)
+   {     
+       cnt_x = 0;
+       for (int x = startx; x < endx; x++)
+       {  
+           pixItr1 = &( pixels [(y* *w) + x] );
+           pixItr2 = &( output [(cnt_y* new_w) + cnt_x] );
+           
+           pixItr2->r = pixItr1->r;       
+           pixItr2->g = pixItr1->g;  
+           pixItr2->b = pixItr1->b;  
+           pixItr2->a = pixItr1->a; 
+           
+           cnt_x++;
+       }
+       cnt_y++;
+   }
+
+   *h = new_h;
+   *w = new_w;
+
+  return output;
+}
+*/
+
+/*****************************/
 
 RGBAType* blitBuffer32( RGBAType *pixels, int* w, int* h, int startx, int starty,  
                         int endx, int endy )

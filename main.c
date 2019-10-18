@@ -36,6 +36,8 @@
 
 #include "point_op.h"    // vector operations
 #include "framebuffer.h" // raster operations
+#include "examples_fb.h" // example raster ops
+
 #include "image_util.h"  // experimental features, etc 
 
 
@@ -368,9 +370,6 @@ void animateTextures2(Image *loaded_texture)
     cp_tl[1] = vpos-pong_size;
     cp_br[0] = upos+pong_size;
     cp_br[1] = vpos+pong_size;
-
-
-
    
     //clear background image 
     //fillbuffer24(loaded_texture, pt_bgcolor);
@@ -389,9 +388,6 @@ void animateTextures2(Image *loaded_texture)
     }
 
     copyBuffer24( imageloaded_bfr2 , loaded_texture, cp_tl, cp_br );
-
-    
-
 
     ////
 
@@ -466,8 +462,9 @@ void ReSizeGLScene(int Width, int Height)
   cobbled together display callback to create a quad polygon with a UV map 
 */
  
+// blitBuffer32
 
-void DrawGLScene()
+void drawglscene_2d()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity(); // Reset The View
@@ -513,7 +510,6 @@ void DrawGLScene()
     if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
 
     //usleep(200000); //if you want to slow it down 
-
     
     animateTextures2(main_bg_bfr);
 
@@ -526,7 +522,7 @@ void DrawGLScene()
 
 
 
-void DrawGLScene3D()
+void drawglscene_3d()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
@@ -770,14 +766,11 @@ void spinningCubeDemo(int *argc, char** argv){
      
     window = glutCreateWindow("SEM raster display"); //create an opengl window 
 
-    //glutDisplayFunc(&DrawGLScene);//register display callback       
-    glutDisplayFunc(&DrawGLScene3D);   
-
-    //glutFullScreen(); // if you want fullscreen. 
+    //register display callback       
+    glutDisplayFunc(&drawglscene_3d);   
 
     // Even if there are no events, redraw our gl scene.  
-    //glutIdleFunc(&DrawGLScene);
-    glutIdleFunc(&DrawGLScene3D);
+    glutIdleFunc(&drawglscene_3d);
 
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
@@ -800,8 +793,6 @@ void spinningCubeDemo(int *argc, char** argv){
     ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
-
-
 
 
 }
@@ -830,10 +821,10 @@ void flatImageDemo(int *argc, char** argv){
      
     window = glutCreateWindow("SEM raster display"); //create an opengl window 
 
-    glutDisplayFunc(&DrawGLScene);//register display callback       
+    glutDisplayFunc(&drawglscene_2d);//register display callback       
 
     // Even if there are no events, redraw our gl scene.  
-    glutIdleFunc(&DrawGLScene);
+    glutIdleFunc(&drawglscene_2d);
 
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
@@ -874,17 +865,17 @@ void flatImageDemo(int *argc, char** argv){
 
 
 
+
 /***************************************/
 
 
 int main(int argc, char **argv) 
 {  
     
-    // flatImageDemo(&argc, argv); //start up openGL 
+    //flatImageDemo(&argc, argv); //start up openGL 
 
-    spinningCubeDemo(&argc, argv); //start up openGL 
-    
-
+    //spinningCubeDemo(&argc, argv); //start up openGL 
+    test_framebuffer_funcs();
 
     return 1;
 }
