@@ -405,10 +405,16 @@ void animateTextures()
     pt_linecolor->g = 230;
     pt_linecolor->b = 130;
 
-
+    
     RGBType bordercolor;
     RGBType *pt_bordercolor = &bordercolor;
     pt_bordercolor->b = 255;
+
+
+    RGBType hitcolor;
+    RGBType *pt_hitcolor = &hitcolor;
+    pt_hitcolor->r = 200;
+    pt_hitcolor->b = 128;
 
     fillbuffer24(image, pt_bgcolor);
     
@@ -421,9 +427,13 @@ void animateTextures()
     int br[2] = { image->sizeX-2, image->sizeY-2 };
     draw_square( image, image->sizeX, tl, br, pt_bordercolor );
    
-
-    draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
-
+    //draw the pong bouncer 
+    if(upos>(image->sizeX-(pong_size*2)))
+    {
+        draw_fill_square(  image,  upos, vpos, pong_size*2, pt_hitcolor  );
+    }else{
+        draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
+    }
 
     ////
 
@@ -597,14 +607,16 @@ void DrawGLScene()
     glEnd();
     */
 
-    unsigned int u_edge = img_usize - (pong_size/2);
-    unsigned int v_edge = img_vsize - (pong_size/2);
+    unsigned int u_edge = img_usize - pong_size;
+    unsigned int v_edge = img_vsize - pong_size;
 
     // animate some numbers 
-    if(upos>=u_edge)    { dir_u = 1; }
-    if(upos<=pong_size) { dir_u = 0; }
+    if(upos>=u_edge)     { dir_u = 1; }
+    if(upos<=pong_size)  { dir_u = 0; }
+
     if(vpos>=u_edge)    { dir_v = 1; }
     if(vpos<=pong_size) { dir_v = 0; }
+
     if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
     if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
 
@@ -682,23 +694,25 @@ void DrawGLScene3D()
         yrot+=.2f;    // Y Axis Rotation
         //zrot+=.1f;  // Z Axis Rotation
         pong_size = 30;
+        pong_speed = 3;
     }
 
     if (yrot>=200){
         xrot-=.2f;    // X Axis Rotation  
         //yrot+=.2f;    // Y Axis Rotation
         zrot+=.1f;  // Z Axis Rotation
-        pong_size = 100;        
+        pong_size = 30;    
+        pong_speed = 10;    
     }
 
     /**********/
 
-    unsigned int u_edge = img_usize - (pong_size/2);
-    unsigned int v_edge = img_vsize - (pong_size/2);
+    unsigned int u_edge = img_usize - pong_size;
+    unsigned int v_edge = img_vsize - pong_size;
 
     // animate some numbers 
-    if(upos>=u_edge)    { dir_u = 1; }
-    if(upos<=pong_size) { dir_u = 0; }
+    if(upos>=u_edge)     { dir_u = 1; }
+    if(upos<=pong_size)  { dir_u = 0; }
 
     if(vpos>=u_edge)    { dir_v = 1; }
     if(vpos<=pong_size) { dir_v = 0; }
