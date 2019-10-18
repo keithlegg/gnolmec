@@ -111,14 +111,15 @@ RGBAType newRgba(int r, int g, int b, int a){
 
 void copyBuffer24( Image* inBuffer , Image* outBuffer )
 {
-   //make damn sure they are the same size!!
+    //make damn sure they are the same size!!
+    //DEBUG add a check to ensure the two are the same size 
 
     unsigned int xa = 0;
     unsigned int ya = 0;
 
     unsigned int pixIdx = 0;
 
-    unsigned int width = inBuffer->sizeX;    
+    unsigned int width  = inBuffer->sizeX;    
     unsigned int height = inBuffer->sizeY; 
 
     for (ya=0;ya<(height*3);ya+=3)
@@ -146,7 +147,7 @@ RGBType* copyBuffer24( RGBAType *pixels, int w, int h )
    RGBAType *pixItr1 = 0;  
    RGBType  *pixItr2 = 0;    
 
-   RGBType *output = createBuffer24(w,h);
+   RGBType *output = createBuffer24(w,h); //never gets freed! debug 
 
    for (int y = 0; y < h; y++)
    {     
@@ -172,7 +173,7 @@ RGBType* copyBuffer24( RGBType *pixels, int w, int h )
    RGBType *pixItr1 = 0;  
    RGBType *pixItr2 = 0;    
 
-   RGBType *output = createBuffer24(w,h);
+   RGBType *output = createBuffer24(w,h); //never gets freed! debug 
 
    for (int y = 0; y < h; y++)
    {     
@@ -195,10 +196,14 @@ RGBType* copyBuffer24( RGBType *pixels, int w, int h )
 RGBAType* copyBuffer32( RGBAType *pixels, int w, int h )
 {
 
+   /*
+       make sure you call free() on the result when you are done 
+   */
+
    RGBAType  *pixItr1 = 0;  
    RGBAType *pixItr2 = 0;    
 
-   RGBAType *output = createBuffer32(w,h);
+   RGBAType *output = createBuffer32(w,h);  
 
    for (int y = 0; y < h; y++)
    {     
@@ -221,10 +226,14 @@ RGBAType* copyBuffer32( RGBAType *pixels, int w, int h )
 RGBAType* copyBuffer32( RGBType *pixels, int w, int h )
 {
 
+   /*
+       make sure you call free() on the result when you are done 
+   */
+
    RGBType *pixItr1 = 0;  
    RGBAType *pixItr2 = 0;    
 
-   RGBAType *output = createBuffer32(w,h);
+   RGBAType *output = createBuffer32(w,h);  
 
    for (int y = 0; y < h; y++)
    {     
@@ -262,7 +271,7 @@ void copyBuffer24( Image* inBuffer , Image* outBuffer, int tl[2], int br[2] )
 {
     //DEBUG make damn sure they are the same size!!
     /*
-        Blit- copy an image region, or a whole image 
+        masks a region between two images based on a rectangle  
     */
 
     unsigned int xa = 0;
@@ -303,13 +312,17 @@ RGBAType* blitBuffer32( RGBAType *pixels, int* w, int* h, int startx, int starty
                         int endx, int endy )
 {
 
+   /*
+       make sure you call free() on the result when you are done 
+   */
+
    RGBAType *pixItr1 = 0;  
    RGBAType *pixItr2 = 0;    
 
    int new_w = (endx-startx);
    int new_h = (endy-starty);
 
-   RGBAType *output = createBuffer32( new_w, new_h );
+   RGBAType *output = createBuffer32( new_w, new_h );  
 
    int cnt_x = 0;
    int cnt_y = 0;
@@ -342,6 +355,9 @@ RGBAType* blitBuffer32( RGBAType *pixels, int* w, int* h, int startx, int starty
 /*not used yet - this is for experimenting*/
 RGBAType* copyBufferEveryOther32( RGBAType *pixels, int* w, int* h, int step_size )
 {
+   /*
+       make sure you call free() on the result when you are done 
+   */
 
    RGBAType *pixItr1 = 0;  
    RGBAType *pixItr2 = 0;    
@@ -352,7 +368,7 @@ RGBAType* copyBufferEveryOther32( RGBAType *pixels, int* w, int* h, int step_siz
    //printf("debug new size is %i %i \n", new_w, new_h );
 
    //RGBAType *output = createBuffer32(w,h);
-   RGBAType *output = createBuffer32( new_w, new_h );
+   RGBAType *output = createBuffer32( new_w, new_h );  
 
    int cnt_x = 0;
    int cnt_y = 0;
@@ -428,24 +444,25 @@ void ScaleRect(RGBAType *Target, RGBAType *Source, int SrcWidth, int SrcHeight,
   int stepHeight   = (SrcHeight / TgtHeight) * SrcWidth;
   int FractPart = SrcHeight % TgtHeight;
   int E = 0;
+
   RGBAType *PrevSource = NULL;
 
   while (NumPixels-- > 0) {
-    if (Source == PrevSource) {
-      memcpy(Target, Target-TgtWidth, TgtWidth*sizeof(*Target));
-    } else {
-      ScaleLine(Target, Source, SrcWidth, TgtWidth);
-      PrevSource = Source;
-    }//if 
-    
-    Target += TgtWidth;
-    Source += stepHeight;
-     
-    E += FractPart;
-    if (E >= TgtHeight) {
-      E -= TgtHeight;
-      Source += SrcWidth;
-    }//if
+      if (Source == PrevSource) {
+         memcpy(Target, Target-TgtWidth, TgtWidth*sizeof(*Target));
+      } else {
+          ScaleLine(Target, Source, SrcWidth, TgtWidth);
+          PrevSource = Source;
+      }//if 
+      
+      Target += TgtWidth;
+      Source += stepHeight;
+       
+      E += FractPart;
+      if (E >= TgtHeight) {
+          E -= TgtHeight;
+          Source += SrcWidth;
+      }//if
     
   }//while
 }
@@ -661,15 +678,15 @@ void threshold (RGBAType *pixbuffer, int imagewidth, int imageheight, int thresh
             //thresholded output
             if (pix->r<threshval || pix->g<threshval || pix->b<threshval )
             {
-                  pix->r =  0;
-                  pix->g =  0;
-                  pix->b =  0;
-                  pix->a =  255;   
+                pix->r =  0;
+                pix->g =  0;
+                pix->b =  0;
+                pix->a =  255;   
             }else{
-                  pix->r =  255;
-                  pix->g =  255;
-                  pix->b =  255;
-                  pix->a =  255;  
+                pix->r =  255;
+                pix->g =  255;
+                pix->b =  255;
+                pix->a =  255;  
             }
         }//imagewidth
      }//imageheight
@@ -693,13 +710,13 @@ void threshold (RGBType *pixbuffer, int imagewidth, int imageheight, int threshv
             //thresholded output
             if (pix->r<threshval || pix->g<threshval || pix->b<threshval )
             {
-                  pix->r =  0;
-                  pix->g =  0;
-                  pix->b =  0;
+                pix->r =  0;
+                pix->g =  0;
+                pix->b =  0;
             }else{
-                  pix->r =  255;
-                  pix->g =  255;
-                  pix->b =  255;
+                pix->r =  255;
+                pix->g =  255;
+                pix->b =  255;
             }
         }//imagewidth
      }//imageheight
@@ -793,38 +810,38 @@ void gaussBlur (RGBAType *pixbuffer, RGBAType *pix2buffer, int imagewidth, int i
 
 void draw_square( Image *imgBuffer, int width, int tl[2], int br[2], RGBType *color )
 {
-  int plot_x = 0;
-  int plot_y = 0;
-  int px     = 0;
+    int plot_x = 0;
+    int plot_y = 0;
+    int px     = 0;
 
-  int tl_x = tl[0];
-  int tl_y = tl[1];
-  int br_x = br[0];
-  int br_y = br[1];
-  
-  for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , br_y, color); }
-  for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , tl_y, color); }
-  for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, br_x, px  , color); }
-  for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, tl_x, px  , color); }
+    int tl_x = tl[0];
+    int tl_y = tl[1];
+    int br_x = br[0];
+    int br_y = br[1];
+    
+    for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , br_y, color); }
+    for ( px =tl_x; px <br_x; px++) { draw_point(imgBuffer, width, px  , tl_y, color); }
+    for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, br_x, px  , color); }
+    for ( px =tl_y; px <=br_y; px++){ draw_point(imgBuffer, width, tl_x, px  , color); }
 }
 
 /*****************************/
 
 void draw_square( RGBAType *row_pt, int width, int tl[2], int br[2], int color[3] )
 {
-  int plot_x = 0;
-  int plot_y = 0;
-  int px     = 0;
+    int plot_x = 0;
+    int plot_y = 0;
+    int px     = 0;
 
-  int tl_x = tl[0];
-  int tl_y = tl[1];
-  int br_x = br[0];
-  int br_y = br[1];
-  
-  for ( px =tl_x; px <br_x; px++){ draw_point(row_pt, width, px, br_y, color); }
-  for ( px =tl_x; px <br_x; px++){ draw_point(row_pt, width, px, tl_y, color); }
-  for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, br_x, px, color); }
-  for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, tl_x, px, color); }
+    int tl_x = tl[0];
+    int tl_y = tl[1];
+    int br_x = br[0];
+    int br_y = br[1];
+    
+    for ( px =tl_x; px <br_x; px++){ draw_point(row_pt, width, px, br_y, color); }
+    for ( px =tl_x; px <br_x; px++){ draw_point(row_pt, width, px, tl_y, color); }
+    for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, br_x, px, color); }
+    for ( px =tl_y; px <=br_y; px++){ draw_point(row_pt, width, tl_x, px, color); }
 }
 
 
@@ -834,30 +851,30 @@ void draw_square( RGBAType *row_pt, int width, int tl[2], int br[2], int color[3
 
 void draw_fill_square( Image *imgBuffer, int x_orig, int y_orig, int dia, RGBType *color)
 {
-   int tl[2] = {0};
-   int br[2] = {0};
+     int tl[2] = {0};
+     int br[2] = {0};
 
-   for (int a=0;a<dia;a++)
-   {
+     for (int a=0;a<dia;a++)
+     {
 
-       if (x_orig-a>0){
-           tl[0] = x_orig-a;
-       }
-       if (y_orig-a>0){
-           tl[1] = y_orig-a;
-       }
+         if (x_orig-a>0){
+             tl[0] = x_orig-a;
+         }
+         if (y_orig-a>0){
+             tl[1] = y_orig-a;
+         }
 
-       if (x_orig+a<imgBuffer->sizeX){
-           br[0] = x_orig+a;
-       }
-       if (y_orig+a<imgBuffer->sizeY){
-           br[1] = y_orig+a;
-       }
+         if (x_orig+a<imgBuffer->sizeX){
+             br[0] = x_orig+a;
+         }
+         if (y_orig+a<imgBuffer->sizeY){
+             br[1] = y_orig+a;
+         }
 
-       //draw_square( row_pt, width, tl, br, color );
-       draw_square( imgBuffer, imgBuffer->sizeX, tl, br, color );
+         //draw_square( row_pt, width, tl, br, color );
+         draw_square( imgBuffer, imgBuffer->sizeX, tl, br, color );
 
-   }
+     }
 
 }
 
@@ -866,20 +883,20 @@ void draw_fill_square( Image *imgBuffer, int x_orig, int y_orig, int dia, RGBTyp
 
 void draw_fill_square( RGBAType *row_pt, int width, int x_orig, int y_orig, int dia, int color[3])
 {
-   int tl[2] = {0};
-   int br[2] = {0};
+     int tl[2] = {0};
+     int br[2] = {0};
 
-   for (int a=0;a<dia;a++){
+     for (int a=0;a<dia;a++){
 
-       tl[0] = x_orig-a;
-       tl[1] = y_orig-a;
-       
-       br[0] = x_orig+a;
-       br[1] = y_orig+a;
+         tl[0] = x_orig-a;
+         tl[1] = y_orig-a;
+         
+         br[0] = x_orig+a;
+         br[1] = y_orig+a;
 
-       draw_square( row_pt, width, tl, br, color );
+         draw_square( row_pt, width, tl, br, color );
 
-   }
+     }
 
 }
 
@@ -980,7 +997,8 @@ void draw_line( RGBType *fb_image, int imagewidth, int x1, int y1, int x2, int y
     // if x1 == x2, then it does not matter what we set here
     signed char const ix((delta_x > 0) - (delta_x < 0));
     delta_x = abs(delta_x) << 1;
-         int delta_y(y2 - y1);
+    int delta_y(y2 - y1);
+ 
     // if y1 == y2, then it does not matter what we set here
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = abs(delta_y) << 1;
@@ -1030,7 +1048,7 @@ void draw_poly_line ( RGBAType *fb_image, int imagewidth, pix_coord *vertices, i
 {
     int i =0;
     if (numpts<2){
-      return;
+        return;
     }  
 
     for (i=1;i<numpts;i++ )
