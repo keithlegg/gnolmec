@@ -64,13 +64,16 @@ RGBAType newRgba(int r, int g, int b, int a);
 BWI_Type* createBuffer1(  int w, int h);   // 1 bit
 GSI_Type* createBuffer8(  int w, int h);   // 8 bit
 RGBType*  createBuffer24( int w, int h);   // 24 bit
-RGBAType* createBuffer32( int w, int h);  // 32 bit 
+RGBAType* createBuffer32( int w, int h);   // 32 bit 
+Image*    createBufferImage(int w, int h);    // Image type (SizeX, SizeY, data)
 
 //copy or "convert" a buffer 24 to 32 
 RGBType*  copyBuffer24( RGBType *pixels , int w, int h );
 RGBType*  copyBuffer24( RGBAType *pixels, int w, int h );
 RGBAType* copyBuffer32( RGBType *pixels , int w, int h );
 RGBAType* copyBuffer32( RGBAType *pixels, int w, int h );
+void copyBuffer24( Image* inBuffer , Image* outBuffer );
+
 RGBAType* copyBufferEveryOther32( RGBAType *pixels, int* w, int* h, int step_size );
 
 void ScaleLine(RGBAType *Target, RGBAType *Source, int SrcWidth, int TgtWidth);

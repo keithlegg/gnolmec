@@ -69,6 +69,19 @@ RGBType* createBuffer24(int w, int h){
     return pxl; 
 }
 
+
+Image* createBufferImage(int w, int h){
+    Image *imgbuffer = (Image *) malloc(sizeof(Image)); 
+   
+    unsigned long size; 
+    imgbuffer->sizeX = w;
+    imgbuffer->sizeY = h;
+    size = imgbuffer->sizeX * imgbuffer->sizeY * 3;
+    imgbuffer->data = (char *) malloc(size);
+
+    return imgbuffer; 
+}
+
 /*****************************/
 
 
@@ -93,6 +106,37 @@ RGBAType newRgba(int r, int g, int b, int a){
     return color;
 }
 
+
+/*****************************/
+
+void copyBuffer24( Image* inBuffer , Image* outBuffer )
+{
+   //make damn sure they are the same size!!
+
+    unsigned int xa = 0;
+    unsigned int ya = 0;
+
+    unsigned int pixIdx = 0;
+
+    unsigned int width = inBuffer->sizeX;    
+    unsigned int height = inBuffer->sizeY; 
+
+    for (ya=0;ya<(height*3);ya+=3)
+    {
+        for (xa=0;xa<(width*3);xa+=3)
+        {
+            //pixItr = &( inBuffer->data[ (ya*inBuffer->sizeX) + xa] );
+            pixIdx = (ya*width) + xa ;
+
+            outBuffer->data[pixIdx]   = inBuffer->data[pixIdx]   ;
+            outBuffer->data[pixIdx+1] = inBuffer->data[pixIdx+1] ;
+            outBuffer->data[pixIdx+2] = inBuffer->data[pixIdx+2] ;
+
+        }
+    }
+
+
+}
 
 
 /*****************************/
