@@ -73,6 +73,7 @@ RGBType*  copyBuffer24( RGBAType *pixels, int w, int h );
 RGBAType* copyBuffer32( RGBType *pixels , int w, int h );
 RGBAType* copyBuffer32( RGBAType *pixels, int w, int h );
 void copyBuffer24( Image* inBuffer , Image* outBuffer );
+void copyBuffer24( Image* inBuffer , Image* outBuffer, int tl[2], int br[2] ); //blitter/copy 
 
 RGBAType* copyBufferEveryOther32( RGBAType *pixels, int* w, int* h, int step_size );
 

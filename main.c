@@ -118,7 +118,7 @@ unsigned int vpos = 320;
 unsigned int dir_u = 0;
 unsigned int dir_v = 0;
 unsigned int pong_speed = 5;
-unsigned int pong_size  = 15;
+unsigned int pong_size  = 60;
 unsigned int img_usize  = 512;
 unsigned int img_vsize  = 512;
 
@@ -329,87 +329,6 @@ int dynamicImage2(Image *image)
 
 /***************************************/
 
-// same as dynamicUpdateTextures but test of animation 
-void animateTextures()
-{
-    Image *image;
-    image = (Image *) malloc(sizeof(Image));  
-
-    if (image == NULL) {
-      printf("Error allocating space for image");
-      exit(0);
-    }
-
-    //// 
-
-    unsigned long size; 
-
-    image->sizeX = img_usize;
-    image->sizeY = img_vsize;
-
-    size = image->sizeX * image->sizeY * 3;
-
-    image->data = (char *) malloc(size);
-
-    RGBType bgcolor;
-    RGBType *pt_bgcolor = &bgcolor;
-
-    pt_bgcolor->r = 45;
-    pt_bgcolor->g = 50;
-    pt_bgcolor->b = 50;
-
-
-    RGBType linecolor;
-    RGBType *pt_linecolor = &linecolor;
-    pt_linecolor->g = 230;
-    pt_linecolor->b = 130;
-
-    
-    RGBType bordercolor;
-    RGBType *pt_bordercolor = &bordercolor;
-    pt_bordercolor->b = 255;
-
-
-    RGBType hitcolor;
-    RGBType *pt_hitcolor = &hitcolor;
-    pt_hitcolor->r = 200;
-    pt_hitcolor->b = 128;
-
-    fillbuffer24(image, pt_bgcolor);
-    
-    //origin is bottom left - grr 
-    int tl[2] = { 0, 0 };
-    int br[2] = { image->sizeX-2, image->sizeY-2 };
-    draw_square( image, image->sizeX, tl, br, pt_bordercolor );
-   
-    //draw the pong bouncer 
-    if(upos>(image->sizeX-(pong_size*2)))
-    {
-        draw_fill_square(  image,  upos, vpos, pong_size*2, pt_hitcolor  );
-    }else{
-        draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
-        
-    }
-
-    ////
-
-    // Create Texture   
-    glGenTextures(1, &texture[0]);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
-
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
-
-    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
-    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, image->sizeX, image->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
-
-    free( image );
-
-}
-
-/***************************************/
-
 
 void animateTextures2(Image *loaded_texture)
 {
@@ -441,20 +360,38 @@ void animateTextures2(Image *loaded_texture)
     pt_firecolor->g = 171;
     pt_firecolor->b = 16;    
 
+
+    int cp_tl[2] = {0};
+    int cp_br[2] = {0};
+    
+    cp_tl[0] = upos-pong_size;
+    cp_tl[1] = vpos-pong_size;
+    cp_br[0] = upos+pong_size;
+    cp_br[1] = vpos+pong_size;
+
+
+
+   
+    //clear background image 
+    //fillbuffer24(loaded_texture, pt_bgcolor);
+
+    // draw background image 
+    if (use_tex==0){ copyBuffer24( imageloaded_bfr  , loaded_texture );}
+    if (use_tex==1){ copyBuffer24( imageloaded_bfr2 , loaded_texture );}
+
     //draw the pong bouncer 
     if(upos>(loaded_texture->sizeX-(pong_size*2)))
     {
-        if (use_tex==0){ copyBuffer24( imageloaded_bfr  , loaded_texture );}
-        if (use_tex==1){ copyBuffer24( imageloaded_bfr2 , loaded_texture );}
-
         draw_fill_square(  loaded_texture,  upos, vpos, pong_size*1.2, pt_hitcolor  );
         draw_fill_square(  loaded_texture,  upos, vpos, pong_size, pt_firecolor  );
     }else{
-
-        if (use_tex==0){ copyBuffer24( imageloaded_bfr  , loaded_texture );}
-        if (use_tex==1){ copyBuffer24( imageloaded_bfr2 , loaded_texture );}
         draw_fill_square(  loaded_texture,  upos, vpos, pong_size, pt_linecolor  );
     }
+
+    copyBuffer24( imageloaded_bfr2 , loaded_texture, cp_tl, cp_br );
+
+    
+
 
     ////
 
@@ -860,7 +797,7 @@ void spinningCubeDemo(int *argc, char** argv){
     glutAttachMenu (GLUT_RIGHT_BUTTON);
 
     ImageLoad("textures/generated1.bmp"     , imageloaded_bfr);
-    ImageLoad("textures/generated2.bmp", imageloaded_bfr2);
+    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
 
@@ -929,7 +866,7 @@ void flatImageDemo(int *argc, char** argv){
     // glDisable( GL_MULTISAMPLE_ARB) ;
 
     ImageLoad("textures/generated1.bmp", imageloaded_bfr);
-    ImageLoad("textures/generated2.bmp", imageloaded_bfr2);
+    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
    
@@ -965,7 +902,89 @@ int main(int argc, char **argv)
 
 
 
+/***************************************/
 
+/*
+
+// same as dynamicUpdateTextures but test of animation 
+void animateTextures()
+{
+    Image *image;
+    image = (Image *) malloc(sizeof(Image));  
+
+    if (image == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    //// 
+
+    unsigned long size; 
+
+    image->sizeX = img_usize;
+    image->sizeY = img_vsize;
+
+    size = image->sizeX * image->sizeY * 3;
+
+    image->data = (char *) malloc(size);
+
+    RGBType bgcolor;
+    RGBType *pt_bgcolor = &bgcolor;
+
+    pt_bgcolor->r = 45;
+    pt_bgcolor->g = 50;
+    pt_bgcolor->b = 50;
+
+
+    RGBType linecolor;
+    RGBType *pt_linecolor = &linecolor;
+    pt_linecolor->g = 230;
+    pt_linecolor->b = 130;
+
+    
+    RGBType bordercolor;
+    RGBType *pt_bordercolor = &bordercolor;
+    pt_bordercolor->b = 255;
+
+
+    RGBType hitcolor;
+    RGBType *pt_hitcolor = &hitcolor;
+    pt_hitcolor->r = 200;
+    pt_hitcolor->b = 128;
+
+    fillbuffer24(image, pt_bgcolor);
+    
+    //origin is bottom left - grr 
+    int tl[2] = { 0, 0 };
+    int br[2] = { image->sizeX-2, image->sizeY-2 };
+    draw_square( image, image->sizeX, tl, br, pt_bordercolor );
+   
+    //draw the pong bouncer 
+    if(upos>(image->sizeX-(pong_size*2)))
+    {
+        draw_fill_square(  image,  upos, vpos, pong_size*2, pt_hitcolor  );
+    }else{
+        draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
+        
+    }
+
+    ////
+
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, image->sizeX, image->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
+
+    free( image );
+
+}
+*/
 
 
 

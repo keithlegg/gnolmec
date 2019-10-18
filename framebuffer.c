@@ -244,6 +244,59 @@ RGBAType* copyBuffer32( RGBType *pixels, int w, int h )
 }
 
 
+
+/*****************************/
+
+// void draw_square( Image *imgBuffer, int width, int tl[2], int br[2], RGBType *color )
+// {
+//   int plot_x = 0;
+//   int plot_y = 0;
+//   int px     = 0;
+// 
+//   int tl_x = tl[0];
+//   int tl_y = tl[1];
+//   int br_x = br[0];
+//   int br_y = br[1];
+
+void copyBuffer24( Image* inBuffer , Image* outBuffer, int tl[2], int br[2] )
+{
+    //DEBUG make damn sure they are the same size!!
+    /*
+        Blit- copy an image region, or a whole image 
+    */
+
+    unsigned int xa = 0;
+    unsigned int ya = 0;
+
+    unsigned int pixIdx = 0;
+
+    unsigned int width = inBuffer->sizeX;    
+    unsigned int height = inBuffer->sizeY; 
+
+    int tl_x = tl[0]*3;
+    int tl_y = tl[1]*3;
+    int br_x = br[0]*3;
+    int br_y = br[1]*3;
+
+
+    for (ya=0;ya<(height*3);ya+=3)
+    {
+        for (xa=0;xa<(width*3);xa+=3)
+        {
+
+            if (xa>=tl_x && xa<= br_x){
+                if (ya>=tl_y && ya<= br_y){              
+                    pixIdx = (ya*width) + xa ;
+                    outBuffer->data[pixIdx]   = inBuffer->data[pixIdx]   ;
+                    outBuffer->data[pixIdx+1] = inBuffer->data[pixIdx+1] ;
+                    outBuffer->data[pixIdx+2] = inBuffer->data[pixIdx+2] ;
+                }    
+            }
+        }
+    }
+ }
+
+
 /*****************************/
 
 RGBAType* blitBuffer32( RGBAType *pixels, int* w, int* h, int startx, int starty,  
