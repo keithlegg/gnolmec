@@ -3,6 +3,16 @@
 
 #include "framebuffer.h"
 
+struct rec
+{
+    int x,y,z;
+};
+
+
+
+int testLoadBinary();
+
+int ImageLoad(char *filename, Image *image) ;
 
 
 void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h); 
