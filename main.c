@@ -872,10 +872,12 @@ void flatImageDemo(int *argc, char** argv){
 int main(int argc, char **argv) 
 {  
     
+    test_framebuffer_funcs();
+
     //flatImageDemo(&argc, argv); //start up openGL 
 
     //spinningCubeDemo(&argc, argv); //start up openGL 
-    test_framebuffer_funcs();
+
 
     return 1;
 }

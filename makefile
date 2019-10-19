@@ -7,7 +7,7 @@ INC = -I "./"
 #    g++ $(OBJ) -o semraster $(INC) $(MOAR)
 ##################################
 
-MOAR = examples_fb.c point_op.c framebuffer.c image_util.c
+MOAR = bitmap_io.c examples_fb.c point_op.c framebuffer.c image_util.c
 
 semraster:$(OBJ)
 	 
