@@ -679,8 +679,8 @@ void spinningCubeDemo(int *argc, char** argv){
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
 
-    ImageLoad("../textures/generated1.bmp"     , imageloaded_bfr);
-    ImageLoad("../textures/generated3.bmp", imageloaded_bfr2);
+    ImageLoad("textures/generated1.bmp"     , imageloaded_bfr);
+    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
 
@@ -746,8 +746,8 @@ void flatImageDemo(int *argc, char** argv){
     // #define GL_MULTISAMPLE_ARB 0x809D
     // glDisable( GL_MULTISAMPLE_ARB) ;
 
-    ImageLoad("../textures/generated1.bmp", imageloaded_bfr);
-    ImageLoad("../textures/generated3.bmp", imageloaded_bfr2);
+    ImageLoad("textures/generated1.bmp", imageloaded_bfr);
+    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
    
