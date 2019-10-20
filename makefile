@@ -9,12 +9,30 @@ BINDIR   =bin
 
 CC       = g++
 
+
+#detect the OS (linux or OSX, dont care about windows)
+UNAME := $(shell uname)
+
+
+
 # compiling flags  
 CFLAGS   = -I$(INCDIR) -Wall  
 
 LINKER   = g++
+
 # linking flags 
-LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz
+ifeq ($(UNAME), Linux)
+    #LINUX
+    #g++ $(OBJ) -o semraster $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
+	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz
+endif
+
+ifeq ($(UNAME), Darwin)
+    #OSX
+	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz
+endif
+
+
 
 SOURCES  := $(wildcard $(SRCDIR)/*.c)
 
@@ -30,11 +48,6 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
-# #LINUX
-# #g++ $(OBJ) -o semraster $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
-# #OSX
-# #g++ $(OBJ) -o semraster $(INC) $(MOAR) -lm -lz -framework Glut -framework OpenGL
-
 .PHONY: clean
 clean:
 	@$(rm) $(TARGET)
@@ -44,5 +57,6 @@ clean:
 .PHONY: remove
 remove: clean
 	@$(rm) $(BINDIR)/$(TARGET)
+	@$(rm) $(OBJDIR)/*.o
 	@echo "Executable removed!"
 	 
