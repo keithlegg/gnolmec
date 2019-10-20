@@ -40,6 +40,7 @@
 
 #include "image_util.h"  // experimental features, etc 
 #include "bitmap_io.h"   
+#include "bitmap_cpu.h"  //highly experimental - dont ask 
 
 
 typedef int BOOL;
@@ -347,7 +348,7 @@ void ReSizeGLScene(int Width, int Height)
 
 /***************************************/
 /*
-  cobbled together display callback to create a quad polygon with a UV map 
+    cobbled together display callback to create a quad polygon with a UV map 
 */
  
 // blitBuffer32
@@ -403,6 +404,7 @@ void drawglscene_2d()
 
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
+    
 }//end display callback 
 
 /***************************************/
@@ -677,8 +679,8 @@ void spinningCubeDemo(int *argc, char** argv){
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
 
-    ImageLoad("textures/generated1.bmp"     , imageloaded_bfr);
-    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
+    ImageLoad("../textures/generated1.bmp"     , imageloaded_bfr);
+    ImageLoad("../textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
 
@@ -744,8 +746,8 @@ void flatImageDemo(int *argc, char** argv){
     // #define GL_MULTISAMPLE_ARB 0x809D
     // glDisable( GL_MULTISAMPLE_ARB) ;
 
-    ImageLoad("textures/generated1.bmp", imageloaded_bfr);
-    ImageLoad("textures/generated3.bmp", imageloaded_bfr2);
+    ImageLoad("../textures/generated1.bmp", imageloaded_bfr);
+    ImageLoad("../textures/generated3.bmp", imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
    
@@ -762,9 +764,9 @@ int main(int argc, char **argv)
     
     // test_framebuffer_funcs();
 
-    flatImageDemo(&argc, argv); //start up openGL 
+    //flatImageDemo(&argc, argv); //start up openGL 
 
-    //spinningCubeDemo(&argc, argv); //start up openGL 
+    spinningCubeDemo(&argc, argv); //start up openGL 
 
 
     return 1;

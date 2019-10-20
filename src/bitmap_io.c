@@ -1,5 +1,16 @@
 
 
+/*************************************************************/
+/*
+
+   file importer/ exporters - mostly image loaders and saver
+   they all sort of work and sort of dont 
+
+*/
+/*************************************************************/
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
@@ -7,6 +18,10 @@
 #include "framebuffer.h"
 #include "bitmap_io.h"
 
+
+
+
+/***************************************/
 
 
 /* 
@@ -20,11 +35,6 @@
    free(pixels); free(pixels2);
 
 */
-
-
-
-/***************************************/
-
 
 
 int testLoadBinary()
@@ -53,7 +63,7 @@ int testLoadBinary()
 
 /***************************************/
 
-int ImageLoad(char *filename, Image *image) 
+int ImageLoad(const char *filename, Image *image) 
 {
     FILE *file;
     unsigned long size;                 // size of the image in bytes.
@@ -136,7 +146,7 @@ int ImageLoad(char *filename, Image *image)
 
 /***************************************/
 
-    
+
 void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h) {
 
     FILE *f;

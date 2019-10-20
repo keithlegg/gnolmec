@@ -1,10 +1,22 @@
+
+/*************************************************************/
+/*
+
+    Example code to use as a copy/paste repository and 
+    for testing various framebuffer functions 
+
+
+*/
+/*************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "examples_fb.h" 
 #include "framebuffer.h" 
 #include "image_util.h" 
-  
+#include "bitmap_io.h" 
+
 
 
 typedef int BOOL;
@@ -60,6 +72,7 @@ void test_framebuffer_funcs(void)
         int *pt_h = &loaded_h;
 
         loadBMP_24bit( pt_cpyrgb_bfr, filename2, pt_w, pt_h);
+        
 
 
 
@@ -97,7 +110,15 @@ void test_framebuffer_funcs(void)
     /***********************/
     if (test_image_type){
         // Test the Image type 
+        
+        //create a buffer 
         Image* pt_image_bfr = createBufferImage(image_x, image_y);
+
+        //load an image into memory 
+        const char *filename2 = "textures/generated3.bmp";        
+        ImageLoad(filename2, pt_image_bfr);
+
+
         //RGBType = newRgb(255, 128, 0);
         //void fillbuffer24(Image *imgBuffer, RGBType *color)
 

@@ -12,7 +12,7 @@ struct rec
 
 int testLoadBinary();
 
-int ImageLoad(char *filename, Image *image) ;
+int ImageLoad(const char *filename, Image *image) ;
 
 
 void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h); 

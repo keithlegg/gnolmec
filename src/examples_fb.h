@@ -7,4 +7,3 @@ void test_framebuffer_funcs(void);
 
 
 #endif
-
