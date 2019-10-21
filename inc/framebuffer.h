@@ -73,7 +73,8 @@ RGBType*  copyBuffer24( RGBAType *pixels, int w, int h );
 RGBAType* copyBuffer32( RGBType *pixels , int w, int h );
 RGBAType* copyBuffer32( RGBAType *pixels, int w, int h ); 
 
-//void copyBuffer24( RGBType* inBuffer , Image* outBuffer   );    // convert an "RGBType" to "Image"
+
+void copyBuffer24( RGBType* inBuffer , Image* outBuffer   );    // convert an "RGBType" to "Image"
 void copyBuffer24( Image* inBuffer   , RGBType* outBuffer );    // convert an "Image" to "RGBType"
 void copyBuffer24( Image* inBuffer   , Image* outBuffer   );    // copy an "Image" type 
 void copyBuffer24( Image* inBuffer   , Image* outBuffer, int tl[2], int br[2] ); //mask a region  

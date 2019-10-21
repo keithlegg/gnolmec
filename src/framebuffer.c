@@ -106,6 +106,44 @@ RGBAType newRgba(int r, int g, int b, int a){
     return color;
 }
 
+/*****************************/
+
+void copyBuffer24( RGBType* inBuffer, Image* outBuffer   )
+{
+    /*
+        
+        make damn sure they are the same size!!
+        DEBUG add a check to ensure the two are the same size 
+    
+    */
+ 
+    RGBType  *pt_inpixel = 0;    
+
+    unsigned int xa = 0;
+    unsigned int ya = 0;
+
+    unsigned int pixIdx = 0;
+
+    unsigned int width  = outBuffer->sizeX;    
+    unsigned int height = outBuffer->sizeY; 
+
+    for (ya=0;ya<(height*3);ya+=3)
+    {
+        for (xa=0;xa<(width*3);xa+=3)
+        {
+            pixIdx = (ya*width) + xa ;
+
+            pt_inpixel = &( inBuffer[ (int)pixIdx/3 ] );          
+
+            outBuffer->data[pixIdx]   = pt_inpixel->r;
+            outBuffer->data[pixIdx+1] = pt_inpixel->g;
+            outBuffer->data[pixIdx+2] = pt_inpixel->b;
+
+        }
+    }
+
+
+}
 
 /*****************************/
 
@@ -186,7 +224,7 @@ RGBType* copyBuffer24( RGBAType *pixels, int w, int h )
    RGBAType *pixItr1 = 0;  
    RGBType  *pixItr2 = 0;    
 
-   RGBType *output = createBuffer24(w,h); //never gets freed! debug 
+   RGBType *output = createBuffer24(w,h);
 
    for (int y = 0; y < h; y++)
    {     
@@ -209,11 +247,14 @@ RGBType* copyBuffer24( RGBAType *pixels, int w, int h )
 RGBType* copyBuffer24( RGBType *pixels, int w, int h )
 {
 
+   /*
+       make sure you call free() on the pixels when you are done 
+   */
+
    RGBType *pixItr1 = 0;  
    RGBType *pixItr2 = 0;    
 
-   RGBType *output = createBuffer24(w,h); //never gets freed! debug 
-
+   RGBType *output = createBuffer24(w,h); 
    for (int y = 0; y < h; y++)
    {     
        for (int x = 0; x < w; x++)
@@ -236,7 +277,7 @@ RGBAType* copyBuffer32( RGBAType *pixels, int w, int h )
 {
 
    /*
-       make sure you call free() on the result when you are done 
+       make sure you call free() on pixels result when you are done 
    */
 
    RGBAType  *pixItr1 = 0;  
@@ -266,7 +307,7 @@ RGBAType* copyBuffer32( RGBType *pixels, int w, int h )
 {
 
    /*
-       make sure you call free() on the result when you are done 
+       make sure you call free() on the pixels when you are done 
    */
 
    RGBType *pixItr1 = 0;  

@@ -748,6 +748,33 @@ void flatImageDemo(int *argc, char** argv){
 
     loadImage("textures/generated1.bmp", imageloaded_bfr);
     loadImage("textures/generated3.bmp", imageloaded_bfr2);
+    
+    //test of new framebuffer commands
+    RGBType* pt_rgb_bfr =  createBuffer24(imageloaded_bfr->sizeX, imageloaded_bfr->sizeY);    
+    //copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+    RGBType line_color;
+    RGBType *pt_linecolor = &line_color;
+    pt_linecolor->r = 255;
+    pt_linecolor->g = 0;
+    pt_linecolor->b = 0;
+
+    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 20  , 50  , 50  , pt_linecolor); 
+    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 0   , 511 , 511 , pt_linecolor); 
+    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 511, 0   , 0   , 511 , pt_linecolor); 
+    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 511 , 511 , 0   , pt_linecolor);
+
+    // const char *filename = "rgb_buffer.bmp";
+    // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
+    // free(pt_image_bfr);
+
+    copyBuffer24( pt_rgb_bfr, imageloaded_bfr2 ); //convert "RGBType" to "Image"
+
+
+
+
+
+    //imageloaded_bfr2
+
 
     glutMainLoop();// Start Event Processing Engine   
    
@@ -762,11 +789,11 @@ void flatImageDemo(int *argc, char** argv){
 int main(int argc, char **argv) 
 {  
     
-    test_framebuffer_funcs();
+    // test_framebuffer_funcs();
 
     // flatImageDemo(&argc, argv); //start up openGL 
 
-    //spinningCubeDemo(&argc, argv); //start up openGL 
+    spinningCubeDemo(&argc, argv); //start up openGL 
 
 
     return 1;

@@ -43,18 +43,23 @@ void test_framebuffer_funcs(void)
    
         RGBType color;
         RGBType *pt_color = &color;
+        pt_color->r = 60;
+        pt_color->g = 60;
+        pt_color->b = 60;
 
-        pt_color->r = 125;
-        pt_color->g = 30;
-        pt_color->b = 40;
-
+        
+        RGBType line_color;
+        RGBType *pt_linecolor = &line_color;
+        pt_linecolor->r = 200;
+        pt_linecolor->g = 0;
+        pt_linecolor->b = 0;
 
         // create a 24 bit image with RGBType type 
         RGBType* pt_rgb_bfr =  createBuffer24(image_x, image_y);
 
         /*******/
         // fill solid color 
-        //fillbuffer24(pt_rgb_bfr, image_x, image_y, pt_color);
+        fillbuffer24(pt_rgb_bfr, image_x, image_y, pt_color);
 
         /*******/
         // make a copy of it 
@@ -65,21 +70,37 @@ void test_framebuffer_funcs(void)
         //RGBType *pixels2 =  cvt32bit_24bit(pixels, width, height);   
 
         /*******/
+        // TESTED - Load an "Image" type, convert to RGBType, save it  
+        // create an Image type buffer  (so we can test conversion to RGBType and save)
+        // Image* pt_image_bfr = createBufferImage(image_x, image_y);
+        // // load an image into memory (DEBUG WONT WORK IF DISK BITMAP IS WRONG SIZE)
+        // const char *filename2 = "textures/generated1.bmp";        
+        // loadImage(filename2, pt_image_bfr);
+        // //convert "Image" to "RGBType"
+        // copyBuffer24( pt_image_bfr ,  pt_rgb_bfr );
+        // // save the 24 bit image 
+        // const char *filename = "rgb_buffer.bmp";
+        // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
+        // free(pt_image_bfr);
 
-        // create an Image type buffer 
-        Image* pt_image_bfr = createBufferImage(image_x, image_y);
-        // load an image into memory (DEBUG WONT WORK IF DISK BITMAP IS WRONG SIZE)
-        const char *filename2 = "textures/generated1.bmp";        
-        loadImage(filename2, pt_image_bfr);
-        copyBuffer24( pt_image_bfr ,  pt_rgb_bfr );
-        // save the 24 bit image 
-        const char *filename = "rgb_buffer.bmp";
-        saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
+        /*******/
+        // // TESTED-ISH - Load an Image, convert to RGBtype, draw a line on it and save 
+        // Image* pt_image_bfr = createBufferImage(image_x, image_y);
+        // // load an image into memory (DEBUG WONT WORK IF DISK BITMAP IS WRONG SIZE)
+        // const char *filename2 = "textures/generated1.bmp";   
+        // loadImage(filename2, pt_image_bfr);
+        // copyBuffer24( pt_image_bfr ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+        // draw_line(pt_rgb_bfr, image_x, 0, 20, 50, 50, pt_linecolor); 
+        // const char *filename = "rgb_buffer.bmp";
+        // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
+        // free(pt_image_bfr);
 
+
+        /*******/
         // cleanup memory 
         free(pt_rgb_bfr);
         free(pt_cpyrgb_bfr);
-        free(pt_image_bfr);
+
 
     }
 
