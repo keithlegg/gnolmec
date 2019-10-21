@@ -62,9 +62,11 @@ int testLoadBinary()
 
 
 /***************************************/
+// Load a 24Bit BMP into an "Image" type object  
 
-int ImageLoad(const char *filename, Image *image) 
+int loadImage(const char *filename, Image *image) 
 {
+
     FILE *file;
     unsigned long size;                 // size of the image in bytes.
     unsigned long i;                    // standard counter.
@@ -133,7 +135,8 @@ int ImageLoad(const char *filename, Image *image)
       return 0;
     }
 
-    for (i=0;i<size;i+=3) { // reverse all of the colors. (bgr -> rgb)
+    // reverse all of the colors. (bgr -> rgb)
+    for (i=0;i<size;i+=3) { 
       temp = image->data[i];
       image->data[i] = image->data[i+2];
       image->data[i+2] = temp;
@@ -145,7 +148,7 @@ int ImageLoad(const char *filename, Image *image)
     
 
 /***************************************/
-
+// Save a 24Bit BMP from an "RGBType" object  
 
 void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h) {
 
@@ -198,11 +201,11 @@ void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h) {
     fwrite( bmpinfoheader, 1, 40, f);
 
     for (int i = 0; i < k;i++){
-       RGBType *rgba = &(data[i]);
+       RGBType *rgb = &(data[i]);
 
-       double red   = rgba->r*255;
-       double green = rgba->g*255;
-       double blue  = rgba->b*255;
+       double red   = rgb->r*-255;  // debug - keith flipped these but may have broken something 
+       double green = rgb->g*-255;  // debug - keith flipped these but may have broken something 
+       double blue  = rgb->b*-255;  // debug - keith flipped these but may have broken something 
 
        unsigned char color[3] = { (int)floor(blue),(int)floor(green),(int)floor(red) };
        fwrite (color, 1,3,f);
@@ -213,6 +216,9 @@ void saveBMP_24bit ( RGBType *data, const char *filename, int w, int h) {
 
 
 /************************************/
+// Load a 24Bit BMP from an "RGBType" object  
+// DEBUG - UNTESTED AND NOT DONE 
+// WE HAVE DATA IN MEMORY BUT THATS ALL 
 
 void loadBMP_24bit( RGBType *data, const char *filename, int *w, int *h){
     FILE *file;
@@ -229,11 +235,11 @@ void loadBMP_24bit( RGBType *data, const char *filename, int *w, int *h){
     // seek through the bmp header, up to the width/height:
     fseek(file, 18, SEEK_CUR);
 
-    // read the width
+    // read the width (and set value via pointer)
     if ((i = fread(w, 4, 1, file)) != 1) {printf("Error reading width from %s.\n", filename);}
     printf("Width of %s: %i\n", filename, *w);
     
-    // read the height 
+    // read the height (and set value via pointer)
     if ((i = fread(h, 4, 1, file)) != 1) {printf("Error reading height from %s.\n", filename);}
     printf("Height of %s: %i\n", filename, *h);
     
@@ -256,13 +262,24 @@ void loadBMP_24bit( RGBType *data, const char *filename, int *w, int *h){
     if (imageData == NULL){ printf("Error allocating memory for color-corrected image data");}
     if ((i = fread(imageData, size, 1, file)) != 1) {printf("Error reading image data from %s.\n", filename);}
 
-    for (i=0;i<size;i+=3) { // reverse all of the colors. (bgr -> rgb)
+    
+    //at this point "imagedata" contains the data 
+
+    // reverse all of the colors. (bgr -> rgb)
+    for (i=0;i<size;i+=3) { 
         temp = imageData[i];
-        //printf("%s",temp);
+
+        //printf("\\%02hhx", (unsigned char) temp ); //view char as hex
+        //RGBType *pt_rgb = &( data [(y*w)+x]);
+        
+        //pixItr1 = &( pixels  [(y*w)+x] );
+        //pixItr2 = &( output  [(y*w)+x] );
+
         //data[i]   = image->data[i+2];
         //data[i+2] = temp;
-      
+
     }
+
 
     //fclose
     //free

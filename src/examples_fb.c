@@ -41,7 +41,6 @@ void test_framebuffer_funcs(void)
     // Test the RGBType
     if (test_rgb_type){
    
-
         RGBType color;
         RGBType *pt_color = &color;
 
@@ -53,36 +52,34 @@ void test_framebuffer_funcs(void)
         // create a 24 bit image with RGBType type 
         RGBType* pt_rgb_bfr =  createBuffer24(image_x, image_y);
 
+        /*******/
         // fill solid color 
-        fillbuffer24(pt_rgb_bfr, image_x, image_y, pt_color);
+        //fillbuffer24(pt_rgb_bfr, image_x, image_y, pt_color);
 
+        /*******/
         // make a copy of it 
         RGBType* pt_cpyrgb_bfr = copyBuffer24( pt_rgb_bfr , image_x, image_y);
 
-
-        //RGBAType *pixels = read_png_create_buffer32( INFILE );
+        /*******/
+        // Bitdepth conversion  
         //RGBType *pixels2 =  cvt32bit_24bit(pixels, width, height);   
 
+        /*******/
 
-        //void loadBMP_24bit( RGBType *data, const char *filename, int *w, int *h){
-        const char *filename2 = "textures/generated3.bmp";
-        int loaded_w = 0;
-        int loaded_h = 0;
-        int *pt_w = &loaded_w;
-        int *pt_h = &loaded_h;
-
-        loadBMP_24bit( pt_cpyrgb_bfr, filename2, pt_w, pt_h);
-        
-
-
-
+        // create an Image type buffer 
+        Image* pt_image_bfr = createBufferImage(image_x, image_y);
+        // load an image into memory (DEBUG WONT WORK IF DISK BITMAP IS WRONG SIZE)
+        const char *filename2 = "textures/generated1.bmp";        
+        loadImage(filename2, pt_image_bfr);
+        copyBuffer24( pt_image_bfr ,  pt_rgb_bfr );
         // save the 24 bit image 
         const char *filename = "rgb_buffer.bmp";
-        saveBMP_24bit (pt_cpyrgb_bfr, filename , image_x, image_y);
+        saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
 
         // cleanup memory 
         free(pt_rgb_bfr);
         free(pt_cpyrgb_bfr);
+        free(pt_image_bfr);
 
     }
 
@@ -116,7 +113,7 @@ void test_framebuffer_funcs(void)
 
         //load an image into memory 
         const char *filename2 = "textures/generated3.bmp";        
-        ImageLoad(filename2, pt_image_bfr);
+        loadImage(filename2, pt_image_bfr);
 
 
         //RGBType = newRgb(255, 128, 0);

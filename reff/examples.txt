@@ -1,0 +1,223 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***************************************/
+
+/*
+
+// same as dynamicUpdateTextures but test of animation 
+void animateTextures()
+{
+    Image *image;
+    image = (Image *) malloc(sizeof(Image));  
+
+    if (image == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    //// 
+
+    unsigned long size; 
+
+    image->sizeX = img_usize;
+    image->sizeY = img_vsize;
+
+    size = image->sizeX * image->sizeY * 3;
+
+    image->data = (char *) malloc(size);
+
+    RGBType bgcolor;
+    RGBType *pt_bgcolor = &bgcolor;
+
+    pt_bgcolor->r = 45;
+    pt_bgcolor->g = 50;
+    pt_bgcolor->b = 50;
+
+
+    RGBType linecolor;
+    RGBType *pt_linecolor = &linecolor;
+    pt_linecolor->g = 230;
+    pt_linecolor->b = 130;
+
+    
+    RGBType bordercolor;
+    RGBType *pt_bordercolor = &bordercolor;
+    pt_bordercolor->b = 255;
+
+
+    RGBType hitcolor;
+    RGBType *pt_hitcolor = &hitcolor;
+    pt_hitcolor->r = 200;
+    pt_hitcolor->b = 128;
+
+    fillbuffer24(image, pt_bgcolor);
+    
+    //origin is bottom left - grr 
+    int tl[2] = { 0, 0 };
+    int br[2] = { image->sizeX-2, image->sizeY-2 };
+    draw_square( image, image->sizeX, tl, br, pt_bordercolor );
+   
+    //draw the pong bouncer 
+    if(upos>(image->sizeX-(pong_size*2)))
+    {
+        draw_fill_square(  image,  upos, vpos, pong_size*2, pt_hitcolor  );
+    }else{
+        draw_fill_square(  image,  upos, vpos, pong_size, pt_linecolor  );
+        
+    }
+
+    ////
+
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, image->sizeX, image->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
+
+    free( image );
+
+}
+*/
+
+
+
+
+/***************************************/
+/*
+
+void makeTestImage()
+{
+    char image_name[] = "diagnostic.bmp"; 
+
+    RGBType bgcolor;
+    bgcolor.r=255;
+    bgcolor.g=45;
+    bgcolor.b=30;
+
+    RGBType linecol;
+    linecol.r=0;
+    linecol.g=0;
+    linecol.b=0;
+
+    int locwidth  = 100;
+    int locheight = 100;
+
+    //24 bit
+    RGBType *pixels  = createBuffer24(locwidth, locheight);
+    if (pixels==NULL)
+    {
+        printf("Error creating test image framebuffer\n");
+        return;
+    }
+
+    fillbuffer24( pixels, locwidth, locheight, &bgcolor);
+    saveBMP_24bit(pixels, image_name, locwidth, locheight );
+
+    //32 bit 
+    //RGBAType *pixels = createBuffer32(locwidth, locheight);        
+    //fillbuffer32( pixels, locwidth, locheight, &bgcolor);
+    //saveBMP_24bit(copyBuffer24(pixels, locwidth, locheight), image_name, locwidth, locheight );
+
+    char title[] = "scanfidstest";
+    //writePng32(pixels, image_name, locwidth, locheight, title);
+
+
+    //cleanup_heap(row_pointers, h);   
+    free(pixels); 
+
+}
+
+*/
+
+
+/***************************************/
+/*
+// Load Bitmaps And Convert To Textures
+void LoadGLTextures(char* filename, Image *pixels ) 
+{   
+    
+    //Image *pixels;
+    //pixels = (Image *) malloc(sizeof(Image));  
+
+    //RGBType *pixels  = createBuffer24(100, 100); 
+
+    if (pixels == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    if (!loadImage(filename, pixels )) {
+      exit(1);
+    }        
+    
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, pixels->sizeX, pixels->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels->data);
+    
+    //free(pixels);
+
+}
+*/
+
+/***************************************/
+
+/*
+void dynamicUpdateTextures()
+{
+    Image *loaded_pixels;
+    loaded_pixels = (Image *) malloc(sizeof(Image));  
+
+    if (loaded_pixels == NULL) {
+      printf("Error allocating space for image");
+      exit(0);
+    }
+
+    //example 1
+    // if (!dynamicImage(loaded_pixels )) {
+    //   exit(1);
+    // }        
+
+    //example 2
+    if (!dynamicImage2(loaded_pixels )) {
+      exit(1);
+    }  
+
+    // Create Texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+    // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, loaded_pixels->sizeX, loaded_pixels->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, loaded_pixels->data);
+
+    free(loaded_pixels);
+}
+*/

@@ -18,31 +18,7 @@ You should have received  a copy of the GNU General Public License  along with
 this emulator. If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------- */
 
-#if defined(CPU_6502_HIDE_API)
-#	define CPU_6502_API static
-#elif defined(CPU_6502_STATIC)
-#	define CPU_6502_API
-#else
-#	define CPU_6502_API Z_API_EXPORT
-#endif
-
-#if defined(CPU_6502_WITH_MODULE_ABI) && !defined(CPU_6502_WITH_ABI)
-#	define CPU_6502_WITH_ABI
-#endif
-
-#ifdef CPU_6502_WITH_ABI
-#	if defined(CPU_6502_HIDE_ABI)
-#		define CPU_6502_ABI static
-#	elif defined(CPU_6502_STATIC)
-#		define CPU_6502_ABI
-#	else
-#		define CPU_6502_ABI Z_API_EXPORT
-#	endif
-#endif
-
-#ifdef CPU_6502_USE_LOCAL_HEADER
-#	include "6502.h"
-#endif
+#include "6502.h"
 
 
 /* MARK: - Types */

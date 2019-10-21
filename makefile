@@ -24,7 +24,7 @@ LINKER   = g++
 ifeq ($(UNAME), Linux)
     #LINUX
     #g++ $(OBJ) -o semraster $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
-	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz
+	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz 
 endif
 
 ifeq ($(UNAME), Darwin)
@@ -48,11 +48,19 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
+
+.PHONY: cleanimg
+cleanimg:
+	@$(rm) *.bmp
+	@echo "image cleanup done"
+
+
 .PHONY: clean
 clean:
 	@$(rm) $(TARGET)
 	@$(rm) $(OBJECTS)
 	@echo "cleanup done"
+
 
 .PHONY: remove
 remove: clean

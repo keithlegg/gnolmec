@@ -61,20 +61,23 @@ RGBType  newRgb(int r, int g, int b);
 RGBAType newRgba(int r, int g, int b, int a);
 
 //framebuffer allocation
-BWI_Type* createBuffer1(  int w, int h);   // 1 bit
-GSI_Type* createBuffer8(  int w, int h);   // 8 bit
-RGBType*  createBuffer24( int w, int h);   // 24 bit
-RGBAType* createBuffer32( int w, int h);   // 32 bit 
-Image*    createBufferImage(int w, int h);    // Image type (SizeX, SizeY, data)
+BWI_Type* createBuffer1(  int w, int h);    // 1 bit
+GSI_Type* createBuffer8(  int w, int h);    // 8 bit
+RGBType*  createBuffer24( int w, int h);    // 24 bit
+RGBAType* createBuffer32( int w, int h);    // 32 bit 
+Image*    createBufferImage(int w, int h);  // Image type (SizeX, SizeY, data)
 
 //copy or "convert" a buffer 24 to 32 
 RGBType*  copyBuffer24( RGBType *pixels , int w, int h );
 RGBType*  copyBuffer24( RGBAType *pixels, int w, int h );
 RGBAType* copyBuffer32( RGBType *pixels , int w, int h );
-RGBAType* copyBuffer32( RGBAType *pixels, int w, int h );
+RGBAType* copyBuffer32( RGBAType *pixels, int w, int h ); 
 
-void copyBuffer24( Image* inBuffer , Image* outBuffer );
-void copyBuffer24( Image* inBuffer , Image* outBuffer, int tl[2], int br[2] ); //blitter/copy 
+//void copyBuffer24( RGBType* inBuffer , Image* outBuffer   );    // convert an "RGBType" to "Image"
+void copyBuffer24( Image* inBuffer   , RGBType* outBuffer );    // convert an "Image" to "RGBType"
+void copyBuffer24( Image* inBuffer   , Image* outBuffer   );    // copy an "Image" type 
+void copyBuffer24( Image* inBuffer   , Image* outBuffer, int tl[2], int br[2] ); //mask a region  
+
 
 RGBAType* copyBufferEveryOther32( RGBAType *pixels, int* w, int* h, int step_size );
 

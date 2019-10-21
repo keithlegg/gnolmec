@@ -109,6 +109,45 @@ RGBAType newRgba(int r, int g, int b, int a){
 
 /*****************************/
 
+void copyBuffer24( Image* inBuffer , RGBType* outBuffer )
+{
+    /*
+        
+        make damn sure they are the same size!!
+        DEBUG add a check to ensure the two are the same size 
+    
+    */
+ 
+    RGBType  *pt_outpixel = 0;    
+
+    unsigned int xa = 0;
+    unsigned int ya = 0;
+
+    unsigned int pixIdx = 0;
+
+    unsigned int width  = inBuffer->sizeX;    
+    unsigned int height = inBuffer->sizeY; 
+
+    for (ya=0;ya<(height*3);ya+=3)
+    {
+        for (xa=0;xa<(width*3);xa+=3)
+        {
+            pixIdx = (ya*width) + xa ;
+
+            pt_outpixel = &( outBuffer[ (int)pixIdx/3 ] );          
+
+            pt_outpixel->r = inBuffer->data[pixIdx]   ;
+            pt_outpixel->g = inBuffer->data[pixIdx+1] ;
+            pt_outpixel->b = inBuffer->data[pixIdx+2] ;
+
+        }
+    }
+
+
+}
+
+/*****************************/
+
 void copyBuffer24( Image* inBuffer , Image* outBuffer )
 {
     //make damn sure they are the same size!!
