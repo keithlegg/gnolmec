@@ -1048,7 +1048,23 @@ void draw_square_pt(  png_bytep *row_pt, int center[2], int size, int color[3])
 
 
 /*****************************/
-/*
+
+
+void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, int dia, RGBType *color)
+{
+    int plot_x = 0;
+    int plot_y = 0;
+  
+    for (int i = 0; i <=359; i++)
+    {  
+        plot_x = x_orig + sin(deg_to_rad(i))*dia ;
+        plot_y = y_orig + cos(deg_to_rad(i))*dia ;
+        draw_point(fb_image, imagewidth, plot_x, plot_y, color); 
+    }
+
+}
+
+/* 
 void draw_fill_circle ( png_bytep *row_pt, int x_orig, int y_orig, int dia, int color[3])
 {
   int plot_x = 0;
@@ -1064,7 +1080,7 @@ void draw_fill_circle ( png_bytep *row_pt, int x_orig, int y_orig, int dia, int 
     }
   }
 }
-*/
+*/ 
 
 /*****************************/
 void draw_line( RGBAType *fb_image, int imagewidth, int x1, int y1, int x2, int y2, RGBType *color) 

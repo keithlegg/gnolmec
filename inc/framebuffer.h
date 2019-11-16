@@ -123,8 +123,11 @@ void draw_line( RGBType *fb_image, int imagewidth, int x1, int y1, int x2, int y
 void draw_poly_line ( RGBAType *fb_image, int imagewidth, pix_coord *vertices, int numpts,  RGBType *color );
 void draw_vector ( RGBAType *fb_image, int imagewidth, vector2d vec, int xpos, int ypos, RGBType *color );
 
+
+void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, int dia, RGBType *color);
+
 //void draw_square_pt( png_bytep *row_pt, int center[2], int size, int color[3]);
-//void draw_circle ( png_bytep *row_pt, int x_orig, int y_orig, int dia, int color[3]);
+
 //void draw_fill_circle (  png_bytep *row_pt, int x_orig, int y_orig, int dia, int color[3]);
 
 

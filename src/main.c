@@ -325,10 +325,11 @@ void animateTextures3(Image *loaded_texture)
     cp_br[0] = upos+pong_size;
     cp_br[1] = vpos+pong_size;
 
-    // draw 4 lines - crisscross applesauce 
-    draw_line(pt_rgb_bfr, loaded_texture->sizeX, cp_tl[0]  , cp_tl[0]   , 511 , 511 , pt_linecolor); 
-    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511       , 0          , 0   , 511 , pt_linecolor); 
-
+    // draw some lines - crisscross applesauce 
+    //draw_line(pt_rgb_bfr, loaded_texture->sizeX, 0  , cp_tl[0]   , cp_br[0] , 511 , pt_linecolor); 
+    //draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511       , 0          , 0   , 511 , pt_linecolor); 
+    
+    draw_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, 5, pt_linecolor);
 
     // const char *filename = "rgb_buffer.bmp";
     // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
