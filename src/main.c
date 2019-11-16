@@ -33,8 +33,8 @@
 
 ////////////////////////
 
-
-#include "point_op.h"    // vector operations
+#include "math_op.h"     // general math operations
+#include "point_op.h"    // geometry operations
 #include "framebuffer.h" // raster operations
 #include "examples_fb.h" // example raster ops
 
@@ -824,7 +824,33 @@ void flatImageDemo(int *argc, char** argv){
    
 }
 
+/***************************************/
 
+void test_math_ops(void){
+
+    vector2d vec2 = newvec2( 12.5, 32.6 );
+    vector2d nrml_vec2 = normalize(vec2);
+
+    printf("-------------------------------------------------\n");
+
+    printf("# 2d vector            %f %f     \n", vec2.x, vec2.y );
+    printf("# 2d vector length is  %f        \n", fcalc_distance(vec2) );
+    printf("# 2d vector normalized %f %f     \n", nrml_vec2.x, nrml_vec2.y );
+
+    printf("\n");
+
+    /**********/
+
+    vector3d vec3      = newvec3( 12.5, 32.5, 42.4);
+    vector3d nrml_vec3 = normalize(vec3);
+
+    printf("# 3d vector            %f %f %f  \n", vec3.x, vec3.y, vec3.z );
+    printf("# 3d vector length is  %f        \n", fcalc_distance(vec3) );
+    printf("# 3d vector normalized %f %f %f  \n", nrml_vec3.x, nrml_vec3.y, nrml_vec3.z );
+    
+    printf("-------------------------------------------------\n");    
+
+}
 
 
 /***************************************/
@@ -835,7 +861,11 @@ int main(int argc, char **argv)
     
     // test_framebuffer_funcs();
 
-    flatImageDemo(&argc, argv); //start up openGL 
+    
+    test_math_ops();
+
+
+    //flatImageDemo(&argc, argv); //start up openGL 
 
     //spinningCubeDemo(&argc, argv); //start up openGL 
 

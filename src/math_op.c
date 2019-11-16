@@ -33,6 +33,10 @@ float fcalc_distance( vector2d input){
     return sqrt( (input.x * input.x) + (input.y * input.y) );
 }
 
+float fcalc_distance( vector3d input){
+    return sqrt( (input.x * input.x) + (input.y * input.y) + (input.z * input.z) );
+}
+
 
 /*****************************/
 
@@ -66,7 +70,8 @@ float angle_between( vector2d v_one, vector2d v_two )
 }
 
 
-/*****************************/
+
+
 vector2d newvec2( int x, int y ){
     vector2d output;
     output.x = (float)x;
@@ -74,7 +79,7 @@ vector2d newvec2( int x, int y ){
     return output; 
 }
 
-vector2d newvec2( float x, float y ){
+vector2d newvec2( double x, double y ){
     vector2d output;
     output.x = x;
     output.y = y;
@@ -83,11 +88,12 @@ vector2d newvec2( float x, float y ){
 
 
 /*****************************/
+
+/* normalize a vector */
 vector2d normalize( vector2d input )
 {
-     /* normalize a vector */
-
-     float length  = sqrt( (input.x * input.x) + (input.y * input.y) );
+     //float length  = sqrt( (input.x * input.x) + (input.y * input.y) );
+     float length  = fcalc_distance(input);
 
      vector2d output;
 
@@ -118,11 +124,10 @@ vector2d mult_vec_scalar( vector2d input, float amount ){
 
 /*****************************/
 
-vector2d line2vect(float start_x, float start_y, float end_x, float end_y)
 /*
   convert an arbitrary line segment to a true vector from origin.
 */
-
+vector2d line2vect(float start_x, float start_y, float end_x, float end_y)
 {
     vector2d out;
     out.x = end_x-start_x;
@@ -141,10 +146,9 @@ vector2d line2vect(int start_x, int start_y, int end_x, int end_y)
 
 /*****************************/
 
+/* multiply two 2d vectors */
 vector2d vmul_2d ( vector2d v1, vector2d v2 )
 {
-     /* multiply two vectors */
-
      vector2d output;
      
      output.x = v1.x * v2.x;
@@ -154,6 +158,44 @@ vector2d vmul_2d ( vector2d v1, vector2d v2 )
 }
 
 
+/*****************************/
+/*****************************/
+
+
+vector3d newvec3( int x, int y, int z ){
+    vector3d output;
+    output.x = (float)x;
+    output.y = (float)y;
+    output.z = (float)z;
+    return output; 
+}
+
+vector3d newvec3( double x, double y, double z ){
+    vector3d output;
+    output.x = x;
+    output.y = y;
+    output.z = z;
+    return output; 
+}
+
+/* normalize a 3d vector */
+vector3d normalize( vector3d input )
+{
+     //float length  = sqrt( (input.x * input.x) + (input.y * input.y) );
+     float length  = fcalc_distance(input);
+
+     vector3d output;
+
+     if(length != 0)
+     {
+        output.x = input.x/length;
+        output.y = input.y/length;
+        output.z = input.z/length;
+
+     }
+
+     return output; 
+}
 
 
 
