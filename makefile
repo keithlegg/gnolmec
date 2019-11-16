@@ -24,12 +24,12 @@ LINKER   = g++
 ifeq ($(UNAME), Linux)
     #LINUX
     #g++ $(OBJ) -o semraster $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
-	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz 
+	LFLAGS   = -Wall -lglut -lGL -lGLU -lX11 -lXi  -lm -lz 
 endif
 
 ifeq ($(UNAME), Darwin)
     #OSX
-	LFLAGS   = -Wall -lm -lglut -lGL -lGLU -lX11 -lXi  -lm -lz
+	LFLAGS   = -Wall -lm -lz -framework Glut -framework OpenGL
 endif
 
 
