@@ -316,9 +316,18 @@ void animateTextures3(Image *loaded_texture)
     pt_linecolor->g = 0;
     pt_linecolor->b = 0;
 
+
+    int cp_tl[2] = {0};
+    int cp_br[2] = {0};
+    
+    cp_tl[0] = upos-pong_size;
+    cp_tl[1] = vpos-pong_size;
+    cp_br[0] = upos+pong_size;
+    cp_br[1] = vpos+pong_size;
+
     // draw 4 lines - crisscross applesauce 
-    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 0  , 0   , 511 , 511 , pt_linecolor); 
-    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511, 0   , 0   , 511 , pt_linecolor); 
+    draw_line(pt_rgb_bfr, loaded_texture->sizeX, cp_tl[0]  , cp_tl[0]   , 511 , 511 , pt_linecolor); 
+    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511       , 0          , 0   , 511 , pt_linecolor); 
 
 
     // const char *filename = "rgb_buffer.bmp";
@@ -860,12 +869,10 @@ int main(int argc, char **argv)
 {  
     
     // test_framebuffer_funcs();
-
     
     test_math_ops();
 
-
-    //flatImageDemo(&argc, argv); //start up openGL 
+    flatImageDemo(&argc, argv); //start up openGL 
 
     //spinningCubeDemo(&argc, argv); //start up openGL 
 

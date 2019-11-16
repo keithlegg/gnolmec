@@ -75,6 +75,10 @@ double angle_between( vector2d v_one, vector2d v_two )
 }
 
 
+/*****************************/
+/*****************************/
+/*****************************/
+
 vector2d newvec2( int x, int y ){
     vector2d output;
     output.x = (double)x;
@@ -88,7 +92,6 @@ vector2d newvec2( double x, double y ){
     output.y = y;
     return output; 
 }
-
 
 /*****************************/
 
@@ -162,6 +165,7 @@ vector2d vmul_2d ( vector2d v1, vector2d v2 )
 
 /*****************************/
 /*****************************/
+/*****************************/
 
 vector3d crossProduct(vector3d v1, vector3d v2){
     // UNTESTED! 
@@ -207,10 +211,6 @@ vector3d normalize( vector3d input )
 
      return output; 
 }
-
-/*****************************/
-/*****************************/
-/*****************************/
 
 
 vector3d dtr_vec3(vector3d invec){
@@ -263,6 +263,31 @@ vector3d mult_m33_vec3(m33 m, vector3d v){
     output.z = m.m2 * v.x + m.m5 * v.y + m.m8 * v.z; 
 
     return output;
+}
+
+
+/*****************************/
+/*****************************/
+/*****************************/
+
+m33 new_m33( double m0 , double m1 , double m2,  
+             double m3 , double m4 , double m5, 
+             double m6 , double m7 , double m8
+    ){
+    m33 output;
+
+    return output; 
+}
+
+
+m44 new_m44( double m0 , double m1 , double m2 , double m3, 
+             double m4 , double m5 , double m6 , double m7,
+             double m8 , double m9 , double m10, double m11,
+             double m12, double m13, double m14, double m15
+    ){
+    m44 output;
+
+    return output; 
 }
 
 /*****************************/

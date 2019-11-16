@@ -24,51 +24,24 @@ struct vector3d {
 
 //2X2 matrix 
 struct m22 {
-    double m0;
-    double m1;
-  
-    double m2;    
-    double m3;
-  
+    double m0; double m1;
+    double m2; double m3;
 };
 
 //3X3 matrix 
 struct m33 {
-    double m0;
-    double m1;
-    double m2;    
-
-    double m3;
-    double m4;
-    double m5;
-
-    double m6;
-    double m7;
-    double m8;    
+    double m0; double m1; double m2;    
+    double m3; double m4; double m5;
+    double m6; double m7; double m8;    
 };
 
 
 //4X4 matrix 
 struct m44 {
-    double m0;
-    double m1;
-    double m2;    
-    double m3;
-
-    double m4;
-    double m5;
-    double m6;
-    double m7;
-
-    double m8;    
-    double m9;
-    double m10;
-    double m11;
-
-    double m12;    
-    double m13;
-    double m14;     
-    double m15; 
+    double m0 ; double m1 ; double m2 ; double m3;
+    double m4 ; double m5 ; double m6 ; double m7;
+    double m8 ; double m9 ; double m10; double m11;
+    double m12; double m13; double m14; double m15; 
 };
 
 
@@ -117,6 +90,20 @@ vector3d vect_add( vector3d v1, vector3d v2);
 vector3d mult_scalar (double scalar, vector3d v);
 
 vector3d mult_m33_vec3(m33 m, vector3d v);
+
+/////////
+
+m33 new_m33( double m0 , double m1 , double m2,  
+             double m3 , double m4 , double m5, 
+             double m6 , double m7 , double m8
+    );
+
+m44 new_m44( double m0 , double m1 , double m2 , double m3, 
+             double m4 , double m5 , double m6 , double m7,
+             double m8 , double m9 , double m10, double m11,
+             double m12, double m13, double m14, double m15
+    );
+
 
 #endif
 
