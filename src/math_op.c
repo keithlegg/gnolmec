@@ -15,38 +15,43 @@ double rad_to_deg ( double rad){
 }
 
 /*****************************/
-float dotProduct ( vector2d v1, vector2d v2){
+double dotProduct ( vector2d v1, vector2d v2){
     return (v1.x*v2.x + v1.y*v2.y ); 
 }
 
 
+double dotProduct ( vector3d v1, vector3d v2){
+    return (v1.x*v2.x + v1.y*v2.y + v1.z*v2.z); 
+}
+
+
 /*****************************/
-float fcalc_distance(float pt1[2], float pt2[2]){
+double fcalc_distance(double pt1[2], double pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
 }
 
-float fcalc_distance(int pt1[2], int pt2[2]){
+double fcalc_distance(int pt1[2], int pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
 }
 
-float fcalc_distance( vector2d input){
+double fcalc_distance( vector2d input){
     return sqrt( (input.x * input.x) + (input.y * input.y) );
 }
 
-float fcalc_distance( vector3d input){
+double fcalc_distance( vector3d input){
     return sqrt( (input.x * input.x) + (input.y * input.y) + (input.z * input.z) );
 }
 
 
 /*****************************/
 
-float calc_theta_vert ( float start_x, float start_y, float end_x, float end_y)
+double calc_theta_vert ( double start_x, double start_y, double end_x, double end_y)
 {
     //#get corner to build a right triangle
-    float a_x = end_x-start_x;  
-    float a_y = end_y-start_y;
+    double a_x = end_x-start_x;  
+    double a_y = end_y-start_y;
 
-    float r = 0;
+    double r = 0;
     
     //#relative offset (depending on order of start-end)
     if (a_x != 0 && a_y !=0){
@@ -59,23 +64,21 @@ float calc_theta_vert ( float start_x, float start_y, float end_x, float end_y)
 
 /*****************************/
 
-float angle_between( vector2d v_one, vector2d v_two )
+double angle_between( vector2d v_one, vector2d v_two )
 {
     vector2d v1 ;
     vector2d v2 ;
     v1 = normalize(v_one);
     v2 = normalize(v_two);
-    float dot = dotProduct(v1,v2);
+    double dot = dotProduct(v1,v2);
     return rad_to_deg( acos(dot) );
 }
 
 
-
-
 vector2d newvec2( int x, int y ){
     vector2d output;
-    output.x = (float)x;
-    output.y = (float)y;
+    output.x = (double)x;
+    output.y = (double)y;
     return output; 
 }
 
@@ -92,8 +95,7 @@ vector2d newvec2( double x, double y ){
 /* normalize a vector */
 vector2d normalize( vector2d input )
 {
-     //float length  = sqrt( (input.x * input.x) + (input.y * input.y) );
-     float length  = fcalc_distance(input);
+     double length  = fcalc_distance(input);
 
      vector2d output;
 
@@ -107,7 +109,7 @@ vector2d normalize( vector2d input )
 }
 
 /*****************************/
-vector2d scale_vec( vector2d input, float amount ){
+vector2d scale_vec( vector2d input, double amount ){
     vector2d output;
     output.x = input.x/amount;
     output.y = input.y/amount;
@@ -115,7 +117,7 @@ vector2d scale_vec( vector2d input, float amount ){
 }
 
 /*****************************/
-vector2d mult_vec_scalar( vector2d input, float amount ){
+vector2d mult_vec_scalar( vector2d input, double amount ){
     vector2d output;
     output.x = input.x*amount;
     output.y = input.y*amount;
@@ -127,7 +129,7 @@ vector2d mult_vec_scalar( vector2d input, float amount ){
 /*
   convert an arbitrary line segment to a true vector from origin.
 */
-vector2d line2vect(float start_x, float start_y, float end_x, float end_y)
+vector2d line2vect(double start_x, double start_y, double end_x, double end_y)
 {
     vector2d out;
     out.x = end_x-start_x;
@@ -138,8 +140,8 @@ vector2d line2vect(float start_x, float start_y, float end_x, float end_y)
 vector2d line2vect(int start_x, int start_y, int end_x, int end_y)
 {
     vector2d out;
-    out.x = (float)(end_x-start_x);
-    out.y = (float)(end_y-start_y);
+    out.x = (double)(end_x-start_x);
+    out.y = (double)(end_y-start_y);
     return out;
 }
 
@@ -161,12 +163,22 @@ vector2d vmul_2d ( vector2d v1, vector2d v2 )
 /*****************************/
 /*****************************/
 
+vector3d crossProduct(vector3d v1, vector3d v2){
+    // UNTESTED! 
+    vector3d output;
+    
+    output.x =  v1.y*v2.z-v1.z*v2.y; 
+    output.y =  v1.z*v2.x-v1.x*v2.z; 
+    output.z =  v1.x*v2.y-v1.y*v2.x;
+    
+    return output;
+}
 
 vector3d newvec3( int x, int y, int z ){
     vector3d output;
-    output.x = (float)x;
-    output.y = (float)y;
-    output.z = (float)z;
+    output.x = (double)x;
+    output.y = (double)y;
+    output.z = (double)z;
     return output; 
 }
 
@@ -181,8 +193,7 @@ vector3d newvec3( double x, double y, double z ){
 /* normalize a 3d vector */
 vector3d normalize( vector3d input )
 {
-     //float length  = sqrt( (input.x * input.x) + (input.y * input.y) );
-     float length  = fcalc_distance(input);
+     double length  = fcalc_distance(input);
 
      vector3d output;
 
@@ -197,191 +208,121 @@ vector3d normalize( vector3d input )
      return output; 
 }
 
-
-
-
 /*****************************/
 /*****************************/
 /*****************************/
+
+
+vector3d dtr_vec3(vector3d invec){
+    vector3d output;
+
+    //return ( deg_to_rad( invec[0] ),
+    //         deg_to_rad( invec[1] ),
+    //         deg_to_rad( invec[2] ),
+    //       )
+    
+    return output;
+
+}
+
+/*****************************/
+
+vector3d rtd_vec3(vector3d invec){
+    vector3d output;    
+    // return ( rad_to_deg( invec[0] ),
+    //          rad_to_deg( invec[1] ),
+    //          rad_to_deg( invec[2] ),
+    //        )
+    return output;
+}        
+
+/*****************************/
+vector3d vect_add( vector3d v1, vector3d v2){
+    vector3d output;    
+    //return [v1[0]+v2[0], v1[0]+v2[1], v1[2]+v2[2]]
+    return output;
+
+}
+
+/*****************************/
+vector3d mult_scalar (double scalar, vector3d v){
+    vector3d output; 
+    // return [v[0]*scalar, v[1]*scalar, v[2]*scalar ]
+    return output;
+}
+
+/*****************************/
+/* multiplies a 3X3 matrix by a vector3d 
+   returns a vector3d */
+
+vector3d mult_m33_vec3(m33 m, vector3d v){
+    vector3d output;
+    
+    output.x = m.m0 * v.x + m.m3 * v.y + m.m6 * v.z; 
+    output.y = m.m1 * v.x + m.m4 * v.y + m.m7 * v.z; 
+    output.z = m.m2 * v.x + m.m5 * v.y + m.m8 * v.z; 
+
+    return output;
+}
+
+/*****************************/
+
+//     def mult_m44_vec3(self, m, v):
+//         """ multiplies a 4X4 matrix by a 3D vector - returns a vector tuple """
+//         
+//         outx = m[0]*v[0] + m[4]*v[1] + m[8]  * v[2]+m[12]
+//         outy = m[1]*v[0] + m[5]*v[1] + m[9]  * v[2]+m[13]
+//         outz = m[2]*v[0] + m[6]*v[1] + m[10] * v[2]+m[14]
+//           
+//         return  (outx, outy, outz)
+ 
+/*****************************/
+
+//     def mult_mat33(self, m, n):
+//         """ multiply two 3X3 matricies together """
+//         return [
+//                 m[0]*n[0] + m[1]*n[3] + m[2]*n[6],
+//                 m[0]*n[1] + m[1]*n[4] + m[2]*n[7],
+//                 m[0]*n[2] + m[1]*n[5] + m[2]*n[8],
+//                 m[3]*n[0] + m[4]*n[3] + m[5]*n[6],
+//                 m[3]*n[1] + m[4]*n[4] + m[5]*n[7],
+//                 m[3]*n[2] + m[4]*n[5] + m[5]*n[8],
+//                 m[6]*n[0] + m[7]*n[3] + m[8]*n[6],
+//                 m[6]*n[1] + m[7]*n[4] + m[8]*n[7],
+//                 m[6]*n[2] + m[7]*n[5] + m[8]*n[8]   
+//                ]        
+
+
+/*****************************/
+
+
+//     def mult_mat44(self, m, n):
+//         """multiply two 4X4 matricies together """
+//         return [
+//                 m[0]*n[0]  + m[1]*n[4]  + m[2]*n[8]   + m[3]*n[12],
+//                 m[0]*n[1]  + m[1]*n[5]  + m[2]*n[9]   + m[3]*n[13],
+//                 m[0]*n[2]  + m[1]*n[6]  + m[2]*n[10]  + m[3]*n[14],
+//                 m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
+//                 m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
+//                 m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
+//                 m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
+//                 m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
+//                 m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
+//                 m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
+//                 m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
+//                 m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
+//                 m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
+//                 m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
+//                 m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
+//                 m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
+//                ]
+
+/*****************************/
+
+
+
 
 /*
-
-    def dot_vec3 (self, v1, v2):
-         """ scalar - mag but not direction """
-         return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2] 
-
-    def cross_vec3 (self, v1, v2):
-        return (v1[1]*v2[2]-v1[2]*v2[1], v1[2]*v2[0]-v1[0]*v2[2], v1[0]*v2[1]-v1[1]*v2[0])
-
-    def dtr (self, deg ):
-       return deg * DEG_TO_RAD
-
-    def rtd (self, rad ):
-       return rad * RAD_TO_DEG
-
-    def dtr_vec3(self, invec):
-        return ( self.dtr( invec[0] ),
-                 self.dtr( invec[1] ),
-                 self.dtr( invec[2] ),
-               )
-
-    def rtd_vec3(self, invec):
-        return ( self.rtd( invec[0] ),
-                 self.rtd( invec[1] ),
-                 self.rtd( invec[2] ),
-               )
-
-    def vect_add(self, v1, v2):
-        return [v1[0]+v2[0], v1[0]+v2[1], v1[2]+v2[2]]
-
-    def mult_scalar (self, scalar, v):
-        return [v[0]*scalar, v[1]*scalar, v[2]*scalar ]
-
-    def mult_m33_vec3(self, m, v):
-        """ multiplies a 3X3 matrix by a 3D vector - returns a vector tuple 
-            NUMPY DOT is the same as multiplying 
-        """
-        
-        outx = m[0] * v[0] + m[3] * v[1] + m[6] * v[2] 
-        outy = m[1] * v[0] + m[4] * v[1] + m[7] * v[2] 
-        outz = m[2] * v[0] + m[5] * v[1] + m[8] * v[2] 
-          
-        return  (outx, outy, outz)
-
-    def mult_m44_vec3(self, m, v):
-        """ multiplies a 4X4 matrix by a 3D vector - returns a vector tuple """
-        
-        outx = m[0]*v[0] + m[4]*v[1] + m[8]  * v[2]+m[12]
-        outy = m[1]*v[0] + m[5]*v[1] + m[9]  * v[2]+m[13]
-        outz = m[2]*v[0] + m[6]*v[1] + m[10] * v[2]+m[14]
-          
-        return  (outx, outy, outz)
-
-    def calc_line_length(self, x1, y1, x2, y2):
-        """ distance between two points 
-            DEBUG -- make work in 2d and 3d!
-            DEBUG -- merge with -  self.calc_line_length(pt1[0], pt1[1], pt2[0], pt2[1] )
-
-        """
-        return math.sqrt( ((x1-x2)**2)+ ((y1-y2)**2) )
-
-    def mult_mat33(self, m, n):
-        """ multiply two 3X3 matricies together """
-        return [
-                m[0]*n[0] + m[1]*n[3] + m[2]*n[6],
-                m[0]*n[1] + m[1]*n[4] + m[2]*n[7],
-                m[0]*n[2] + m[1]*n[5] + m[2]*n[8],
-                m[3]*n[0] + m[4]*n[3] + m[5]*n[6],
-                m[3]*n[1] + m[4]*n[4] + m[5]*n[7],
-                m[3]*n[2] + m[4]*n[5] + m[5]*n[8],
-                m[6]*n[0] + m[7]*n[3] + m[8]*n[6],
-                m[6]*n[1] + m[7]*n[4] + m[8]*n[7],
-                m[6]*n[2] + m[7]*n[5] + m[8]*n[8]   
-               ]        
-
-    def mult_mat44(self, m, n):
-        """multiply two 4X4 matricies together """
-        return [
-                m[0]*n[0]  + m[1]*n[4]  + m[2]*n[8]   + m[3]*n[12],
-                m[0]*n[1]  + m[1]*n[5]  + m[2]*n[9]   + m[3]*n[13],
-                m[0]*n[2]  + m[1]*n[6]  + m[2]*n[10]  + m[3]*n[14],
-                m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
-                m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
-                m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
-                m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
-                m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
-                m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
-                m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
-                m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
-                m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
-                m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
-                m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
-                m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
-                m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
-               ]
-
-
-    def normalize_vec3(self, in_vec):
-        try:
-           invLength = 1.0/math.sqrt(in_vec[0]*in_vec[0] + in_vec[1]*in_vec[1]+ in_vec[2]*in_vec[2])
-           return (in_vec[0] *invLength, in_vec[1] * invLength,  in_vec[2] * invLength)
-        except:
-           print('normalize_vec3: divide by zero error.') 
-           return [0,0,1]
-
-
-    def mul_square_matrices(self, m1, m2):
-        
-        """
-        # From the brilliant Bryant Ewert's script 
-        matrix_playground.mel 
-
-        matrix $cMatrix[4][4] = << 0, 0, 0, 0;  0, 0, 0, 0;  0, 0, 0, 0;  0, 0, 0, 0 >>;
-        for ( $i = 0; $i < 4; $i++ )
-        {
-            for ( $j = 0; $j < 4; $j++ )
-            {
-                for ( $k = 0; $k < 4; $k++ )
-                {
-                    $cMatrix[$i][$j] = $cMatrix[$i][$j] + ( $aMatrix[$i][$k] * $bMatrix[$k][$j] );
-                }
-            }
-        }
-        return $cMatrix;
-        """
-        pass
-
-
-    def matrix_adjoint(self, m44, size):
-        
-        """
-        # From the brilliant Bryant Ewert's script 
-        matrix_playground.mel 
-
-        # Returns a matrix which is the Adjoint of $aMatrix.
-        # The $size of the input matrix must be specified (3 or 4).
-
-        """
-        cMatrix = matrix44()
-        detSize = size - 1 
-
-        if size > 2:
-            """
-            # Cofactor of top-left 3×3 matrix
-            $cMatrix[0][0] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 1, 1 ), $detSize );
-            $cMatrix[0][1] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 1, 2 ), $detSize );
-            $cMatrix[0][2] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 1, 3 ), $detSize );
-
-            $cMatrix[1][0] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 2, 1 ), $detSize );
-            $cMatrix[1][1] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 2, 2 ), $detSize );
-            $cMatrix[1][2] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 2, 3 ), $detSize );
-
-            $cMatrix[2][0] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 3, 1 ), $detSize );
-            $cMatrix[2][1] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 3, 2 ), $detSize );
-            $cMatrix[2][2] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 3, 3 ), $detSize );
-            """
-            pass
-
-        if size > 3:
-            """
-            # Cofactor of 4th column
-            $cMatrix[0][3] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 1, 4 ), $detSize );
-
-            $cMatrix[1][3] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 2, 4 ), $detSize );
-
-            $cMatrix[2][3] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 3, 4 ), $detSize );
-
-            # Cofactor of 4th row
-            $cMatrix[3][0] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 4, 1 ), $detSize );
-            $cMatrix[3][1] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 4, 2 ), $detSize );
-            $cMatrix[3][2] = -determinant( matrixCollapseRowColumn( $aMatrix, $size, 4, 3 ), $detSize );
-            $cMatrix[3][3] =  determinant( matrixCollapseRowColumn( $aMatrix, $size, 4, 4 ), $detSize );
-            """ 
-            pass 
-
-        # Adjoint is TRANSPOSE of matrix containing cofactors
-        #cMatrix = transpose( $cMatrix, $size );
-        return cMatrix
 
 
 
