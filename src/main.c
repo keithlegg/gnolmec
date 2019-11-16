@@ -67,7 +67,7 @@ static float g_lightPos[4] = { 10, 10, -100, 1 };  // Position of light
 
 
 enum {
-    MENU_ABOUT = 1,
+    MENU_ABOUT,
     MENU_POLYMODE,
     MENU_TEXTURING,
     MENU_EXIT
@@ -220,7 +220,6 @@ int dynamicImage2(Image *image)
 
 /***************************************/
 
-
 void animateTextures2(Image *loaded_texture)
 {
 
@@ -297,11 +296,49 @@ void animateTextures2(Image *loaded_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, 3, loaded_texture->sizeX, loaded_texture->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, loaded_texture->data);
     
     //free(loaded_texture->data);
-
-
 }
 
 
+
+void animateTextures3(Image *loaded_texture)
+{
+
+
+    //test of new framebuffer commands
+    RGBType* pt_rgb_bfr =  createBuffer24(loaded_texture->sizeX, loaded_texture->sizeY);    
+    
+    //copyBuffer24( loaded_texture ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+
+    //make a color for some lines 
+    RGBType line_color;
+    RGBType *pt_linecolor = &line_color;
+    pt_linecolor->r = 255;
+    pt_linecolor->g = 0;
+    pt_linecolor->b = 0;
+
+    // draw 4 lines - crisscross applesauce 
+    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 0  , 0   , 511 , 511 , pt_linecolor); 
+    draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511, 0   , 0   , 511 , pt_linecolor); 
+
+
+    // const char *filename = "rgb_buffer.bmp";
+    // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
+    // free(pt_image_bfr);
+
+    //overwrite loaded buffer with lines
+    copyBuffer24( pt_rgb_bfr, loaded_texture ); //convert "RGBType" to "Image"
+
+     
+    // create and apply 2D texture   
+    glGenTextures(1, &texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
+
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, loaded_texture->sizeX, loaded_texture->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, loaded_texture->data);
+
+}
 
 /***************************************/
 
@@ -400,7 +437,9 @@ void drawglscene_2d()
 
     //usleep(200000); //if you want to slow it down 
     
-    animateTextures2(main_bg_bfr);
+    //animateTextures2(main_bg_bfr);
+    
+    animateTextures3(main_bg_bfr);
 
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
@@ -408,8 +447,6 @@ void drawglscene_2d()
 }//end display callback 
 
 /***************************************/
-
-
 
 
 void drawglscene_3d()
@@ -560,6 +597,14 @@ void keyPressed(unsigned char key, int x, int y)
 
     }
 
+
+
+    if (key == 101) //e
+    { 
+        glutReshapeWindow(800, 800);
+        glutPositionWindow(0,0);
+    }        
+
     if (key == 102) //f
     { 
         //printf("you pressed f\n");
@@ -618,12 +663,13 @@ void MouseMotion(int x, int y)
     // If button1 pressed, zoom in/out if mouse is moved up/down.
 
     if (g_bButton1Down)
-      {
-        g_fViewDistance = (y - g_yClick) / 3.0;
-        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-           g_fViewDistance = VIEWING_DISTANCE_MIN;
-        glutPostRedisplay();
-      }
+    {
+        
+        // g_fViewDistance = (y - g_yClick) / 3.0;
+        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
+        // glutPostRedisplay();
+    }
 }
 
 
@@ -671,10 +717,12 @@ void spinningCubeDemo(int *argc, char** argv){
     //test of BMP saving 
     //create_Image("generated1.bmp");  
     //create_Image2("generated2.bmp"); 
-    
-    glutMouseFunc (MouseButton);
-    glutMotionFunc (MouseMotion);
+
+    ///////////////////////////    
+    //glutMouseFunc (MouseButton);
+    //glutMotionFunc (MouseMotion);
   
+    ///////////////////////////      
     // Create our popup menu
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
@@ -732,49 +780,45 @@ void flatImageDemo(int *argc, char** argv){
     // Create our popup menu
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
-
-
-    // attempt to turn off antialiasing 
-    // glDisable(GL_BLEND);
-    // glDisable(GL_DITHER);
-    // glDisable(GL_POINT_SMOOTH);
-    // glDisable(GL_LINE_SMOOTH);
-    // glDisable(GL_POLYGON_SMOOTH);
-    // glHint(GL_POINT_SMOOTH, GL_DONT_CARE);
-    // glHint(GL_LINE_SMOOTH, GL_DONT_CARE);
-    // glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
-    // #define GL_MULTISAMPLE_ARB 0x809D
-    // glDisable( GL_MULTISAMPLE_ARB) ;
+    
+    /***********************/
+    // 2d playground for framebuffer 
 
     loadImage("textures/generated1.bmp", imageloaded_bfr);
     loadImage("textures/generated3.bmp", imageloaded_bfr2);
     
+    /*
     //test of new framebuffer commands
     RGBType* pt_rgb_bfr =  createBuffer24(imageloaded_bfr->sizeX, imageloaded_bfr->sizeY);    
+    
     //copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+
+    //make a color for some lines 
     RGBType line_color;
     RGBType *pt_linecolor = &line_color;
     pt_linecolor->r = 255;
     pt_linecolor->g = 0;
     pt_linecolor->b = 0;
 
-    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 20  , 50  , 50  , pt_linecolor); 
+    // draw 4 lines - crisscross applesauce 
+    //draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 20  , 50  , 50  , pt_linecolor); 
     draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 0   , 511 , 511 , pt_linecolor); 
     draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 511, 0   , 0   , 511 , pt_linecolor); 
-    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 511 , 511 , 0   , pt_linecolor);
+    //draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 511 , 511 , 0   , pt_linecolor);
 
     // const char *filename = "rgb_buffer.bmp";
     // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
     // free(pt_image_bfr);
 
-    copyBuffer24( pt_rgb_bfr, imageloaded_bfr2 ); //convert "RGBType" to "Image"
-
-
-
+    //overwrite loaded buffer with lines
+    copyBuffer24( pt_rgb_bfr, imageloaded_bfr ); //convert "RGBType" to "Image"
+   
+    */
 
 
     //imageloaded_bfr2
-
+    
+    /***********************/
 
     glutMainLoop();// Start Event Processing Engine   
    
@@ -791,9 +835,9 @@ int main(int argc, char **argv)
     
     // test_framebuffer_funcs();
 
-    // flatImageDemo(&argc, argv); //start up openGL 
+    flatImageDemo(&argc, argv); //start up openGL 
 
-    spinningCubeDemo(&argc, argv); //start up openGL 
+    //spinningCubeDemo(&argc, argv); //start up openGL 
 
 
     return 1;

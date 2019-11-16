@@ -18,7 +18,7 @@ To use:
   - simply compile with "make"
 
 
-There are various hotkeys to do things, read main.py to see those. 
+There are various hotkeys to do things, read main.c to see those. 
 
 
 
