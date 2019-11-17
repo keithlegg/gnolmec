@@ -125,6 +125,7 @@ void draw_vector ( RGBAType *fb_image, int imagewidth, vector2d vec, int xpos, i
 
 
 void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, int dia, RGBType *color);
+void draw_fill_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, int dia, RGBType *color);
 
 //void draw_square_pt( png_bytep *row_pt, int center[2], int size, int color[3]);
 

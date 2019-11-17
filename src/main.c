@@ -314,6 +314,13 @@ void animateTextures3(Image *loaded_texture)
     pt_linecolor->g = 0;
     pt_linecolor->b = 0;
 
+    //make a color for some lines 
+    RGBType line_color2;
+    RGBType *pt_linecolor2 = &line_color2;
+    pt_linecolor2->r = 155;
+    pt_linecolor2->g = 255;
+    pt_linecolor2->b = 0;
+
     // int cp_tl[2] = {0};
     // int cp_br[2] = {0};
     // cp_tl[0] = upos-pong_size;
@@ -324,13 +331,25 @@ void animateTextures3(Image *loaded_texture)
     // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_tl[0] , cp_br[1] , pt_linecolor);
     
     //just to show its alive - bounce a ball around 
-    draw_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
+    draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
 
     // const char *filename = "rgb_buffer.bmp";
     // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
     // free(pt_image_bfr);
-    
+
     ///////////////////////
+    int x = 0;
+    
+    int num_cells = 20;
+    int cell_size = (int)loaded_texture->sizeX/num_cells;
+    
+    for (x=cell_size;x<=loaded_texture->sizeX-cell_size;x=x+cell_size){
+        draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, x, 200, cell_size/2, pt_linecolor2);
+    }
+
+
+    ///////////////////////
+    /*
     // first stab at some matrix and vector art 
     m33 identity = new_m33(1,0,0,
                            0,1,0,
@@ -339,7 +358,7 @@ void animateTextures3(Image *loaded_texture)
     vector2d v1 = newvec2(102.0, 301.0);
 
     draw_line(pt_rgb_bfr, loaded_texture->sizeX , v1.x , v1.y , 0 , 0 , pt_linecolor);
-
+    */
     ///////////////////////
 
     //overwrite loaded buffer with lines
@@ -559,9 +578,9 @@ void drawglscene_3d()
     if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
 
     
-    animateTextures2(main_bg_bfr);
+    //animateTextures2(main_bg_bfr);
     
-    //animateTextures3(main_bg_bfr);
+    animateTextures3(main_bg_bfr);
 
     //usleep(100000); 
     // since this is double buffered, swap the buffers to display what just got drawn.
@@ -883,9 +902,9 @@ int main(int argc, char **argv)
     
     test_math_ops();
 
-    flatImageDemo(&argc, argv); //start up openGL 
+    //flatImageDemo(&argc, argv); //start up openGL 
 
-    //spinningCubeDemo(&argc, argv); //start up openGL 
+    spinningCubeDemo(&argc, argv); //start up openGL 
 
 
     return 1;

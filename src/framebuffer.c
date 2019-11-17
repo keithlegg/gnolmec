@@ -1055,7 +1055,7 @@ void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, in
     int plot_x = 0;
     int plot_y = 0;
   
-    for (int i = 0; i <=359; i++)
+    for (int i = 0; i <=360; i++)
     {  
         plot_x = x_orig + sin(deg_to_rad(i))*dia ;
         plot_y = y_orig + cos(deg_to_rad(i))*dia ;
@@ -1064,23 +1064,18 @@ void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, in
 
 }
 
-/* 
-void draw_fill_circle ( png_bytep *row_pt, int x_orig, int y_orig, int dia, int color[3])
+
+void draw_fill_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, int dia, RGBType *color)
 {
   int plot_x = 0;
   int plot_y = 0;
   
   for (int id = 0; id <=dia; id++)
   {  
-    for (int i = 0; i <=360; i++)
-    {  
-        plot_x = x_orig + (sin(deg_to_rad(i))*id) ;
-        plot_y = y_orig + (cos(deg_to_rad(i))*id) ;
-        draw_point(row_pt, plot_x, plot_y, color); 
-    }
+      draw_circle ( fb_image, imagewidth, x_orig, y_orig, id, color);    
   }
 }
-*/ 
+
 
 /*****************************/
 void draw_line( RGBAType *fb_image, int imagewidth, int x1, int y1, int x2, int y2, RGBType *color) 
