@@ -90,6 +90,16 @@ vector3d vect_add( vector3d v1, vector3d v2);
 vector3d mult_scalar (double scalar, vector3d v);
 
 vector3d mult_m33_vec3(m33 m, vector3d v);
+vector3d mult_m44_vec3(m44 m, vector3d v);
+
+m33 mult_mat33(m33 m, m33 n);
+m44 mult_mat44(m44 m, m44 n);
+
+vector3d add_vec3 (vector3d v1, vector3d v2);
+vector3d sub_vec3 (vector3d v1, vector3d v2);
+vector3d mult_vec3 (vector3d v1, vector3d v2);
+vector3d div_vec3 (vector3d v1, vector3d v2);
+
 
 /////////
 

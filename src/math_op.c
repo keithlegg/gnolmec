@@ -267,6 +267,167 @@ vector3d mult_m33_vec3(m33 m, vector3d v){
 
 
 /*****************************/
+/* multiplies a 4X4 matrix by a 3D vector 
+   returns a vector tuple */
+
+vector3d mult_m44_vec3(m44 m, vector3d v){
+    vector3d output;
+
+    output.x = m.m0*v.x + m.m4*v.y + m.m8  * v.z+m.m12;
+    output.y = m.m1*v.x + m.m5*v.y + m.m9  * v.z+m.m13;
+    output.z = m.m2*v.x + m.m6*v.y + m.m10 * v.z+m.m14;
+       
+    return output;
+}
+
+/************************************************/
+
+vector3d add_vec3 (vector3d v1, vector3d v2){
+    // if isinstance(other, float) or isinstance(other, int):
+    //     return type(self)(self.x+other, self.y+other, self.z+other)
+    // if isinstance(other, vec3):                    
+    //     return type(self)(self.x+other.x, self.y+other.y, self.z+other.z)
+    // if isinstance(other, tuple) or isinstance(other, list):
+    //     return type(self)(self.x+other[0], self.y+other[1], self.z+other[2])  
+}
+
+
+vector3d sub_vec3 (vector3d v1, vector3d v2){
+    // if isinstance(other, float) or isinstance(other, int):
+    //     return type(self)(self.x-other, self.y-other, self.z-other)
+    // if isinstance(other, vec3):                    
+    //     return type(self)(self.x-other.x, self.y-other.y, self.z-other.z)
+    // if isinstance(other, tuple) or isinstance(other, list):
+    //     return type(self)(self.x-other[0], self.y-other[1], self.z-other[2])  
+
+}
+
+vector3d mult_vec3 (vector3d v1, vector3d v2){
+    // if isinstance(other, float) or isinstance(other, int):
+    //     return type(self)(self.x*other, self.y*other, self.z*other)
+    // if isinstance(other, vec3):
+    //     return type(self)(self.x*other.x, self.y*other.y, self.z*other.z)
+    // if isinstance(other, tuple) or isinstance(other, list):
+    //     return type(self)(self.x*other[0], self.y*other[1], self.z*other[2])
+}
+
+
+vector3d div_vec3 (vector3d v1, vector3d v2){
+    // #untested - normalized? 
+    // #return type(self)(self.x / other.x, self.y / other.y)
+    // self.x = other.x/other.length()
+    // self.y = other.y/other.length()
+    // self.z = other.y/other.length()
+    // return type(self)(self.x, self.y, self.z)
+}
+
+
+
+// given 2 points in 3D, create a 3D vector 
+// representing the offset between them 
+// doesnt get much easier than this, just subtract 
+////////////
+// vector3d between(double pt1_x, double pt1_y, double pt1_z, 
+//                  double pt2_x, double pt2_y, double pt2_z){
+//   
+//         #if isinstance(pt1, tuple):
+//         #    pt1 = vec3( pt1[0], pt1[1], pt1[2]) 
+// 
+//         if isinstance(pt2, tuple):
+//             pt2 = vec3( pt2[0], pt2[1], pt2[2])
+// 
+//         return pt2 - self
+// }
+
+
+/*
+
+    def project_pt(self, offset):
+        """ project a point along a vector """
+        
+        # nX = B.x - A.x
+        # nY = B.y - A.y
+        # nZ = B.z - A.z 
+
+        # distX = pow( (A.x - B.x ) , 2.0 ) 
+        # distY = pow( (A.y - B.y ) , 2.0 ) 
+        # distZ = pow( (A.z - B.z ) , 2.0 ) 
+        # vecLength = math.sqrt(distX + distY + distZ )
+
+        # normalized vector  
+        # calcX = nX / self.length
+        # calcY = nY / self.length
+        # calcZ = nZ / self.length
+
+        normal = self.normal
+
+        # project point along vector with offset (can use negative too)
+        ptX = self.x + (normal.x * offset)
+        ptY = self.y + (normal.y * offset)
+        ptZ = self.z + (normal.z * offset)
+        return type(self)(ptX, ptY, ptZ)
+
+ 
+    def copy(self, vtype=None):
+        if vtype is None:
+            return type(self)(self.x,self.y,self.z)
+
+        if vtype is 'tuple':
+            return ( (self.x,self.y,self.z) )
+
+    def angle_between(self, other):
+        """ 
+            result is in radians
+            derived from law of cosines 
+            range from 0 (colinear) to PI radians (180 deg)  
+
+            FAILS WHEN 0 or 180 ?
+        """
+        try:
+            o = math.acos( self.dot(other) / (self.length*other.length) ) 
+            return o 
+        except:
+            return 0
+
+    def vector_mean(self, p_vecs, mode='vec3'):
+        """ 
+            UNTESTED 
+         
+            take a list of vectors and return a new vector that is an average
+
+        """
+        tmp_x = 0;tmp_y = 0;tmp_z = 0;
+
+        count = 0
+        a = 0 
+        for v in p_vecs: 
+
+            if mode=='angle':            
+                a = a + self.np_angle_between( upvec, v )
+
+            if mode=='vec3':
+                if isinstance(v, vec3):
+                    tmp_x = tmp_x+v.x
+                    tmp_y = tmp_x+v.y
+                    tmp_z = tmp_x+v.z 
+
+                if isinstance(v, tuple) or isinstance(v, list):                
+                    tmp_x = tmp_x+v[0]
+                    tmp_y = tmp_x+v[1]
+                    tmp_z = tmp_x+v[2] 
+
+            count += 1 
+        
+        if mode=='angle':
+            return a/count 
+        if mode=='vec3':
+            return type(self)(tmp_x/count, tmp_y/count, tmp_z/count)
+
+
+        return None 
+
+*/        
+/*****************************/
 /*****************************/
 /*****************************/
 
@@ -275,7 +436,6 @@ m33 new_m33( double m0 , double m1 , double m2,
              double m6 , double m7 , double m8
     ){
     m33 output;
-
     return output; 
 }
 
@@ -286,61 +446,56 @@ m44 new_m44( double m0 , double m1 , double m2 , double m3,
              double m12, double m13, double m14, double m15
     ){
     m44 output;
-
     return output; 
 }
 
-/*****************************/
-
-//     def mult_m44_vec3(self, m, v):
-//         """ multiplies a 4X4 matrix by a 3D vector - returns a vector tuple """
-//         
-//         outx = m[0]*v[0] + m[4]*v[1] + m[8]  * v[2]+m[12]
-//         outy = m[1]*v[0] + m[5]*v[1] + m[9]  * v[2]+m[13]
-//         outz = m[2]*v[0] + m[6]*v[1] + m[10] * v[2]+m[14]
-//           
-//         return  (outx, outy, outz)
- 
-/*****************************/
-
-//     def mult_mat33(self, m, n):
-//         """ multiply two 3X3 matricies together """
-//         return [
-//                 m[0]*n[0] + m[1]*n[3] + m[2]*n[6],
-//                 m[0]*n[1] + m[1]*n[4] + m[2]*n[7],
-//                 m[0]*n[2] + m[1]*n[5] + m[2]*n[8],
-//                 m[3]*n[0] + m[4]*n[3] + m[5]*n[6],
-//                 m[3]*n[1] + m[4]*n[4] + m[5]*n[7],
-//                 m[3]*n[2] + m[4]*n[5] + m[5]*n[8],
-//                 m[6]*n[0] + m[7]*n[3] + m[8]*n[6],
-//                 m[6]*n[1] + m[7]*n[4] + m[8]*n[7],
-//                 m[6]*n[2] + m[7]*n[5] + m[8]*n[8]   
-//                ]        
 
 
 /*****************************/
+/* multiply two 3X3 matricies together */
+
+m33 mult_mat33(m33 m, m33 n){
+    m33 output;    
+     
+    output.m0 =  m.m0*n.m0 + m.m1*n.m3 + m.m2*n.m6;
+    output.m1 =  m.m0*n.m1 + m.m1*n.m4 + m.m2*n.m7;
+    output.m2 =  m.m0*n.m2 + m.m1*n.m5 + m.m2*n.m8;
+    output.m3 =  m.m3*n.m0 + m.m4*n.m3 + m.m5*n.m6;
+    output.m4 =  m.m3*n.m1 + m.m4*n.m4 + m.m5*n.m7;
+    output.m5 =  m.m3*n.m2 + m.m4*n.m5 + m.m5*n.m8;
+    output.m6 =  m.m6*n.m0 + m.m7*n.m3 + m.m8*n.m6;
+    output.m7 =  m.m6*n.m1 + m.m7*n.m4 + m.m8*n.m7;
+    output.m8 =  m.m6*n.m2 + m.m7*n.m5 + m.m8*n.m8;   
+                
+    return output;        
+}
 
 
-//     def mult_mat44(self, m, n):
-//         """multiply two 4X4 matricies together """
-//         return [
-//                 m[0]*n[0]  + m[1]*n[4]  + m[2]*n[8]   + m[3]*n[12],
-//                 m[0]*n[1]  + m[1]*n[5]  + m[2]*n[9]   + m[3]*n[13],
-//                 m[0]*n[2]  + m[1]*n[6]  + m[2]*n[10]  + m[3]*n[14],
-//                 m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
-//                 m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
-//                 m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
-//                 m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
-//                 m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
-//                 m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
-//                 m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
-//                 m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
-//                 m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
-//                 m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
-//                 m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
-//                 m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
-//                 m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
-//                ]
+/*****************************/
+/* multiply two 4X4 matricies together */
+
+m44 mult_mat44(m44 m, m44 n){
+    m44 output;
+    // return [
+    //         m[0]*n[0]  + m[1]*n[4]  + m[2]*n[8]   + m[3]*n[12],
+    //         m[0]*n[1]  + m[1]*n[5]  + m[2]*n[9]   + m[3]*n[13],
+    //         m[0]*n[2]  + m[1]*n[6]  + m[2]*n[10]  + m[3]*n[14],
+    //         m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
+    //         m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
+    //         m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
+    //         m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
+    //         m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
+    //         m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
+    //         m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
+    //         m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
+    //         m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
+    //         m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
+    //         m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
+    //         m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
+    //         m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
+    //        ]
+    return output;
+}
 
 /*****************************/
 
@@ -546,361 +701,7 @@ class vec2(object):
         self.x *= invLength
         self.y *= invLength
 
-###############################################
-class vec3(object):    
 
-    def __init__(self,x=0,y=0,z=0):
-        self.x=x;self.y=y;self.z=z  
-        self.mu = math_util() 
-
-    def __repr__(self):
-        return '(%s, %s, %s)' % (self.x, self.y, self.z)
-
-    def __abs__(self):
-        return type(self)(abs(self.x), abs(self.y), abs(self.z))
-
-    def __add__(self, other):
-        if isinstance(other, np.ndarray):
-            return type(self)(self.x+other[0], self.y+other[1], self.z+other[2])
-        if isinstance(other, float) or isinstance(other, int):
-            return type(self)(self.x+other, self.y+other, self.z+other)
-        if isinstance(other, vec3):                    
-            return type(self)(self.x+other.x, self.y+other.y, self.z+other.z)
-        if isinstance(other, tuple) or isinstance(other, list):
-            return type(self)(self.x+other[0], self.y+other[1], self.z+other[2])  
-
-    def __sub__(self, other):
-        if isinstance(other, np.ndarray):
-            return type(self)(self.x-other[0], self.y-other[1], self.z-other[2])
-        if isinstance(other, float) or isinstance(other, int):
-            return type(self)(self.x-other, self.y-other, self.z-other)
-        if isinstance(other, vec3):                    
-            return type(self)(self.x-other.x, self.y-other.y, self.z-other.z)
-        if isinstance(other, tuple) or isinstance(other, list):
-            return type(self)(self.x-other[0], self.y-other[1], self.z-other[2])  
-
-    def __mul__(self, other):
-        if isinstance(other, np.ndarray):
-            return type(self)(self.x*other[0], self.y*other[1], self.z*other[2])
-        if isinstance(other, float) or isinstance(other, int):
-            return type(self)(self.x*other, self.y*other, self.z*other)
-        if isinstance(other, vec3):
-            return type(self)(self.x*other.x, self.y*other.y, self.z*other.z)
-        if isinstance(other, tuple) or isinstance(other, list):
-            return type(self)(self.x*other[0], self.y*other[1], self.z*other[2])          
-
-    def __truediv__(self, other):
-        #untested - normalized? 
-        #return type(self)(self.x / other.x, self.y / other.y)
-        self.x = other.x/other.length()
-        self.y = other.y/other.length()
-        self.z = other.y/other.length()
-        return type(self)(self.x, self.y, self.z)
-
-    def __float__(self):
-        return type(self)(float(self.x), float(self.y), float(self.z) )
-
-    def __getitem__(self, index):
-        if index==0:
-            return self.x
-        if index==1:
-            return self.y
-        if index==2:
-            return self.z
-
-    def __setitem__(self, key, item):
-        if key==0:
-            self.x = item
-        if key==1:
-            self.y = item
-        if key==2:
-            self.z = item
-
-
-    def to_euler(self):
-        """ 
-            UNFINISHED 
-            experimental - inspired by this:
-            https://stackoverflow.com/questions/21622956/how-to-convert-direction-vector-to-euler-angles
-        
-        """
-        
-        """
-        D = (XD,YD,ZD) # direction 
-        U = (XU,YU,ZU) # up
-        H = (XD,YD,0)  # heading 
-        
-        angle_H = math.atan2(YD,XD)
-        
-        ZD=sin(angle_P)
-        
-        angle_P=asin(ZD)
-
-        W0 = ( -YD, XD, 0 )
-        U0 = W0 × D
-
-        cos(angle_B) = Dot(U0,U) / abs(U0) / abs(U)
-        sin(angle_B) = Dot(W0,U) / abs(W0) / abs(U)
-        angle_B = atan2( Dot(W0,U) / abs(W0), Dot(U0,U) / abs(U0) )
-
-        """
-        pass  
-
-
-
-    def project_pt(self, offset):
-        """ project a point along a vector """
-        
-        # nX = B.x - A.x
-        # nY = B.y - A.y
-        # nZ = B.z - A.z 
-
-        # distX = pow( (A.x - B.x ) , 2.0 ) 
-        # distY = pow( (A.y - B.y ) , 2.0 ) 
-        # distZ = pow( (A.z - B.z ) , 2.0 ) 
-        # vecLength = math.sqrt(distX + distY + distZ )
-
-        # normalized vector  
-        # calcX = nX / self.length
-        # calcY = nY / self.length
-        # calcZ = nZ / self.length
-
-        normal = self.normal
-
-        # project point along vector with offset (can use negative too)
-        ptX = self.x + (normal.x * offset)
-        ptY = self.y + (normal.y * offset)
-        ptZ = self.z + (normal.z * offset)
-        return type(self)(ptX, ptY, ptZ)
-
-    def project_vec3(self):
-        """  UNFINISHED  
-
-            from David Gould's book
-            Complete Maya Programing II 
-            page 32 
-        
-
-        """
-
-        pass
-
-
-    def between(self, pt2):
-        """ given 2 points in 3D, create a 3D vector 
-            representing the offset between them 
-
-            doesnt get much easier than this, just subtract 
-
-        """
-   
-        #if isinstance(pt1, tuple):
-        #    pt1 = vec3( pt1[0], pt1[1], pt1[2]) 
-
-
-        if isinstance(pt2, tuple):
-            pt2 = vec3( pt2[0], pt2[1], pt2[2])
-
-        return pt2 - self
-
- 
-    def orthogonal_vec_from_pt(self, vecpt, unitvec, pt ):
-        if NUMPY_IS_LOADED:        
-            return (vecpt-pt) - ( np.dot((vecpt-pt), unitvec) ) * unitvec
-        return None 
-
-    @property
-    def as_np(self):
-        """  get this vec3 as an np.array """ 
-        return self.copy(vtype='numpy')
-
-    def insert(self, iterable):
-        """ convert an np.array, tuple or list  to vec3  
-            does not check size, so just assume 3 items (x,y,z)
-        """
-
-        if isinstance(iterable, list) or isinstance(iterable, tuple):
-            self.x = iterable[0]
-            self.y = iterable[1]            
-            self.z = iterable[2]
-
-        if NUMPY_IS_LOADED:
-            if isinstance(iterable, np.ndarray):
-                self.x = iterable[0]
-                self.y = iterable[1]            
-                self.z = iterable[2]
-
-        return self 
-
- 
-    def copy(self, vtype=None):
-        if vtype is None:
-            return type(self)(self.x,self.y,self.z)
-
-        if vtype is 'tuple':
-            return ( (self.x,self.y,self.z) )
-
-        if NUMPY_IS_LOADED:    
-            if vtype is 'numpy':
-                return np.array( (self.x,self.y,self.z) )
-
-    @property
-    def length(self):
-        """ output - scalar representing the length of this vector """
-        return math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z )
-
-    def dot (self, v2):
-         """ input  - vector
-             output - scalar  
-         """
-         return self.x*v2[0] + self.y*v2[1] + self.z*v2[2]
-
-    def cross (self, other):
-        """ input  - vector
-            output - vector 
-        """
-        x = self.y*other.z - self.z*other.y
-        y = self.z*other.x - self.x*other.z
-        z = self.x*other.y - self.y*other.x
-        return type(self)(x,y,z)
-
-    @property
-    def dtr(self):
-        """ degree to radian """
-        return ( self.mu.drt( self.x ),
-                 self.mu.dtr( self.y ),
-                 self.mu.dtr( self.z )                 
-               )
-
-    @property
-    def rtd(self):
-        """ radian to degree """
-        return ( self.mu.rtd( self.x ),
-                 self.mu.rtd( self.y ),
-                 self.mu.rtd( self.z )                 
-               )  
-    @property
-    def normal(self) :
-        """ normal of this vector """
-        try:
-           invLength = 1.0/math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
-           return type(self)(self.x *invLength, self.y * invLength,  self.z * invLength)
-        except:
-           print('normal vec3: divide by zero error.') 
-           return [0,0,1]
-
-    @property
-    def np_normal(self):
-        """ unit vector of the vector using numpy """
-        if NUMPY_IS_LOADED:
-            return self.as_np / np.linalg.norm(self.as_np)
-        else:
-            pass 
-
-    def look_at(self):
-        """
-        https://stackoverflow.com/questions/1251828/calculate-rotations-to-look-at-a-3d-point
-        
-        ###################################
-
-        rotx = Math.atan2( y, z )
-        roty = Math.atan2( x * Math.cos(rotx), z )
-        rotz = Math.atan2( Math.cos(rotx), Math.sin(rotx) * Math.sin(roty) )
-        ###################################
-         rotx = Math.atan2( y, z );
-         if (z >= 0) {
-            roty = -Math.atan2( x * Math.cos(rotx), z );
-         }else{
-            roty = Math.atan2( x * Math.cos(rotx), -z );
-         }        
-        ###################################
-
-        About X: -atan2(y, z)
-        About Y: atan2(x, sqrt(y*y + z*z))
-        About Z: 0 
-
-        """
-        pass
-
-    def np_angle_between(self, v1, v2):
-        """ 
-           UNTESTED 
-
-           Returns the angle in radians between vectors 'v1' and 'v2'::
-
-                >>> angle_between((1, 0, 0), (0, 1, 0))
-                1.5707963267948966
-                >>> angle_between((1, 0, 0), (1, 0, 0))
-                0.0
-                >>> angle_between((1, 0, 0), (-1, 0, 0))
-                3.141592653589793
-        """
-
-        if NUMPY_IS_LOADED:        
-            if isinstance(v1, tuple):
-                v1 = self.insert(v1)  #wrong?
-            if isinstance(v2, tuple):
-                v2 = self.insert(v2)  #wrong?
-
-            v1_u = v1.np_normal;v2_u = v2.np_normal
-
-            #print('### ', v1_u , v2_u )
-
-            return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
-
-    def angle_between(self, other):
-        """ 
-            result is in radians
-            derived from law of cosines 
-            range from 0 (colinear) to PI radians (180 deg)  
-
-            FAILS WHEN 0 or 180 ?
-        """
-        try:
-            o = math.acos( self.dot(other) / (self.length*other.length) ) 
-            return o 
-        except:
-            return 0
-
-    def vector_mean(self, p_vecs, mode='vec3'):
-        """ 
-            UNTESTED 
-         
-            take a list of vectors and return a new vector that is an average
-
-        """
-        
-
-        tmp_x = 0;tmp_y = 0;tmp_z = 0;
-
-        count = 0
-        a = 0 
-        for v in p_vecs: 
-
-            if mode=='angle':            
-                a = a + self.np_angle_between( upvec, v )
-
-            if mode=='vec3':
-                if isinstance(v, vec3):
-                    tmp_x = tmp_x+v.x
-                    tmp_y = tmp_x+v.y
-                    tmp_z = tmp_x+v.z 
-
-                if isinstance(v, tuple) or isinstance(v, list):                
-                    tmp_x = tmp_x+v[0]
-                    tmp_y = tmp_x+v[1]
-                    tmp_z = tmp_x+v[2] 
-
-            count += 1 
-        
-        if mode=='angle':
-            return a/count 
-        if mode=='vec3':
-            return type(self)(tmp_x/count, tmp_y/count, tmp_z/count)
-
-
-        return None 
 
 ###############################################
 class vec4(object):
@@ -969,15 +770,6 @@ class vec4(object):
             if len(iterable)==4:
                 self.w = iterable[3]                 
 
-        if NUMPY_IS_LOADED:
-            if isinstance(iterable, np.ndarray):
-                self.x = iterable[0]
-                self.y = iterable[1]            
-                self.z = iterable[2]
-                if len(iterable)==3: 
-                    self.w = 1  
-                if len(iterable)==4:
-                    self.w = iterable[3] 
         return self 
 
     def to_vec3(self):
@@ -1112,17 +904,6 @@ class matrix33(object):
         self.m = [a,b,c,d,e,f,g,h,i]
         self.mu = math_util()
 
-    def __getitem__(self, index):
-        return self.m[index]
-
-    def __setitem__(self, key, item):
-        self.m[key] = item
-
-    def __repr__(self):
-        return '(%s, %s, %s, %s, %s, %s, %s, %s, %s )'%(
-                self.m[0], self.m[1], self.m[2],  self.m[3],  self.m[4],  
-                self.m[5],  self.m[6],  self.m[7], self.m[8] )
-
     def test_index(self):
         """ fill matrix with incrementing numbers to see indices 
             for testing transpose and other things 
@@ -1132,10 +913,6 @@ class matrix33(object):
             tmp.m[i] = i
         return tmp
 
-    @property
-    def identity(self):
-        """ using the "standard" 9 element, Row major, 3X3 rotation matrix """
-        return type(self)()
 
     @property
     def determinant(self):
@@ -1154,68 +931,7 @@ class matrix33(object):
         o = a[0]* ((a[4]*a[8])-(a[5]*a[7])) - a[1]*((a[3]*a[8])-(a[5]*a[6])) +  a[2]*((a[3]*a[7])-(a[4]*a[6]))
         return o
 
-    def np_inverse(self, mtype='numpy'):
-        """ seems to work, but I am not convinced """
-        if NUMPY_IS_LOADED:        
-            a = self.copy(mtype='numpy')
-            b = inv(a)
-            if mtype=='numpy':
-                return b 
-            if mtype=='m33':    
-                c = matrix33()
-                c.insert(b)
-                return c
-            #print('## inverse \n\n', self  , ' \n\n', c , ' \n\n',  self*c )
 
-    def serialize(self, inarray):
-        """ serialize this array into a list 
-            if you want it as a numpy array use self.copy(mtype='numpy')
-        """
-
-        out = []
-        for i in self.m:
-            out.append(i)
-        return out
-
-
-    def from_np(self, np):
-        """ convert a numpy matrix to a matrix33 object
-        """
-        # return type(self)(
-        #     np[0][0] , np[1][0] , np[2][0] ,
-        #     np[0][1] , np[1][1] , np[2][1] ,
-        #     np[0][2] , np[1][2] , np[2][2]
-        # )
-
-        return type(self)(
-            np[0][0] , np[0][1] , np[0][2] ,
-            np[1][0] , np[1][1] , np[1][2] ,
-            np[2][0] , np[2][1] , np[2][2]
-        )
-
-
-    def insert(self, iterable):
-        """ load the first 9 things we find into this matrix 
-            accepts numpy.ndarray, list, and tuple 
-        """
-       
-        if isinstance(iterable, matrix33):
-            self.m = iterable.m
-        
-        #serialized simple array
-        if isinstance(iterable, list) or isinstance(iterable, tuple):
-            for idx,i in enumerate(iterable):
-                if idx <= 9:
-                     self.m[idx] = iterable[idx] 
-
-        if NUMPY_IS_LOADED:
-            #numpy ND array 
-            if isinstance(iterable, np.ndarray):
-                out = [];idx=0
-                for row in iterable:
-                    for col in row:
-                        self.m[idx] = col
-                        idx+=1
 
     def copy(self, mtype=None):
         """ create a copy of this matrix - can be same type or a numpy.ndarray """
@@ -1226,12 +942,6 @@ class matrix33(object):
                 self.m[6] , self.m[7] , self.m[8]
             )
 
-        if NUMPY_IS_LOADED:
-            if mtype == 'numpy':
-                return np.array(([self.m[0] , self.m[1] , self.m[2]] ,
-                                 [self.m[3] , self.m[4] , self.m[5]] ,
-                                 [self.m[6] , self.m[7] , self.m[8]])
-                               )
 
     @property
     def transpose(self):
@@ -1314,11 +1024,6 @@ class matrix33(object):
             outz = self.m[2]*n.x + self.m[5]*n.y + self.m[8]*n.z 
             return  (outx, outy, outz)
 
-        if isinstance(n, tuple) or isinstance(n, list) or isinstance(n, np.ndarray):
-            outx = self.m[0]*n[0] + self.m[3]*n[1] + self.m[6]*n[2] 
-            outy = self.m[1]*n[0] + self.m[4]*n[1] + self.m[7]*n[2] 
-            outz = self.m[2]*n[0] + self.m[5]*n[1] + self.m[8]*n[2] 
-            return  (outx, outy, outz)
 
         if type(n) == type(self):
             return type(self)(
@@ -1341,25 +1046,6 @@ class matrix33(object):
         for pvec in pts:  
             tmp_buffer.append( self * pvec )
         return tmp_buffer
-
-    def from_vec3(self, vec3, angle):
-        """ UNTESTED build a 3X3 matrix that will rotate around a vector 
-  
-            vec3 = the vector for an axis of rotation
-            angle - angle in degrees to rotate 
-
-        """
-        
-        theta = self.mu.dtr(angle)
-        #axis = vec3.normal
-        axis = vec3.as_np
-        #tmpm33 = self.identity
-
-        if NUMPY_IS_LOADED:
-            tmpm33 = expm(np.cross(np.eye(3), axis / np.linalg.norm(axis) * theta)) 
-            return self.from_np(tmpm33)
-        else:
-            return None 
 
 
     def align_two_vec3(self, a, b):
@@ -1557,11 +1243,6 @@ class matrix44(object):
             return  (outx, outy, outz, outw)
 
 
-        if isinstance(n, vec3) or isinstance(n, np.ndarray):
-            # column major -                      why add the last 12,13,14 ? (affine?)            
-            # outx = self.m[0] * n.x + self.m[4] * n.y + self.m[8]  * n.z     + self.m[12]
-            # outy = self.m[1] * n.x + self.m[5] * n.y + self.m[9]  * n.z     + self.m[13]
-            # outz = self.m[2] * n.x + self.m[6] * n.y + self.m[10] * n.z     + self.m[14]
 
             # column major  , without elements 12,13,14 
             outx = self.m[0] * n.x + self.m[4] * n.y + self.m[8]  * n.z 
@@ -1655,14 +1336,6 @@ class matrix44(object):
                 if idx <= 16:
                      self.m[idx] = iterable[idx] 
 
-        if NUMPY_IS_LOADED:
-             #numpy ND array 
-            if isinstance(iterable, np.ndarray):
-                out = [];idx=0
-                for row in iterable:
-                    for col in row:
-                        self.m[idx] = col
-                        idx+=1
 
     #@property
     def copy(self, mtype=None):
@@ -1675,14 +1348,7 @@ class matrix44(object):
                 self.m[12], self.m[13], self.m[14], self.m[15]
             )
 
-        if NUMPY_IS_LOADED:
-            if mtype == 'numpy':
-                return np.array((
-                    [self.m[0] , self.m[1] , self.m[2] , self.m[3]  ],
-                    [self.m[4] , self.m[5] , self.m[6] , self.m[7]  ],
-                    [self.m[8] , self.m[9] , self.m[10], self.m[11] ],
-                    [self.m[12], self.m[13], self.m[14], self.m[15] ]
-                ))               
+         
 
     @property
     def transpose(self):
