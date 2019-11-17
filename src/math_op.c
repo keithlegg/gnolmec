@@ -283,23 +283,13 @@ vector3d mult_m44_vec3(m44 m, vector3d v){
 /************************************************/
 
 vector3d add_vec3 (vector3d v1, vector3d v2){
-    // if isinstance(other, float) or isinstance(other, int):
-    //     return type(self)(self.x+other, self.y+other, self.z+other)
-    // if isinstance(other, vec3):                    
     //     return type(self)(self.x+other.x, self.y+other.y, self.z+other.z)
-    // if isinstance(other, tuple) or isinstance(other, list):
-    //     return type(self)(self.x+other[0], self.y+other[1], self.z+other[2])  
 }
 
 
 vector3d sub_vec3 (vector3d v1, vector3d v2){
-    // if isinstance(other, float) or isinstance(other, int):
-    //     return type(self)(self.x-other, self.y-other, self.z-other)
     // if isinstance(other, vec3):                    
     //     return type(self)(self.x-other.x, self.y-other.y, self.z-other.z)
-    // if isinstance(other, tuple) or isinstance(other, list):
-    //     return type(self)(self.x-other[0], self.y-other[1], self.z-other[2])  
-
 }
 
 vector3d mult_vec3 (vector3d v1, vector3d v2){

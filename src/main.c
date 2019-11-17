@@ -302,8 +302,6 @@ void animateTextures2(Image *loaded_texture)
 
 void animateTextures3(Image *loaded_texture)
 {
-
-
     //test of new framebuffer commands
     RGBType* pt_rgb_bfr =  createBuffer24(loaded_texture->sizeX, loaded_texture->sizeY);    
     
@@ -316,24 +314,33 @@ void animateTextures3(Image *loaded_texture)
     pt_linecolor->g = 0;
     pt_linecolor->b = 0;
 
-
-    int cp_tl[2] = {0};
-    int cp_br[2] = {0};
+    // int cp_tl[2] = {0};
+    // int cp_br[2] = {0};
+    // cp_tl[0] = upos-pong_size;
+    // cp_tl[1] = vpos-pong_size;
+    // cp_br[0] = upos+pong_size;
+    // cp_br[1] = vpos+pong_size;
+    // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_br[0] , cp_br[1] , pt_linecolor); 
+    // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_tl[0] , cp_br[1] , pt_linecolor);
     
-    cp_tl[0] = upos-pong_size;
-    cp_tl[1] = vpos-pong_size;
-    cp_br[0] = upos+pong_size;
-    cp_br[1] = vpos+pong_size;
-
-    // draw some lines - crisscross applesauce 
-    //draw_line(pt_rgb_bfr, loaded_texture->sizeX, 0  , cp_tl[0]   , cp_br[0] , 511 , pt_linecolor); 
-    //draw_line(pt_rgb_bfr, loaded_texture->sizeX, 511       , 0          , 0   , 511 , pt_linecolor); 
-    
-    draw_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, 5, pt_linecolor);
+    //just to show its alive - bounce a ball around 
+    draw_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
 
     // const char *filename = "rgb_buffer.bmp";
     // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
     // free(pt_image_bfr);
+    
+    ///////////////////////
+    // first stab at some matrix and vector art 
+    m33 identity = new_m33(1,0,0,
+                           0,1,0,
+                           0,0,1);
+
+    vector2d v1 = newvec2(102.0, 301.0);
+
+    draw_line(pt_rgb_bfr, loaded_texture->sizeX , v1.x , v1.y , 0 , 0 , pt_linecolor);
+
+    ///////////////////////
 
     //overwrite loaded buffer with lines
     copyBuffer24( pt_rgb_bfr, loaded_texture ); //convert "RGBType" to "Image"
@@ -551,7 +558,10 @@ void drawglscene_3d()
     if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
     if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
 
+    
     animateTextures2(main_bg_bfr);
+    
+    //animateTextures3(main_bg_bfr);
 
     //usleep(100000); 
     // since this is double buffered, swap the buffers to display what just got drawn.
