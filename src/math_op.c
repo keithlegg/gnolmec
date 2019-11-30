@@ -283,32 +283,49 @@ vector3d mult_m44_vec3(m44 m, vector3d v){
 /************************************************/
 
 vector3d add_vec3 (vector3d v1, vector3d v2){
-    //     return type(self)(self.x+other.x, self.y+other.y, self.z+other.z)
+    vector3d output;
+    output.x = v1.x + v2.x;
+    output.y = v1.y + v2.y;
+    output.z = v1.z + v2.z;
+    
+    return output;
+
 }
 
 
 vector3d sub_vec3 (vector3d v1, vector3d v2){
-    // if isinstance(other, vec3):                    
-    //     return type(self)(self.x-other.x, self.y-other.y, self.z-other.z)
+    vector3d output;
+    output.x = v1.x - v2.x;
+    output.y = v1.y - v2.y;
+    output.z = v1.z - v2.z;
+    
+    return output;    
 }
 
 vector3d mult_vec3 (vector3d v1, vector3d v2){
-    // if isinstance(other, float) or isinstance(other, int):
-    //     return type(self)(self.x*other, self.y*other, self.z*other)
-    // if isinstance(other, vec3):
-    //     return type(self)(self.x*other.x, self.y*other.y, self.z*other.z)
-    // if isinstance(other, tuple) or isinstance(other, list):
-    //     return type(self)(self.x*other[0], self.y*other[1], self.z*other[2])
+    vector3d output;
+    output.x = v1.x * v2.x;
+    output.y = v1.y * v2.y;
+    output.z = v1.z * v2.z;
+    
+    return output;
 }
 
 
 vector3d div_vec3 (vector3d v1, vector3d v2){
-    // #untested - normalized? 
-    // #return type(self)(self.x / other.x, self.y / other.y)
+    // UNTESTED - normalized? 
+
     // self.x = other.x/other.length()
     // self.y = other.y/other.length()
     // self.z = other.y/other.length()
     // return type(self)(self.x, self.y, self.z)
+    
+    // vector3d output;
+    // output.x = v1.x - v2.x;
+    // output.y = v1.y - v2.y;
+    // output.z = v1.z - v2.z;
+    // return output;
+
 }
 
 
@@ -357,13 +374,6 @@ vector3d div_vec3 (vector3d v1, vector3d v2){
         ptZ = self.z + (normal.z * offset)
         return type(self)(ptX, ptY, ptZ)
 
- 
-    def copy(self, vtype=None):
-        if vtype is None:
-            return type(self)(self.x,self.y,self.z)
-
-        if vtype is 'tuple':
-            return ( (self.x,self.y,self.z) )
 
     def angle_between(self, other):
         """ 
@@ -445,6 +455,7 @@ m44 new_m44( double m0 , double m1 , double m2 , double m3,
 /* multiply two 3X3 matricies together */
 
 m33 mult_mat33(m33 m, m33 n){
+    // UNTESTED
     m33 output;    
      
     output.m0 =  m.m0*n.m0 + m.m1*n.m3 + m.m2*n.m6;
@@ -465,25 +476,26 @@ m33 mult_mat33(m33 m, m33 n){
 /* multiply two 4X4 matricies together */
 
 m44 mult_mat44(m44 m, m44 n){
+    // UNTESTED - NOT DONE 
     m44 output;
-    // return [
-    //         m[0]*n[0]  + m[1]*n[4]  + m[2]*n[8]   + m[3]*n[12],
-    //         m[0]*n[1]  + m[1]*n[5]  + m[2]*n[9]   + m[3]*n[13],
-    //         m[0]*n[2]  + m[1]*n[6]  + m[2]*n[10]  + m[3]*n[14],
-    //         m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
-    //         m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
-    //         m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
-    //         m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
-    //         m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
-    //         m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
-    //         m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
-    //         m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
-    //         m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
-    //         m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
-    //         m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
-    //         m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
-    //         m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
-    //        ]
+    
+    output.m0  = m.m0*n.m0  + m.m1*n.m4  + m.m2*n.m8   + m.m3*n.m12;
+    output.m1  = m.m0*n.m1  + m.m1*n.m5  + m.m2*n.m9   + m.m3*n.m13;
+    output.m2  = m.m0*n.m2  + m.m1*n.m6  + m.m2*n.m10  + m.m3*n.m14;
+    // output.m3  = //         m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
+    // output.m4  = //         m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
+    // output.m5  = //         m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
+    // output.m6  = //         m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
+    // output.m7  = //         m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
+    // output.m8  = //         m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
+    // output.m9  = //         m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
+    // output.m10 = //         m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
+    // output.m11 = //         m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
+    // output.m12 = //         m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
+    // output.m13 = //         m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
+    // output.m14 = //         m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
+    // output.m15 = //         m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
+    
     return output;
 }
 

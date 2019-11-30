@@ -306,6 +306,10 @@ void animateTextures3(Image *loaded_texture)
     RGBType* pt_rgb_bfr =  createBuffer24(loaded_texture->sizeX, loaded_texture->sizeY);    
     
     //copyBuffer24( loaded_texture ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+    
+    copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+
+    // 
 
     //make a color for some lines 
     RGBType line_color;
@@ -331,7 +335,7 @@ void animateTextures3(Image *loaded_texture)
     // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_tl[0] , cp_br[1] , pt_linecolor);
     
     //just to show its alive - bounce a ball around 
-    draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
+    //draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
 
     // const char *filename = "rgb_buffer.bmp";
     // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
@@ -344,7 +348,7 @@ void animateTextures3(Image *loaded_texture)
     int cell_size = (int)loaded_texture->sizeX/num_cells;
     
     for (x=cell_size;x<=loaded_texture->sizeX-cell_size;x=x+cell_size){
-        draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, x, 200, cell_size/2, pt_linecolor2);
+        draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, x, vpos, cell_size/2, pt_linecolor2);
     }
 
 
@@ -364,6 +368,7 @@ void animateTextures3(Image *loaded_texture)
     //overwrite loaded buffer with lines
     copyBuffer24( pt_rgb_bfr, loaded_texture ); //convert "RGBType" to "Image"
 
+    free(pt_rgb_bfr);
      
     // create and apply 2D texture   
     glGenTextures(1, &texture[0]);
@@ -766,8 +771,8 @@ void spinningCubeDemo(int *argc, char** argv){
     BuildPopupMenu ();
     glutAttachMenu (GLUT_RIGHT_BUTTON);
 
-    loadImage("textures/generated1.bmp"     , imageloaded_bfr);
-    loadImage("textures/generated3.bmp", imageloaded_bfr2);
+    loadImage("textures/generated1.bmp" , imageloaded_bfr);
+    loadImage("textures/generated3.bmp" , imageloaded_bfr2);
 
     glutMainLoop();// Start Event Processing Engine   
 
