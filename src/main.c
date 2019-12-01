@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <stdarg.h>
 #include <unistd.h>      //for getcwd 
 
@@ -784,8 +785,38 @@ void MouseButton(int button, int state, int x, int y)
       }
 }
 
+void maya_mouse_button(int button, int state, int x, int y)
+{
+    // Respond to mouse button presses.
+    // If button1 pressed, mark this state so we know in motion function.
+
+    if (button == GLUT_LEFT_BUTTON)
+      {
+        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
+        g_yClick = y - 3 * g_fViewDistance;
+      }
+}
+
+
 /*****************************************/
+/*****************************************/
+
 void MouseMotion(int x, int y)
+{
+    // If button1 pressed, zoom in/out if mouse is moved up/down.
+
+    if (g_bButton1Down)
+    {
+        
+        // g_fViewDistance = (y - g_yClick) / 3.0;
+        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
+        // glutPostRedisplay();
+    }
+}
+
+
+void maya_mouse_motion(int x, int y)
 {
     // If button1 pressed, zoom in/out if mouse is moved up/down.
 
@@ -987,8 +1018,8 @@ void maya_navigation_demo(int *argc, char** argv){
 
 
     ///////////////////////////    
-    //glutMouseFunc (MouseButton);
-    //glutMotionFunc (MouseMotion);
+    glutMouseFunc (maya_mouse_button);
+    glutMotionFunc (maya_mouse_motion);
   
     ///////////////////////////  
 
@@ -1134,6 +1165,16 @@ void test_math_ops(void){
     
     printf("-------------------------------------------------\n");    
 
+    m33 new_m33 = identity33();
+    m44 new_m44 = identity44();
+
+    print_matrix(new_m33);
+
+    printf("-------------------------------------------------\n");  
+
+    print_matrix(new_m44);
+
+
 }
 
 
@@ -1147,8 +1188,9 @@ int main(int argc, char **argv)
     
     test_math_ops();
 
-    //flatImageDemo(&argc, argv); //start up openGL 
-    spinningCubeDemo(&argc, argv); //start up openGL 
+    // flatImageDemo(&argc, argv); //start up openGL 
+    // spinningCubeDemo(&argc, argv); //start up openGL 
+    
     //maya_navigation_demo(&argc, argv);
 
 

@@ -1,4 +1,7 @@
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <cmath>
 
 #include "math_op.h"
@@ -701,6 +704,20 @@ m33 transpose(m33 input){
 }
 
 
+void print_matrix(m33 input){
+    printf("%f %f %f\n", input.m0, input.m1, input.m2 );
+    printf("%f %f %f\n", input.m3, input.m4, input.m5 );
+    printf("%f %f %f\n", input.m6, input.m7, input.m8 );    
+}
+
+void print_matrix(m44 input){
+    printf("%f %f %f %f\n", input.m0  , input.m1  , input.m2  , input.m3 );
+    printf("%f %f %f %f\n", input.m4  , input.m5  , input.m6  , input.m7 );
+    printf("%f %f %f %f\n", input.m8  , input.m9  , input.m10 , input.m11 );
+    printf("%f %f %f %f\n", input.m12 , input.m13 , input.m14 , input.m15 );        
+}
+
+
 m33 matrix_add(m33 other){
     //         self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
     //         self.m[3]+n[3], self.m[4]+n[4], self.m[5]+n[5],
@@ -731,33 +748,6 @@ m44 matrix_sub(m44 other){
 
 
 
-
-    // m33 batch_mult_pts(self, pts):
-    //     // iterate a list of points and multiply them by this matrix 
-    //     tmp_buffer = []
-    //     out = None
-    //     for pvec in pts:  
-    //         tmp_buffer.append( self * pvec )
-    //     return tmp_buffer
-
-
-    // m33 align_two_vec3(self, a, b):
-    //     //UNFINISHED
-    //     //     https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
-    //     //      ⎛cosθ −sinθ  0 ⎞
-    //     //  G = ⎜sinθ  cosθ  0 ⎟ 
-    //     //      ⎝0      0    1 ⎠
-    //     //       --------------------------------------------------------------
-    //     //       Given our unit vectors, we note that cosθ=A⋅B, and sinθ=||A×B||
-    //     //      ⎛ A.B    -||A×B||    0 ⎞
-    //     //  G = ⎜||A×B||   A.B       0 ⎟ 
-    //     //      ⎝0          0        1 ⎠
-    //     theta = self.mu.dtr(angle)
-    //     #axis = vec3.normal
-    //     axis = vec3.as_np
-    //     #tmpm33 = self.identity
-    //     tmpm33 = expm(np.cross(np.eye(3), axis / np.linalg.norm(axis) * theta)) 
-    //     return self.from_np(tmpm33)
 
     // m33 from_euler(self, xrot, yrot, zrot):
     //     dtr = self.mu.dtr
@@ -831,6 +821,35 @@ m44 matrix_sub(m44 other){
     //     rotation_33 = x_matrix * tmp_matr 
     //     ############ 
     //     return rotation_33.batch_mult_pts(points)
+
+
+
+    // m33 batch_mult_pts(self, pts):
+    //     // iterate a list of points and multiply them by this matrix 
+    //     tmp_buffer = []
+    //     out = None
+    //     for pvec in pts:  
+    //         tmp_buffer.append( self * pvec )
+    //     return tmp_buffer
+
+
+    // m33 align_two_vec3(self, a, b):
+    //     //UNFINISHED
+    //     //     https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
+    //     //      ⎛cosθ −sinθ  0 ⎞
+    //     //  G = ⎜sinθ  cosθ  0 ⎟ 
+    //     //      ⎝0      0    1 ⎠
+    //     //       --------------------------------------------------------------
+    //     //       Given our unit vectors, we note that cosθ=A⋅B, and sinθ=||A×B||
+    //     //      ⎛ A.B    -||A×B||    0 ⎞
+    //     //  G = ⎜||A×B||   A.B       0 ⎟ 
+    //     //      ⎝0          0        1 ⎠
+    //     theta = self.mu.dtr(angle)
+    //     #axis = vec3.normal
+    //     axis = vec3.as_np
+    //     #tmpm33 = self.identity
+    //     tmpm33 = expm(np.cross(np.eye(3), axis / np.linalg.norm(axis) * theta)) 
+    //     return self.from_np(tmpm33)
 
 
 

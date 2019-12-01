@@ -102,6 +102,9 @@ m33 test_indices(void);
 m33 determinant(void);
 m33 transpose(m33 input);
 
+void print_matrix(m33 input);
+void print_matrix(m44 input);
+
 vector3d add_vec3 (vector3d v1, vector3d v2);
 vector3d sub_vec3 (vector3d v1, vector3d v2);
 vector3d mult_vec3 (vector3d v1, vector3d v2);
@@ -113,6 +116,7 @@ m44 matrix_add(m44 other);
 
 m33 matrix_sub(m33 other);
 m44 matrix_sub(m44 other);
+
 
 /////////
 
