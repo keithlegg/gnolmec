@@ -4,12 +4,40 @@
 #include "math_op.h"
 
 
+/*********************************************************/
+/*
+
+   This is an attempt to port the python math library I wrote into 
+   the C language
+
+   The original can be found here:
+
+       https://github.com/keithlegg/pyrender2/blob/master/pygfx/math_ops.py
 
 
+
+*/
+
+/*********************************************************/
+
+
+
+
+
+
+/*********************************************************/
+/*General linear algebra and trig functions 
+  these can be used by higher order objects like vectors and matricies, 
+  or used directly */
+/*********************************************************/
+
+
+//degree to radian 
 double deg_to_rad ( double deg){
    return deg * DEG_TO_RAD;
 }
 
+//radian to degree
 double rad_to_deg ( double rad){
    return rad * RAD_TO_DEG;
 }
@@ -26,18 +54,22 @@ double dotProduct ( vector3d v1, vector3d v2){
 
 
 /*****************************/
+// distance between 2 double points in 2D
 double fcalc_distance(double pt1[2], double pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
 }
 
+// distance between 2 int points in 2D
 double fcalc_distance(int pt1[2], int pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
 }
 
+// distance between 2 vectors in 2D
 double fcalc_distance( vector2d input){
     return sqrt( (input.x * input.x) + (input.y * input.y) );
 }
 
+// distance between 2 vectors in 3D
 double fcalc_distance( vector3d input){
     return sqrt( (input.x * input.x) + (input.y * input.y) + (input.z * input.z) );
 }
@@ -314,6 +346,7 @@ vector3d mult_vec3 (vector3d v1, vector3d v2){
 
 vector3d div_vec3 (vector3d v1, vector3d v2){
     // UNTESTED - normalized? 
+    vector3d output;
 
     // self.x = other.x/other.length()
     // self.y = other.y/other.length()
@@ -324,7 +357,7 @@ vector3d div_vec3 (vector3d v1, vector3d v2){
     // output.x = v1.x - v2.x;
     // output.y = v1.y - v2.y;
     // output.z = v1.z - v2.z;
-    // return output;
+    return output;
 
 }
 
@@ -450,6 +483,53 @@ m44 new_m44( double m0 , double m1 , double m2 , double m3,
 }
 
 
+m33 identity33(void){
+
+    m33 output;    
+     
+    output.m0 =  1.0;
+    output.m1 =  0;
+    output.m2 =  0;
+    
+    output.m3 =  0;
+    output.m4 =  1.0;
+    output.m5 =  0;
+
+    output.m6 =  0;
+    output.m7 =  0;
+    output.m8 =  1;   
+                
+    return output;  
+
+}
+
+
+m44 identity44(void){
+    m44 output;
+    
+    output.m0  = 1.0;
+    output.m1  = 0;
+    output.m2  = 0;
+    output.m3  = 0;
+
+    output.m4  = 0;
+    output.m5  = 1.0;
+    output.m6  = 0;
+    output.m7  = 0;
+
+    output.m8  = 0;
+    output.m9  = 0;
+    output.m10 = 1.0;
+    output.m11 = 0;
+
+    output.m12 = 0;
+    output.m13 = 0;
+    output.m14 = 0;
+    output.m15 = 1.0;
+    
+    return output;
+}
+
 
 /*****************************/
 /* multiply two 3X3 matricies together */
@@ -482,19 +562,19 @@ m44 mult_mat44(m44 m, m44 n){
     output.m0  = m.m0*n.m0  + m.m1*n.m4  + m.m2*n.m8   + m.m3*n.m12;
     output.m1  = m.m0*n.m1  + m.m1*n.m5  + m.m2*n.m9   + m.m3*n.m13;
     output.m2  = m.m0*n.m2  + m.m1*n.m6  + m.m2*n.m10  + m.m3*n.m14;
-    // output.m3  = //         m[0]*n[3]  + m[1]*n[7]  + m[2]*n[11]  + m[3]*n[15],
-    // output.m4  = //         m[4]*n[0]  + m[5]*n[4]  + m[6]*n[8]   + m[7]*n[12],
-    // output.m5  = //         m[4]*n[1]  + m[5]*n[5]  + m[6]*n[9]   + m[7]*n[13],
-    // output.m6  = //         m[4]*n[2]  + m[5]*n[6]  + m[6]*n[10]  + m[7]*n[14],
-    // output.m7  = //         m[4]*n[3]  + m[5]*n[7]  + m[6]*n[11]  + m[7]*n[15],
-    // output.m8  = //         m[8]*n[0]  + m[9]*n[4]  + m[10]*n[8]  + m[11]*n[12],
-    // output.m9  = //         m[8]*n[1]  + m[9]*n[5]  + m[10]*n[9]  + m[11]*n[13],
-    // output.m10 = //         m[8]*n[2]  + m[9]*n[6]  + m[10]*n[10] + m[11]*n[14],
-    // output.m11 = //         m[8]*n[3]  + m[9]*n[7]  + m[10]*n[11] + m[11]*n[15],
-    // output.m12 = //         m[12]*n[0] + m[13]*n[4] + m[14]*n[8]  + m[15]*n[12],
-    // output.m13 = //         m[12]*n[1] + m[13]*n[5] + m[14]*n[9]  + m[15]*n[13],
-    // output.m14 = //         m[12]*n[2] + m[13]*n[6] + m[14]*n[10] + m[15]*n[14],
-    // output.m15 = //         m[12]*n[3] + m[13]*n[7] + m[14]*n[11] + m[15]*n[15]
+    output.m3  = m.m0*n.m3  + m.m1*n.m7  + m.m2*n.m11  + m.m3*n.m15;
+    output.m4  = m.m4*n.m0  + m.m5*n.m4  + m.m6*n.m8   + m.m7*n.m12;
+    output.m5  = m.m4*n.m1  + m.m5*n.m5  + m.m6*n.m9   + m.m7*n.m13;
+    output.m6  = m.m4*n.m2  + m.m5*n.m6  + m.m6*n.m10  + m.m7*n.m14;
+    output.m7  = m.m4*n.m3  + m.m5*n.m7  + m.m6*n.m11  + m.m7*n.m15;
+    output.m8  = m.m8*n.m0  + m.m9*n.m4  + m.m10*n.m8  + m.m11*n.m12;
+    output.m9  = m.m8*n.m1  + m.m9*n.m5  + m.m10*n.m9  + m.m11*n.m13;
+    output.m10 = m.m8*n.m2  + m.m9*n.m6  + m.m10*n.m10 + m.m11*n.m14;
+    output.m11 = m.m8*n.m3  + m.m9*n.m7  + m.m1*n.m11  + m.m11*n.m15;
+    output.m12 = m.m12*n.m0 + m.m13*n.m4 + m.m14*n.m8  + m.m15*n.m12;
+    output.m13 = m.m12*n.m1 + m.m1*n.m5  + m.m14*n.m9  + m.m15*n.m13;
+    output.m14 = m.m12*n.m2 + m.m13*n.m6 + m.m14*n.m10 + m.m15*n.m14;
+    output.m15 = m.m12*n.m3 + m.m13*n.m7 + m.m14*n.m11 + m.m15*n.m15;
     
     return output;
 }
@@ -503,6 +583,337 @@ m44 mult_mat44(m44 m, m44 n){
 
 
 
+
+m33 copy_matrix( m33 input ){
+
+    m33 output;    
+     
+    output.m0 =  input.m0;
+    output.m1 =  input.m1;
+    output.m2 =  input.m2;
+    
+    output.m3 =  input.m3;
+    output.m4 =  input.m4;
+    output.m5 =  input.m5;
+
+    output.m6 =  input.m6;
+    output.m7 =  input.m7;
+    output.m8 =  input.m8;   
+                
+    return output;  
+
+}
+
+m44 copy_matrix(m44 input){
+    m44 output;
+    
+    output.m0  = input.m0;
+    output.m1  = input.m1;
+    output.m2  = input.m2;
+    output.m3  = input.m3;
+
+    output.m4  = input.m4;
+    output.m5  = input.m5;
+    output.m6  = input.m6;
+    output.m7  = input.m7;
+
+    output.m8  = input.m8;
+    output.m9  = input.m9;
+    output.m10 = input.m10;
+    output.m11 = input.m11;
+
+    output.m12 = input.m12;
+    output.m13 = input.m13;
+    output.m14 = input.m14;
+    output.m15 = input.m15;
+    
+    return output;
+}
+
+
+m33 test_indices(void){
+     // create a useless matrix with incrementing numbers  
+     // for testing transpose and more 
+
+    m33 output;    
+     
+    output.m0 =  0;
+    output.m1 =  1;
+    output.m2 =  2;
+    
+    output.m3 =  3;
+    output.m4 =  4;
+    output.m5 =  5;
+
+    output.m6 =  6;
+    output.m7 =  7;
+    output.m8 =  8;   
+                
+    return output;      
+
+}
+
+m33 determinant(void){
+    //     https://www.mathsisfun.com/algebra/matrix-determinant.html
+    //           a b c  |  0 1 2  |        
+    //      A =  d e f  |  3 4 5  |       
+    //           g h i  |  6 7 8  |     
+    //     |A| = a(ei − fh) − b(di − fg) + c(dh − eg)
+    //     |A| = 0(48 − 57) − 1(38 − 56) + 2(37 − 46)
+    
+    m33 output;    
+     
+    output.m0 =  1.0;
+    output.m1 =  0;
+    output.m2 =  0;
+    
+    //     a = self.copy() 
+    //     o = a[0]* ((a[4]*a[8])-(a[5]*a[7])) - a[1]*((a[3]*a[8])-(a[5]*a[6])) +  a[2]*((a[3]*a[7])-(a[4]*a[6]))
+    //     return o
+
+                
+    return output;  
+
+}
+
+
+/* standard indicies  |   transposed indicies
+   1  2  3            |   1 4 7
+   4  5  6            |   2 5 8
+   7  8  9            |   3 6 9  */
+
+m33 transpose(m33 input){
+    m33 output;  
+    
+    output.m0 = input.m0;
+    output.m1 = input.m3;
+    output.m2 = input.m6;
+
+    output.m3 = input.m1;
+    output.m4 = input.m4;
+    output.m5 = input.m7;
+
+    output.m6 = input.m2;
+    output.m7 = input.m5;
+    output.m8 = input.m8;    
+
+    return output;     
+}
+
+
+m33 matrix_add(m33 other){
+    //         self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
+    //         self.m[3]+n[3], self.m[4]+n[4], self.m[5]+n[5],
+    //         self.m[6]+n[6], self.m[7]+n[7], self.m[8]+n[8]     
+}
+
+m44 matrix_add(m44 other){
+}
+
+m33 matrix_sub(m33 other){
+    //         self.m[0]-n[0], self.m[1]-n[1], self.m[2]-n[2],
+    //         self.m[3]-n[3], self.m[4]-n[4], self.m[5]-n[5],
+    //         self.m[6]-n[6], self.m[7]-n[7], self.m[8]-n[8]     
+}
+
+m44 matrix_sub(m44 other){
+
+}
+
+
+/* multiply two 3X3 matricies together 
+   the order that you mutliply will call a different object!!!
+   make sure you do "this * other", NOT "other * this"
+*/
+
+// m33 matrix_mult(m33 n){
+// }
+
+
+
+
+    // m33 batch_mult_pts(self, pts):
+    //     // iterate a list of points and multiply them by this matrix 
+    //     tmp_buffer = []
+    //     out = None
+    //     for pvec in pts:  
+    //         tmp_buffer.append( self * pvec )
+    //     return tmp_buffer
+
+
+    // m33 align_two_vec3(self, a, b):
+    //     //UNFINISHED
+    //     //     https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
+    //     //      ⎛cosθ −sinθ  0 ⎞
+    //     //  G = ⎜sinθ  cosθ  0 ⎟ 
+    //     //      ⎝0      0    1 ⎠
+    //     //       --------------------------------------------------------------
+    //     //       Given our unit vectors, we note that cosθ=A⋅B, and sinθ=||A×B||
+    //     //      ⎛ A.B    -||A×B||    0 ⎞
+    //     //  G = ⎜||A×B||   A.B       0 ⎟ 
+    //     //      ⎝0          0        1 ⎠
+    //     theta = self.mu.dtr(angle)
+    //     #axis = vec3.normal
+    //     axis = vec3.as_np
+    //     #tmpm33 = self.identity
+    //     tmpm33 = expm(np.cross(np.eye(3), axis / np.linalg.norm(axis) * theta)) 
+    //     return self.from_np(tmpm33)
+
+    // m33 from_euler(self, xrot, yrot, zrot):
+    //     dtr = self.mu.dtr
+    //     # build rotationY (see diagram above) 
+    //     y_matrix =  self.identity
+    //     y_matrix[0]  =  math.cos(dtr( yrot ))
+    //     y_matrix[2]  = -math.sin(dtr( yrot ))
+    //     y_matrix[6]  =  math.sin(dtr( yrot ))
+    //     y_matrix[8]  =  math.cos(dtr( yrot ))
+    //     ####                
+    //     # build rotationZ (see diagram above) 
+    //     z_matrix    =  self.identity
+    //     z_matrix[0] =  math.cos(dtr( zrot ))
+    //     z_matrix[1] =  math.sin(dtr( zrot ))
+    //     z_matrix[3] = -math.sin(dtr( zrot ))
+    //     z_matrix[4] =  math.cos(dtr( zrot ))
+    //     tmp_matr =  y_matrix * z_matrix 
+    //     ####
+    //     # build rotationX (see diagram above) 
+    //     x_matrix =  self.identity
+    //     x_matrix[4]  =   math.cos(dtr( xrot )) 
+    //     x_matrix[5]  =   math.sin(dtr( xrot )) 
+    //     x_matrix[7]  =  -math.sin(dtr( xrot ))
+    //     x_matrix[8]  =   math.cos(dtr( xrot ))
+    //     rotation_33 = x_matrix * tmp_matr 
+    //     self.insert(rotation_33)
+
+    // m33 rotate_pts_3d(points, xrot, yrot, zrot):
+    //     //  The "standard" 9 element, Row major, 3X3 rotation matrix used by Maya
+    //     //   ⎡0  1  2⎤      xx xy xz 
+    //     //   ⎢3  4  5⎥      yx yy yz 
+    //     //   ⎣6  7  8⎦      zx zy zz 
+    //     //   ------------------------------
+    //     //        Rotate Y matrix     
+    //     //   ⎡cos(y)  0      -sin(y) ⎤ 
+    //     //   ⎢0       1       0      ⎥ 
+    //     //   ⎣sin(y)  0       cos(y) ⎦ 
+    //     //   ------------------------------
+    //     //        Rotate Z  matrix 
+    //     //   ⎡  cos(z)  sin(z)  0    ⎤ 
+    //     //   ⎢ -sin(z)  cos(z)  0    ⎥
+    //     //   ⎣  0       0       1    ⎦
+    //     //   ------------------------------
+    //     //        Rotate X matrix  
+    //     //   ⎡ 1       0         0   ⎤    
+    //     //   ⎢ 0    cos(x)   sin(x)  ⎥  
+    //     //   ⎣ 0   -sin(x)   cos(x)  ⎦  
+    //     //   ------------------------------            
+    //     dtr = self.mu.dtr
+    //     # build rotationY (see diagram above) 
+    //     y_matrix =  self.identity
+    //     y_matrix[0]  =  math.cos(dtr( yrot ))
+    //     y_matrix[2]  = -math.sin(dtr( yrot ))
+    //     y_matrix[6]  =  math.sin(dtr( yrot ))
+    //     y_matrix[8]  =  math.cos(dtr( yrot ))
+    //     ####                
+    //     # build rotationZ (see diagram above) 
+    //     z_matrix    =  self.identity
+    //     z_matrix[0] =  math.cos(dtr( zrot ))
+    //     z_matrix[1] =  math.sin(dtr( zrot ))
+    //     z_matrix[3] = -math.sin(dtr( zrot ))
+    //     z_matrix[4] =  math.cos(dtr( zrot ))
+    //     tmp_matr =  y_matrix * z_matrix 
+    //     ####
+    //     # build rotationX (see diagram above) 
+    //     x_matrix =  self.identity
+    //     x_matrix[4]  =   math.cos(dtr( xrot )) 
+    //     x_matrix[5]  =   math.sin(dtr( xrot )) 
+    //     x_matrix[7]  =  -math.sin(dtr( xrot ))
+    //     x_matrix[8]  =   math.cos(dtr( xrot ))
+    //     rotation_33 = x_matrix * tmp_matr 
+    //     ############ 
+    //     return rotation_33.batch_mult_pts(points)
+
+
+
+/*
+class spherical(object):
+    def __init__(self,r=0,t=0,p=0):
+        """ r = radius 
+            t = theta 
+            p = phi  (not needed for polar)
+        """
+        #self.mu = math_util() 
+        self.r=r
+        self.t=t
+        self.p=p
+
+    def __repr__(self):
+        return '(%s, %s, %s)' % (self.r, self.p, self.t)
+
+    def __getitem__(self, index):
+        if index==0:
+            return self.r
+        if index==1:
+            return self.t
+        if index==2:
+            return self.p
+
+    def __setitem__(self, key, item):
+        if key==0:
+            self.r = item
+        if key==1:
+            self.t = item
+        if key==2:
+            self.p = item
+
+    def to_cartesian(self, deg_rad='rad'):
+        x = self.r * math.sin(self.p) * math.cos(self.t)
+        y = self.r * math.sin(self.p) * math.sin(self.t)
+        z = self.r * math.cos(self.p)    
+        return (x,y,z)
+ 
+
+    //  UNTESTED 
+    //  from David Gould's book
+    //  Complete Maya Programing II 
+    //  page 14 
+    //  r = length( x y z )
+    //  p = tan-1 (length(x y), z)) 
+    //  t = tan-1 (y,x)
+    
+    // def from_cartesian(self, vec3):
+    //     if isinstance(vec3,tuple):
+    //         vec3 = vec3(vec3[0],vec3[1],vec3[2]) 
+    //     r = vec3.length  
+    //     p = math.atan( -1*math.sqrt(vec3[0]*vec3[0]+vec3[1]*vec3[1])*vec3[2]  ) 
+    //     t = math.atan( -1*(vec3[1]*vec3[0]))
+    //     print('### r %s p %s t %s '%(r,p,t))
+    //     self.r=r
+    //     self.t=t
+    //     self.p=p
+    //     #return type(self)(r,p,t)
+
+
+    //UNTESTED
+    //polar coordinates are spherical without the phi element 
+    //from David Gould's book
+    //Complete Maya Programing II 
+    //page 13         
+    
+    // void cartesian_to_polar (vec3){
+    //     if isinstance(vec3,tuple):
+    //         vec3 = vec3(vec3[0],vec3[1],0) #Z is ignored  
+    //     r = math.sqrt(vec3[0]*vec3[0] + vec3[1]*vec3[1])  
+    //     t = math.atan( vec3[1]*vec3[0] ) 
+    //     print('### cartesian to polar  r %s t %s '%(r,t))
+    //     self.r=r
+    //     self.t=t
+    //     self.p=0
+    // }
+
+*/
+
+
+/*****************************/
 
 /*
 
@@ -891,280 +1302,6 @@ class matrix22(object):
             tmp_buffer.append( self * pt )
         return tmp_buffer
 
-###############################################
-class matrix33(object):
-    """ 3X3 matrix from pure python 
-        limited support to interface to numpy arrays
-
-        the patern "return type(self) is nice to return copies of itself,
-        but beware that this structure is not compatible for passing mutable types.
-        Only primitive types work, in this case, 9 floats  
-    """
-    def __init__(self, a=1,b=0,c=0,
-                       d=0,e=1,f=0,
-                       g=0,h=0,i=1):
-        self.m = [a,b,c,d,e,f,g,h,i]
-        self.mu = math_util()
-
-    def test_index(self):
-        """ fill matrix with incrementing numbers to see indices 
-            for testing transpose and other things 
-        """
-        tmp = type(self)()
-        for i in range(9):
-            tmp.m[i] = i
-        return tmp
-
-
-    @property
-    def determinant(self):
-        """
-            https://www.mathsisfun.com/algebra/matrix-determinant.html
-
-                  a b c  |  0 1 2  |        
-             A =  d e f  |  3 4 5  |       
-                  g h i  |  6 7 8  |     
-           
-            |A| = a(ei − fh) − b(di − fg) + c(dh − eg)
-            |A| = 0(48 − 57) − 1(38 − 56) + 2(37 − 46)
-
-        """  
-        a = self.copy() 
-        o = a[0]* ((a[4]*a[8])-(a[5]*a[7])) - a[1]*((a[3]*a[8])-(a[5]*a[6])) +  a[2]*((a[3]*a[7])-(a[4]*a[6]))
-        return o
-
-
-
-    def copy(self, mtype=None):
-        """ create a copy of this matrix - can be same type or a numpy.ndarray """
-        if not mtype:
-            return type(self)(
-                self.m[0] , self.m[1] , self.m[2] ,
-                self.m[3] , self.m[4] , self.m[5] ,
-                self.m[6] , self.m[7] , self.m[8]
-            )
-
-
-    @property
-    def transpose(self):
-        """
-        # standard indicies  |  #transposed indicies
-        1  2  3              |   1 4 7
-        4  5  6              |   2 5 8
-        7  8  9              |   3 6 9 
-       
-        """
-
-        return type(self)(
-            self.m[0], self.m[3], self.m[6],
-            self.m[1], self.m[4], self.m[7],
-            self.m[2], self.m[5], self.m[8] 
-        )
-
-    @property
-    def inverse(self):
-        """
-            NOT DONE 
-            multiply a matrix by its inverse and we end up with the Identity Matrix.
-
-            https://www.wikihow.com/Find-the-Inverse-of-a-3x3-Matrix
-            
-            https://www.mathsisfun.com/algebra/matrix-inverse.html
-        a = self.copy()
-        o = self.identity 
-
-        det = a.determinant
-        
-        if det == 0:
-            # determinant is 0, matrix has no inverse
-            return None 
-        else:     
-            print( '### ### ' , a )
-
-            b = a.transpose
-
-            print ("TRANSPOSE IS  ", a.transpose )
-       
-
-            return type(self)(
-                o.m[0], o.m[1], o.m[2],
-                o.m[3], o.m[4], o.m[5],
-                o.m[6], o.m[7], o.m[8] 
-            )
-        """
-        pass
-
-    def __add__(self, other):
-        return type(self)(
-            self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
-            self.m[3]+n[3], self.m[4]+n[4], self.m[5]+n[5],
-            self.m[6]+n[6], self.m[7]+n[7], self.m[8]+n[8]     
-        )
-    
-    def __sub__(self, other):
-        return type(self)(
-            self.m[0]-n[0], self.m[1]-n[1], self.m[2]-n[2],
-            self.m[3]-n[3], self.m[4]-n[4], self.m[5]-n[5],
-            self.m[6]-n[6], self.m[7]-n[7], self.m[8]-n[8]     
-        )
-
-    # def __truediv__(self, other):
-    #     # matrices don't divide! there is no concept of dividing by a matrix.
-    #     # multiply by an inverse, which achieves the same thing.
-
-    def __mul__(self, n):
-        """ multiply two 3X3 matricies together 
-
-            the order that you mutliply will call a different object!!!
-            make sure you do "this * other", NOT "other * this"
-
-        """
-
-        if isinstance(n, vec3):
-            outx = self.m[0]*n.x + self.m[3]*n.y + self.m[6]*n.z 
-            outy = self.m[1]*n.x + self.m[4]*n.y + self.m[7]*n.z 
-            outz = self.m[2]*n.x + self.m[5]*n.y + self.m[8]*n.z 
-            return  (outx, outy, outz)
-
-
-        if type(n) == type(self):
-            return type(self)(
-                    self.m[0]*n[0]  + self.m[1]*n[3]  + self.m[2]*n[6],
-                    self.m[0]*n[1]  + self.m[1]*n[4]  + self.m[2]*n[7],
-                    self.m[0]*n[2]  + self.m[1]*n[5]  + self.m[2]*n[8],
-                    self.m[3]*n[0]  + self.m[4]*n[3]  + self.m[5]*n[6],
-                    self.m[3]*n[1]  + self.m[4]*n[4]  + self.m[5]*n[7],
-                    self.m[3]*n[2]  + self.m[4]*n[5]  + self.m[5]*n[8],
-                    self.m[6]*n[0]  + self.m[7]*n[3]  + self.m[8]*n[6],
-                    self.m[6]*n[1]  + self.m[7]*n[4]  + self.m[8]*n[7],
-                    self.m[6]*n[2]  + self.m[7]*n[5]  + self.m[8]*n[8]   
-                   )
-
-    def batch_mult_pts(self, pts):
-        """ iterate a list of points and multiply them by this matrix """
-
-        tmp_buffer = []
-        out = None
-        for pvec in pts:  
-            tmp_buffer.append( self * pvec )
-        return tmp_buffer
-
-
-    def align_two_vec3(self, a, b):
-        """  UNFINISHED !! 
-
-             https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
-       
-              ⎛cosθ −sinθ  0 ⎞
-          G = ⎜sinθ  cosθ  0 ⎟ 
-              ⎝0      0    1 ⎠
-
-                --------------------------------------------------------------
-               Given our unit vectors, we note that cosθ=A⋅B, and sinθ=||A×B||
-      
-              ⎛ A.B    -||A×B||    0 ⎞
-          G = ⎜||A×B||   A.B       0 ⎟ 
-              ⎝0          0        1 ⎠
-
-
-        """
-        theta = self.mu.dtr(angle)
-        #axis = vec3.normal
-        axis = vec3.as_np
-        #tmpm33 = self.identity
-        
-        tmpm33 = expm(np.cross(np.eye(3), axis / np.linalg.norm(axis) * theta)) 
-
-        return self.from_np(tmpm33)
-
-    def from_euler(self, xrot, yrot, zrot):
-        """
-            derived from the rotate_pts_3d function 
-        """
-        dtr = self.mu.dtr
-
-        # build rotationY (see diagram above) 
-        y_matrix =  self.identity
-        y_matrix[0]  =  math.cos(dtr( yrot ))
-        y_matrix[2]  = -math.sin(dtr( yrot ))
-        y_matrix[6]  =  math.sin(dtr( yrot ))
-        y_matrix[8]  =  math.cos(dtr( yrot ))
-
-        ####                
-        # build rotationZ (see diagram above) 
-        z_matrix    =  self.identity
-        z_matrix[0] =  math.cos(dtr( zrot ))
-        z_matrix[1] =  math.sin(dtr( zrot ))
-        z_matrix[3] = -math.sin(dtr( zrot ))
-        z_matrix[4] =  math.cos(dtr( zrot ))
-        tmp_matr =  y_matrix * z_matrix 
-
-        ####
-        # build rotationX (see diagram above) 
-        x_matrix =  self.identity
-        x_matrix[4]  =   math.cos(dtr( xrot )) 
-        x_matrix[5]  =   math.sin(dtr( xrot )) 
-        x_matrix[7]  =  -math.sin(dtr( xrot ))
-        x_matrix[8]  =   math.cos(dtr( xrot ))
-        rotation_33 = x_matrix * tmp_matr 
- 
-        self.insert(rotation_33)
-
-    def rotate_pts_3d(self, points, xrot, yrot, zrot):
-        """
-          The "standard" 9 element, Row major, 3X3 rotation matrix used by Maya
-             
-
-           ⎡0  1  2⎤      xx xy xz 
-           ⎢3  4  5⎥      yx yy yz 
-           ⎣6  7  8⎦      zx zy zz 
-           ------------------------------
-                Rotate Y matrix     
-           ⎡cos(y)  0      -sin(y) ⎤ 
-           ⎢0       1       0      ⎥ 
-           ⎣sin(y)  0       cos(y) ⎦ 
-           ------------------------------
-                Rotate Z  matrix 
-           ⎡  cos(z)  sin(z)  0    ⎤ 
-           ⎢ -sin(z)  cos(z)  0    ⎥
-           ⎣  0       0       1    ⎦
-           ------------------------------
-                Rotate X matrix  
-           ⎡ 1       0         0   ⎤    
-           ⎢ 0    cos(x)   sin(x)  ⎥  
-           ⎣ 0   -sin(x)   cos(x)  ⎦  
-           ------------------------------            
- 
-        """
-        dtr = self.mu.dtr
-
-        # build rotationY (see diagram above) 
-        y_matrix =  self.identity
-        y_matrix[0]  =  math.cos(dtr( yrot ))
-        y_matrix[2]  = -math.sin(dtr( yrot ))
-        y_matrix[6]  =  math.sin(dtr( yrot ))
-        y_matrix[8]  =  math.cos(dtr( yrot ))
-
-        ####                
-        # build rotationZ (see diagram above) 
-        z_matrix    =  self.identity
-        z_matrix[0] =  math.cos(dtr( zrot ))
-        z_matrix[1] =  math.sin(dtr( zrot ))
-        z_matrix[3] = -math.sin(dtr( zrot ))
-        z_matrix[4] =  math.cos(dtr( zrot ))
-        tmp_matr =  y_matrix * z_matrix 
-
-        ####
-        # build rotationX (see diagram above) 
-        x_matrix =  self.identity
-        x_matrix[4]  =   math.cos(dtr( xrot )) 
-        x_matrix[5]  =   math.sin(dtr( xrot )) 
-        x_matrix[7]  =  -math.sin(dtr( xrot ))
-        x_matrix[8]  =   math.cos(dtr( xrot ))
-        rotation_33 = x_matrix * tmp_matr 
-
-        ############ 
-        return rotation_33.batch_mult_pts(points)
 
 ###############################################
 class matrix44(object):
@@ -1893,114 +2030,7 @@ class quaternion(object):
         
         return result
 
-###############################################
-class spherical(object):
-    """ UNTESTED -   polar and spherical coordinates 
 
-    # https://stackoverflow.com/questions/4116658/faster-numpy-cartesian-to-spherical-coordinate-conversion
-
-    def cart2sph(x,y,z):
-        XsqPlusYsq = x**2 + y**2
-        r = m.sqrt(XsqPlusYsq + z**2)               # r
-        elev = m.atan2(z,m.sqrt(XsqPlusYsq))     # theta
-        az = m.atan2(y,x)                           # phi
-        return r, elev, az
-
-    def cart2sphA(pts):
-        return np.array([cart2sph(x,y,z) for x,y,z in pts])
-
-    def appendSpherical(xyz):
-        np.hstack((xyz, cart2sphA(xyz)))
-
-    """
-
-    def __init__(self,r=0,t=0,p=0):
-        """ r = radius 
-            t = theta 
-            p = phi  (not needed for polar)
-        """
-        #self.mu = math_util() 
-        self.r=r
-        self.t=t
-        self.p=p
-
-    def __repr__(self):
-        return '(%s, %s, %s)' % (self.r, self.p, self.t)
-
-    def __getitem__(self, index):
-        if index==0:
-            return self.r
-        if index==1:
-            return self.t
-        if index==2:
-            return self.p
-
-    def __setitem__(self, key, item):
-        if key==0:
-            self.r = item
-        if key==1:
-            self.t = item
-        if key==2:
-            self.p = item
-
-    def to_cartesian(self, deg_rad='rad'):
-        """ from David Gould's book
-            Complete Maya Programing II 
-            page 14 
-        """
-        x = self.r * math.sin(self.p) * math.cos(self.t)
-        y = self.r * math.sin(self.p) * math.sin(self.t)
-        z = self.r * math.cos(self.p)    
-        return (x,y,z)
- 
-    def from_cartesian(self, vec3):
-        """ UNTESTED 
-            from David Gould's book
-            Complete Maya Programing II 
-            page 14 
-
-            r = length( x y z )
-            p = tan-1 (length(x y), z)) 
-            t = tan-1 (y,x)
-        """        
-        if isinstance(vec3,tuple):
-            vec3 = vec3(vec3[0],vec3[1],vec3[2]) 
-
-        r = vec3.length  
-        p = math.atan( -1*math.sqrt(vec3[0]*vec3[0]+vec3[1]*vec3[1])*vec3[2]  ) 
-        t = math.atan( -1*(vec3[1]*vec3[0]))
-        print('### r %s p %s t %s '%(r,p,t))
-        self.r=r
-        self.t=t
-        self.p=p
-        #return type(self)(r,p,t)
-
-    def polar_to_cartesian(self):
-        """ UNTESTED
-            polar coordinates are spherical without the phi element 
-            from David Gould's book
-            Complete Maya Programing II 
-            page 13         
-        """ 
-        pass
-
-    def cartesian_to_polar(self, vec3):
-        """ UNTESTED
-            polar coordinates are spherical without the phi element 
-            from David Gould's book
-            Complete Maya Programing II 
-            page 13         
-        """ 
-        if isinstance(vec3,tuple):
-            vec3 = vec3(vec3[0],vec3[1],0) #Z is ignored  
-
-        r = math.sqrt(vec3[0]*vec3[0] + vec3[1]*vec3[1])  
-        t = math.atan( vec3[1]*vec3[0] ) 
-
-        print('### cartesian to polar  r %s t %s '%(r,t))
-        self.r=r
-        self.t=t
-        self.p=0
 
 */
 

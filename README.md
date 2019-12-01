@@ -4,12 +4,14 @@
 One of the first tests I did to learn about writing an openGL app on Linux in C.
 
 
-The original motivation for writing this was I needed a way to display an image on the screen. 
+My original motivation for writing this was that I needed a way to display an image on the screen in real time 
+from some electronics that were scanning it and beaming the pixels in byte at a time. 
 
-The image was for a "real time" view of image data that was coming in over a serial port 
-for a DIY scanning electron microscope. 
+This is a branch of semraster (https://github.com/keithlegg/semraster), which is a snapshot of the 
+project in some sort of working state. 
 
-That propject ended, but this continues to live as a set of tools for playing with graphics and general nerdery.
+That project ended, but this continues to live as a set of tools for playing with graphics and general nerdery.
+
 
 Tested on Linux and OSX. 
 

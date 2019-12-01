@@ -487,6 +487,89 @@ void drawglscene_2d()
     
 }//end display callback 
 
+
+/***************************************/
+
+void draw_3d_cube()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
+    glLoadIdentity();               // Reset The View
+
+    glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
+    glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
+    glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
+    glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
+    
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
+
+    glBegin(GL_QUADS);                      // begin drawing a cube
+    
+    // Front Face (note that the texture's corners have to match the quad's corners)
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    
+    // Back Face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    
+    // Top Face
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    
+    // Bottom Face       
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    
+    // Right face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    
+    // Left Face
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    
+    glEnd();  // done with the polygon.
+ 
+    unsigned int u_edge = img_usize - pong_size;
+    unsigned int v_edge = img_vsize - pong_size;
+
+    if(upos<0)         { upos = 100; }
+    if(vpos<0)         { vpos = 100; }
+    if(upos>img_usize) { upos = 100; }
+    if(vpos>img_vsize) { vpos = 100; }
+
+
+    // animate some numbers 
+    if(upos>=u_edge)     { dir_u = 1; }
+    if(upos<=pong_size)  { dir_u = 0; }
+
+    if(vpos>=u_edge)    { dir_v = 1; }
+    if(vpos<=pong_size) { dir_v = 0; }
+
+    if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
+    if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
+
+    
+    //animateTextures2(main_bg_bfr);
+    
+    animateTextures3(main_bg_bfr);
+
+    // since this is double buffered, swap the buffers to display what just got drawn.
+    glutSwapBuffers();
+}
+
 /***************************************/
 
 
@@ -868,6 +951,163 @@ void flatImageDemo(int *argc, char** argv){
    
 }
 
+
+
+void maya_navigation_demo(int *argc, char** argv){
+    
+    int screenSize = 512; //defaults to 512
+    if (argv[1]){
+       screenSize = atoi(argv[1]);
+    }
+
+    printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
+
+    // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
+    glutInit(argc, argv);  
+
+
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
+    glutInitWindowSize(screenSize, screenSize);  //window size
+
+    // the window starts at the upper left corner of the screen  
+    glutInitWindowPosition(0, 0);  
+     
+    window = glutCreateWindow("Maya navigation demo"); //create an opengl window 
+
+    //register display callback       
+    glutDisplayFunc(&draw_3d_cube);   
+
+    // Even if there are no events, redraw our gl scene.  
+    glutIdleFunc(&draw_3d_cube);
+
+    glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
+    glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
+    
+    InitGL(screenSize, screenSize); // Initialize window. 
+
+
+    ///////////////////////////    
+    //glutMouseFunc (MouseButton);
+    //glutMotionFunc (MouseMotion);
+  
+    ///////////////////////////  
+
+    // public float zoomSpeed    = 1.2f;
+    // public float moveSpeed    = 1.9f;
+    // public float rotateSpeed  = 4.0f;
+    // public Vector3 startpos = new Vector3(0, 130, 60);
+
+    // private GameObject orbitVector ;
+    // private Quaternion orbt_rot_original;
+
+    // private Vector3 orbt_xform_original;
+    //     // Use this for initialization
+    //     void Start () {
+    //     // Create a capsule (which will be the lookAt target and global orbit vector)
+    //     orbitVector = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+    //     orbitVector.transform.position = Vector3.zero;
+    //     // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
+    //     transform.position = startpos;  
+    //     transform.LookAt(orbitVector.transform.position, Vector3.up);
+    //     orbitVector.renderer.enabled = false; //hide the capsule object     
+    //     ///
+    //     orbt_xform_original = orbitVector.transform.position;
+    //     orbt_rot_original   = orbitVector.transform.rotation;
+    // }
+
+    
+    // void reset_xforms(){
+    //     transform.parent = orbitVector.transform;
+    //     orbitVector.transform.position = orbt_xform_original ;
+    //     orbitVector.transform.rotation = orbt_rot_original;
+    //     transform.parent = null;
+    //     transform.position = startpos;
+    // }
+
+    // var x = Input.GetAxis("Mouse X") ;
+    // var y = Input.GetAxis("Mouse Y") ;
+    
+    //var wheelie = Input.GetAxis("Mouse ScrollWheel");
+        
+    // if (wheelie < 0) // back
+    // {
+    //     var currentZoomSpeed = 100f;
+    //     transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
+    // }
+    // if (wheelie > 0) // back
+    // {
+    //      var currentZoomSpeed = 100f;
+    //      transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
+    // }
+
+    /*
+    //Input.GetAxis("Mouse ScrollWheel") < 0) // back
+    if( Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.LeftAlt) ){
+
+      // Distance between camera and orbitVector. We'll need this in a few places
+      var distanceToOrbit = Vector3.Distance(transform.position, orbitVector.transform.position);
+    
+        //RMB - ZOOM
+        if (Input.GetMouseButton(1)) {
+            
+            // Refine the rotateSpeed based on distance to orbitVector
+            var currentZoomSpeed = Mathf.Clamp(zoomSpeed * (distanceToOrbit / 50), 0.1f, 2.0f);
+            
+            // Move the camera in/out
+            transform.Translate(Vector3.forward * (x * currentZoomSpeed));
+            
+            // If about to collide with the orbitVector, repulse the orbitVector slightly to keep it in front of us
+            if (Vector3.Distance(transform.position, orbitVector.transform.position) < 3) {
+                orbitVector.transform.Translate(Vector3.forward, transform);
+            }
+
+        
+        //LMB - PIVOT
+        } else if (Input.GetMouseButton(0)) {
+            
+            // Refine the rotateSpeed based on distance to orbitVector
+            var currentRotateSpeed = Mathf.Clamp(rotateSpeed * (distanceToOrbit / 50), 1.0f, rotateSpeed);
+            
+            
+            // Temporarily parent the camera to orbitVector and rotate orbitVector as desired
+            transform.parent = orbitVector.transform;
+            orbitVector.transform.Rotate(Vector3.right * (y * currentRotateSpeed));
+            orbitVector.transform.Rotate(Vector3.up * (x * currentRotateSpeed), Space.World);
+            transform.parent = null;
+                    
+        //MMB - PAN
+        else if (Input.GetMouseButton(2)) {
+            
+            // Calculate move speed
+            var translateX = Vector3.right * (x * moveSpeed) * -1;
+            var translateY = Vector3.up * (y * moveSpeed) * -1;
+            
+            // Move the camera
+            transform.Translate(translateX);
+            transform.Translate(translateY);
+            
+            // Move the orbitVector with the same values, along the camera's axes. In effect causing it to behave as if temporarily parented.
+            orbitVector.transform.Translate(translateX, transform);
+            orbitVector.transform.Translate(translateY, transform);
+        }
+    */        
+            
+
+
+
+    ///////////////////////////      
+    // Create our popup menu
+    BuildPopupMenu ();
+    glutAttachMenu (GLUT_RIGHT_BUTTON);
+
+    loadImage("textures/generated1.bmp" , imageloaded_bfr);
+    loadImage("textures/generated3.bmp" , imageloaded_bfr2);
+
+    glutMainLoop();// Start Event Processing Engine   
+
+
+}
+
 /***************************************/
 
 void test_math_ops(void){
@@ -908,8 +1148,9 @@ int main(int argc, char **argv)
     test_math_ops();
 
     //flatImageDemo(&argc, argv); //start up openGL 
-
     spinningCubeDemo(&argc, argv); //start up openGL 
+    //maya_navigation_demo(&argc, argv);
+
 
 
     return 1;

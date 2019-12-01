@@ -95,13 +95,29 @@ vector3d mult_m44_vec3(m44 m, vector3d v);
 m33 mult_mat33(m33 m, m33 n);
 m44 mult_mat44(m44 m, m44 n);
 
+m33 copy_matrix( m33 input );
+m44 copy_matrix( m44 input );
+
+m33 test_indices(void);
+m33 determinant(void);
+m33 transpose(m33 input);
+
 vector3d add_vec3 (vector3d v1, vector3d v2);
 vector3d sub_vec3 (vector3d v1, vector3d v2);
 vector3d mult_vec3 (vector3d v1, vector3d v2);
 vector3d div_vec3 (vector3d v1, vector3d v2);
 
 
+m33 matrix_add(m33 other);
+m44 matrix_add(m44 other);
+
+m33 matrix_sub(m33 other);
+m44 matrix_sub(m44 other);
+
 /////////
+
+m33 identity33(void);
+m44 identity44(void);
 
 m33 new_m33( double m0 , double m1 , double m2,  
              double m3 , double m4 , double m5, 
@@ -113,6 +129,8 @@ m44 new_m44( double m0 , double m1 , double m2 , double m3,
              double m8 , double m9 , double m10, double m11,
              double m12, double m13, double m14, double m15
     );
+
+
 
 
 #endif
