@@ -61,9 +61,9 @@ static BOOL g_bTexture = FALSE;
 
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_Width  = 600;                          // Initial window width
-static int g_Height = 600;                         // Initial window height
+static int g_Height = 600;                          // Initial window height
 static int g_yClick = 0;
-static float g_lightPos[4] = { 10, 10, -100, 1 };  // Position of light
+static float g_lightPos[4] = { 10, 10, -100, 1 };   // Position of light
 
 
 
@@ -104,14 +104,14 @@ void SelectFromMenu(int idCommand)
         break;
     }
 
-  // Almost any menu selection requires a redraw
-  glutPostRedisplay();
+
+    glutPostRedisplay();
 }
 
 
 /***************************************************************/
 
-int window; // The number of our GLUT window 
+int window_id; // The number of our GLUT window 
  
 GLuint texture[1]; // storage for one texture  
 
@@ -360,7 +360,7 @@ void animateTextures3(Image *loaded_texture)
                            0,1,0,
                            0,0,1);
 
-    vector2d v1 = newvec2(102.0, 301.0);
+    vec2 v1 = newvec2(102.0, 301.0);
 
     draw_line(pt_rgb_bfr, loaded_texture->sizeX , v1.x , v1.y , 0 , 0 , pt_linecolor);
     */
@@ -688,7 +688,7 @@ void keyPressed(unsigned char key, int x, int y)
     //ESCAPE KEY
     if (key == 27) 
     { 
-        glutDestroyWindow(window); 
+        glutDestroyWindow(window_id); 
         exit(0);                   
     }
     
@@ -779,27 +779,13 @@ void MouseButton(int button, int state, int x, int y)
     // If button1 pressed, mark this state so we know in motion function.
 
     if (button == GLUT_LEFT_BUTTON)
-      {
+    {
         g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         g_yClick = y - 3 * g_fViewDistance;
-      }
+    }
+
 }
 
-void maya_mouse_button(int button, int state, int x, int y)
-{
-    // Respond to mouse button presses.
-    // If button1 pressed, mark this state so we know in motion function.
-
-    if (button == GLUT_LEFT_BUTTON)
-      {
-        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        g_yClick = y - 3 * g_fViewDistance;
-      }
-}
-
-
-/*****************************************/
-/*****************************************/
 
 void MouseMotion(int x, int y)
 {
@@ -816,18 +802,63 @@ void MouseMotion(int x, int y)
 }
 
 
+/*****************************************/
+/*****************************************/
+
+void maya_mouse_button(int button, int state, int x, int y)
+{
+    // Respond to mouse button presses.
+    // If button1 pressed, mark this state so we know in motion function.
+
+    printf("maya button x %f y %f \n",x , y);
+
+    if (button == GLUT_LEFT_BUTTON)
+      {
+        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
+        g_yClick = y - 3 * g_fViewDistance;
+        
+        printf("maya left click \n");
+
+      }
+
+    if (button == GLUT_MIDDLE_BUTTON)
+      {
+        
+        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
+        printf("maya middle click \n");
+
+      }
+
+    if (button == GLUT_RIGHT_BUTTON)
+      {
+        
+        printf("maya right click \n");
+
+      }
+
+}
+
+
+// var x = Input.GetAxis("Mouse X") ;
+// var y = Input.GetAxis("Mouse Y") ;
+
+
 void maya_mouse_motion(int x, int y)
 {
     // If button1 pressed, zoom in/out if mouse is moved up/down.
+ 
 
     if (g_bButton1Down)
     {
+        printf("MOVE! %f %f \n", x, y);
         
-        // g_fViewDistance = (y - g_yClick) / 3.0;
-        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
-        // glutPostRedisplay();
+        g_fViewDistance = (y - g_yClick) / 3.0;
+        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+           g_fViewDistance = VIEWING_DISTANCE_MIN;
+        glutPostRedisplay();
     }
+
+
 }
 
 
@@ -858,7 +889,7 @@ void spinningCubeDemo(int *argc, char** argv){
     // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
      
-    window = glutCreateWindow("SEM raster display"); //create an opengl window 
+    window_id = glutCreateWindow("3D cube demo"); //create an opengl window 
 
     //register display callback       
     glutDisplayFunc(&drawglscene_3d);   
@@ -915,7 +946,7 @@ void flatImageDemo(int *argc, char** argv){
     // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
      
-    window = glutCreateWindow("SEM raster display"); //create an opengl window 
+    window_id = glutCreateWindow("2D polygon demo"); //create an opengl window 
 
     glutDisplayFunc(&drawglscene_2d);//register display callback       
 
@@ -983,6 +1014,13 @@ void flatImageDemo(int *argc, char** argv){
 }
 
 
+/********************************************/
+
+float zoomSpeed    = 1.2f;
+float moveSpeed    = 1.9f;
+float rotateSpeed  = 4.0f;
+vec3 startpos = newvec3(0.0, 130.0, 60.0);
+
 
 void maya_navigation_demo(int *argc, char** argv){
     
@@ -1003,7 +1041,7 @@ void maya_navigation_demo(int *argc, char** argv){
     // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
      
-    window = glutCreateWindow("Maya navigation demo"); //create an opengl window 
+    window_id = glutCreateWindow("Maya navigation demo"); //create an opengl window 
 
     //register display callback       
     glutDisplayFunc(&draw_3d_cube);   
@@ -1023,13 +1061,10 @@ void maya_navigation_demo(int *argc, char** argv){
   
     ///////////////////////////  
 
-    // public float zoomSpeed    = 1.2f;
-    // public float moveSpeed    = 1.9f;
-    // public float rotateSpeed  = 4.0f;
-    // public Vector3 startpos = new Vector3(0, 130, 60);
 
-    // private GameObject orbitVector ;
-    // private Quaternion orbt_rot_original;
+
+    // GameObject orbitVector ;
+    // Quaternion orbt_rot_original;
 
     // private Vector3 orbt_xform_original;
     //     // Use this for initialization
@@ -1055,8 +1090,7 @@ void maya_navigation_demo(int *argc, char** argv){
     //     transform.position = startpos;
     // }
 
-    // var x = Input.GetAxis("Mouse X") ;
-    // var y = Input.GetAxis("Mouse Y") ;
+
     
     //var wheelie = Input.GetAxis("Mouse ScrollWheel");
         
@@ -1128,8 +1162,8 @@ void maya_navigation_demo(int *argc, char** argv){
 
     ///////////////////////////      
     // Create our popup menu
-    BuildPopupMenu ();
-    glutAttachMenu (GLUT_RIGHT_BUTTON);
+    //BuildPopupMenu ();
+    //glutAttachMenu (GLUT_RIGHT_BUTTON);
 
     loadImage("textures/generated1.bmp" , imageloaded_bfr);
     loadImage("textures/generated3.bmp" , imageloaded_bfr2);
@@ -1143,36 +1177,37 @@ void maya_navigation_demo(int *argc, char** argv){
 
 void test_math_ops(void){
 
-    vector2d vec2 = newvec2( 12.5, 32.6 );
-    vector2d nrml_vec2 = normalize(vec2);
+    vec2 vec2d = newvec2( 12.5, 32.6 );
+    vec2 nrml_vec2 = normalize(vec2d);
 
     printf("-------------------------------------------------\n");
 
-    printf("# 2d vector            %f %f     \n", vec2.x, vec2.y );
-    printf("# 2d vector length is  %f        \n", fcalc_distance(vec2) );
+    printf("# 2d vector            %f %f     \n", vec2d.x, vec2d.y );
+    printf("# 2d vector length is  %f        \n", fcalc_distance(vec2d) );
     printf("# 2d vector normalized %f %f     \n", nrml_vec2.x, nrml_vec2.y );
 
     printf("\n");
 
     /**********/
 
-    vector3d vec3      = newvec3( 12.5, 32.5, 42.4);
-    vector3d nrml_vec3 = normalize(vec3);
+    vec3 vec3d      = newvec3( 12.5, 32.5, 42.4);
+    vec3 nrml_vec3 = normalize(vec3d);
 
-    printf("# 3d vector            %f %f %f  \n", vec3.x, vec3.y, vec3.z );
-    printf("# 3d vector length is  %f        \n", fcalc_distance(vec3) );
+    printf("# 3d vector            %f %f %f  \n", vec3d.x, vec3d.y, vec3d.z );
+    printf("# 3d vector length is  %f        \n", fcalc_distance(vec3d) );
     printf("# 3d vector normalized %f %f %f  \n", nrml_vec3.x, nrml_vec3.y, nrml_vec3.z );
     
     printf("-------------------------------------------------\n");    
 
-    m33 new_m33 = identity33();
+    m33 new_m33 = test_indices33();
     m44 new_m44 = identity44();
 
-    print_matrix(new_m33);
+   
+
+    // print_matrix(transpose(new_m33));
 
     printf("-------------------------------------------------\n");  
 
-    print_matrix(new_m44);
 
 
 }
@@ -1189,9 +1224,9 @@ int main(int argc, char **argv)
     test_math_ops();
 
     // flatImageDemo(&argc, argv); //start up openGL 
-    // spinningCubeDemo(&argc, argv); //start up openGL 
+    //spinningCubeDemo(&argc, argv); //start up openGL 
     
-    //maya_navigation_demo(&argc, argv);
+    maya_navigation_demo(&argc, argv);
 
 
 

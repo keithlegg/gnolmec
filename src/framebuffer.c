@@ -1199,7 +1199,7 @@ void draw_poly_line ( RGBAType *fb_image, int imagewidth, pix_coord *vertices, i
 /*
  transform a vector to a point and draw it. 
 */
-void draw_vector ( RGBAType *fb_image, int imagewidth, vector2d vec, int xpos, int ypos, RGBType *color )
+void draw_vector ( RGBAType *fb_image, int imagewidth, vec2 vec, int xpos, int ypos, RGBType *color )
 {
     int start_x = xpos;
     int start_y = ypos;

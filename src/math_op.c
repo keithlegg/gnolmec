@@ -46,12 +46,12 @@ double rad_to_deg ( double rad){
 }
 
 /*****************************/
-double dotProduct ( vector2d v1, vector2d v2){
+double dotProduct ( vec2 v1, vec2 v2){
     return (v1.x*v2.x + v1.y*v2.y ); 
 }
 
 
-double dotProduct ( vector3d v1, vector3d v2){
+double dotProduct ( vec3 v1, vec3 v2){
     return (v1.x*v2.x + v1.y*v2.y + v1.z*v2.z); 
 }
 
@@ -68,12 +68,12 @@ double fcalc_distance(int pt1[2], int pt2[2]){
 }
 
 // distance between 2 vectors in 2D
-double fcalc_distance( vector2d input){
+double fcalc_distance( vec2 input){
     return sqrt( (input.x * input.x) + (input.y * input.y) );
 }
 
 // distance between 2 vectors in 3D
-double fcalc_distance( vector3d input){
+double fcalc_distance( vec3 input){
     return sqrt( (input.x * input.x) + (input.y * input.y) + (input.z * input.z) );
 }
 
@@ -99,10 +99,10 @@ double calc_theta_vert ( double start_x, double start_y, double end_x, double en
 
 /*****************************/
 
-double angle_between( vector2d v_one, vector2d v_two )
+double angle_between( vec2 v_one, vec2 v_two )
 {
-    vector2d v1 ;
-    vector2d v2 ;
+    vec2 v1 ;
+    vec2 v2 ;
     v1 = normalize(v_one);
     v2 = normalize(v_two);
     double dot = dotProduct(v1,v2);
@@ -114,15 +114,15 @@ double angle_between( vector2d v_one, vector2d v_two )
 /*****************************/
 /*****************************/
 
-vector2d newvec2( int x, int y ){
-    vector2d output;
+vec2 newvec2( int x, int y ){
+    vec2 output;
     output.x = (double)x;
     output.y = (double)y;
     return output; 
 }
 
-vector2d newvec2( double x, double y ){
-    vector2d output;
+vec2 newvec2( double x, double y ){
+    vec2 output;
     output.x = x;
     output.y = y;
     return output; 
@@ -131,11 +131,11 @@ vector2d newvec2( double x, double y ){
 /*****************************/
 
 /* normalize a vector */
-vector2d normalize( vector2d input )
+vec2 normalize( vec2 input )
 {
      double length  = fcalc_distance(input);
 
-     vector2d output;
+     vec2 output;
 
      if(length != 0)
      {
@@ -147,16 +147,16 @@ vector2d normalize( vector2d input )
 }
 
 /*****************************/
-vector2d scale_vec( vector2d input, double amount ){
-    vector2d output;
+vec2 scale_vec( vec2 input, double amount ){
+    vec2 output;
     output.x = input.x/amount;
     output.y = input.y/amount;
     return output; 
 }
 
 /*****************************/
-vector2d mult_vec_scalar( vector2d input, double amount ){
-    vector2d output;
+vec2 mult_vec_scalar( vec2 input, double amount ){
+    vec2 output;
     output.x = input.x*amount;
     output.y = input.y*amount;
     return output; 
@@ -167,17 +167,17 @@ vector2d mult_vec_scalar( vector2d input, double amount ){
 /*
   convert an arbitrary line segment to a true vector from origin.
 */
-vector2d line2vect(double start_x, double start_y, double end_x, double end_y)
+vec2 line2vect(double start_x, double start_y, double end_x, double end_y)
 {
-    vector2d out;
+    vec2 out;
     out.x = end_x-start_x;
     out.y = end_y-start_y;
     return out;
 }
 
-vector2d line2vect(int start_x, int start_y, int end_x, int end_y)
+vec2 line2vect(int start_x, int start_y, int end_x, int end_y)
 {
-    vector2d out;
+    vec2 out;
     out.x = (double)(end_x-start_x);
     out.y = (double)(end_y-start_y);
     return out;
@@ -187,9 +187,9 @@ vector2d line2vect(int start_x, int start_y, int end_x, int end_y)
 /*****************************/
 
 /* multiply two 2d vectors */
-vector2d vmul_2d ( vector2d v1, vector2d v2 )
+vec2 vmul_2d ( vec2 v1, vec2 v2 )
 {
-     vector2d output;
+     vec2 output;
      
      output.x = v1.x * v2.x;
      output.y = v1.y * v2.y;
@@ -198,13 +198,63 @@ vector2d vmul_2d ( vector2d v1, vector2d v2 )
 }
 
 
+/************************************************/
+
+vec3 add_vec3 (vec3 v1, vec3 v2){
+    vec3 output;
+    output.x = v1.x + v2.x;
+    output.y = v1.y + v2.y;
+    output.z = v1.z + v2.z;
+    
+    return output;
+
+}
+
+
+vec3 sub_vec3 (vec3 v1, vec3 v2){
+    vec3 output;
+    output.x = v1.x - v2.x;
+    output.y = v1.y - v2.y;
+    output.z = v1.z - v2.z;
+    
+    return output;    
+}
+
+vec3 mult_vec3 (vec3 v1, vec3 v2){
+    vec3 output;
+    output.x = v1.x * v2.x;
+    output.y = v1.y * v2.y;
+    output.z = v1.z * v2.z;
+    
+    return output;
+}
+
+
+vec3 div_vec3 (vec3 v1, vec3 v2){
+    // UNTESTED - normalized? 
+    vec3 output;
+
+    // self.x = other.x/other.length()
+    // self.y = other.y/other.length()
+    // self.z = other.y/other.length()
+    // return type(self)(self.x, self.y, self.z)
+    
+    // vec3 output;
+    // output.x = v1.x - v2.x;
+    // output.y = v1.y - v2.y;
+    // output.z = v1.z - v2.z;
+    return output;
+
+}
+
+
 /*****************************/
 /*****************************/
 /*****************************/
 
-vector3d crossProduct(vector3d v1, vector3d v2){
+vec3 crossProduct(vec3 v1, vec3 v2){
     // UNTESTED! 
-    vector3d output;
+    vec3 output;
     
     output.x =  v1.y*v2.z-v1.z*v2.y; 
     output.y =  v1.z*v2.x-v1.x*v2.z; 
@@ -213,16 +263,16 @@ vector3d crossProduct(vector3d v1, vector3d v2){
     return output;
 }
 
-vector3d newvec3( int x, int y, int z ){
-    vector3d output;
+vec3 newvec3( int x, int y, int z ){
+    vec3 output;
     output.x = (double)x;
     output.y = (double)y;
     output.z = (double)z;
     return output; 
 }
 
-vector3d newvec3( double x, double y, double z ){
-    vector3d output;
+vec3 newvec3( double x, double y, double z ){
+    vec3 output;
     output.x = x;
     output.y = y;
     output.z = z;
@@ -230,11 +280,11 @@ vector3d newvec3( double x, double y, double z ){
 }
 
 /* normalize a 3d vector */
-vector3d normalize( vector3d input )
+vec3 normalize( vec3 input )
 {
      double length  = fcalc_distance(input);
 
-     vector3d output;
+     vec3 output;
 
      if(length != 0)
      {
@@ -248,8 +298,8 @@ vector3d normalize( vector3d input )
 }
 
 
-vector3d dtr_vec3(vector3d invec){
-    vector3d output;
+vec3 dtr_vec3(vec3 invec){
+    vec3 output;
 
     //return ( deg_to_rad( invec[0] ),
     //         deg_to_rad( invec[1] ),
@@ -262,8 +312,8 @@ vector3d dtr_vec3(vector3d invec){
 
 /*****************************/
 
-vector3d rtd_vec3(vector3d invec){
-    vector3d output;    
+vec3 rtd_vec3(vec3 invec){
+    vec3 output;    
     // return ( rad_to_deg( invec[0] ),
     //          rad_to_deg( invec[1] ),
     //          rad_to_deg( invec[2] ),
@@ -272,26 +322,26 @@ vector3d rtd_vec3(vector3d invec){
 }        
 
 /*****************************/
-vector3d vect_add( vector3d v1, vector3d v2){
-    vector3d output;    
+vec3 vect_add( vec3 v1, vec3 v2){
+    vec3 output;    
     //return [v1[0]+v2[0], v1[0]+v2[1], v1[2]+v2[2]]
     return output;
 
 }
 
 /*****************************/
-vector3d mult_scalar (double scalar, vector3d v){
-    vector3d output; 
+vec3 mult_scalar (double scalar, vec3 v){
+    vec3 output; 
     // return [v[0]*scalar, v[1]*scalar, v[2]*scalar ]
     return output;
 }
 
 /*****************************/
-/* multiplies a 3X3 matrix by a vector3d 
-   returns a vector3d */
+/* multiplies a 3X3 matrix by a vec3 
+   returns a vec3 */
 
-vector3d mult_m33_vec3(m33 m, vector3d v){
-    vector3d output;
+vec3 mult_m33_vec3(m33 m, vec3 v){
+    vec3 output;
     
     output.x = m.m0 * v.x + m.m3 * v.y + m.m6 * v.z; 
     output.y = m.m1 * v.x + m.m4 * v.y + m.m7 * v.z; 
@@ -305,8 +355,8 @@ vector3d mult_m33_vec3(m33 m, vector3d v){
 /* multiplies a 4X4 matrix by a 3D vector 
    returns a vector tuple */
 
-vector3d mult_m44_vec3(m44 m, vector3d v){
-    vector3d output;
+vec3 mult_m44_vec3(m44 m, vec3 v){
+    vec3 output;
 
     output.x = m.m0*v.x + m.m4*v.y + m.m8  * v.z+m.m12;
     output.y = m.m1*v.x + m.m5*v.y + m.m9  * v.z+m.m13;
@@ -315,54 +365,6 @@ vector3d mult_m44_vec3(m44 m, vector3d v){
     return output;
 }
 
-/************************************************/
-
-vector3d add_vec3 (vector3d v1, vector3d v2){
-    vector3d output;
-    output.x = v1.x + v2.x;
-    output.y = v1.y + v2.y;
-    output.z = v1.z + v2.z;
-    
-    return output;
-
-}
-
-
-vector3d sub_vec3 (vector3d v1, vector3d v2){
-    vector3d output;
-    output.x = v1.x - v2.x;
-    output.y = v1.y - v2.y;
-    output.z = v1.z - v2.z;
-    
-    return output;    
-}
-
-vector3d mult_vec3 (vector3d v1, vector3d v2){
-    vector3d output;
-    output.x = v1.x * v2.x;
-    output.y = v1.y * v2.y;
-    output.z = v1.z * v2.z;
-    
-    return output;
-}
-
-
-vector3d div_vec3 (vector3d v1, vector3d v2){
-    // UNTESTED - normalized? 
-    vector3d output;
-
-    // self.x = other.x/other.length()
-    // self.y = other.y/other.length()
-    // self.z = other.y/other.length()
-    // return type(self)(self.x, self.y, self.z)
-    
-    // vector3d output;
-    // output.x = v1.x - v2.x;
-    // output.y = v1.y - v2.y;
-    // output.z = v1.z - v2.z;
-    return output;
-
-}
 
 
 
@@ -370,7 +372,7 @@ vector3d div_vec3 (vector3d v1, vector3d v2){
 // representing the offset between them 
 // doesnt get much easier than this, just subtract 
 ////////////
-// vector3d between(double pt1_x, double pt1_y, double pt1_z, 
+// vec3 between(double pt1_x, double pt1_y, double pt1_z, 
 //                  double pt2_x, double pt2_y, double pt2_z){
 //   
 //         #if isinstance(pt1, tuple):
@@ -462,7 +464,19 @@ vector3d div_vec3 (vector3d v1, vector3d v2){
 
         return None 
 
-*/        
+*/      
+
+
+/*
+void print_vec2(vec2 input){
+    printf("%f %f %f\n", input.m0, input.m1, input.m2 );
+}
+
+void print_vec3(vec3 input){
+    printf("%f %f %f\n", input.m0, input.m1, input.m2 );
+}
+*/
+
 /*****************************/
 /*****************************/
 /*****************************/
@@ -531,6 +545,36 @@ m44 identity44(void){
     output.m15 = 1.0;
     
     return output;
+}
+
+/*****************************/
+
+m33 matrix_add(m33 other){
+    // self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
+    // self.m[3]+n[3], self.m[4]+n[4], self.m[5]+n[5],
+    // self.m[6]+n[6], self.m[7]+n[7], self.m[8]+n[8]     
+}
+
+m44 matrix_add(m44 other){
+    //  self.m[0] +n[0] , self.m[1]+n[1]  , self.m[2]+n[2]  , self.m[3]+n[3]  , 
+    //  self.m[4] +n[4] , self.m[5]+n[5]  , self.m[6]+n[6]  , self.m[7]+n[7]  ,
+    //  self.m[8] +n[8] , self.m[9]+n[9]  , self.m[10]+n[10], self.m[11]+n[11],
+    //  self.m[12]+n[12], self.m[13]+n[13], self.m[14]+n[14], self.m[15]+n[15]
+
+}
+
+m33 matrix_sub(m33 other){
+    //   self.m[0]-n[0], self.m[1]-n[1], self.m[2]-n[2],
+    //   self.m[3]-n[3], self.m[4]-n[4], self.m[5]-n[5],
+    //   self.m[6]-n[6], self.m[7]-n[7], self.m[8]-n[8]     
+}
+
+m44 matrix_sub(m44 other){
+    //  self.m[0] -n[0] , self.m[1]-n[1]  , self.m[2]-n[2]  , self.m[3]-n[3]  , 
+    //  self.m[4] -n[4] , self.m[5]-n[5]  , self.m[6]-n[6]  , self.m[7]-n[7]  ,
+    //  self.m[8] -n[8] , self.m[9]-n[9]  , self.m[10]-n[10], self.m[11]-n[11],
+    //  self.m[12]-n[12], self.m[13]-n[13], self.m[14]-n[14], self.m[15]-n[15]
+
 }
 
 
@@ -634,7 +678,7 @@ m44 copy_matrix(m44 input){
 }
 
 
-m33 test_indices(void){
+m33 test_indices33(void){
      // create a useless matrix with incrementing numbers  
      // for testing transpose and more 
 
@@ -718,24 +762,6 @@ void print_matrix(m44 input){
 }
 
 
-m33 matrix_add(m33 other){
-    //         self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
-    //         self.m[3]+n[3], self.m[4]+n[4], self.m[5]+n[5],
-    //         self.m[6]+n[6], self.m[7]+n[7], self.m[8]+n[8]     
-}
-
-m44 matrix_add(m44 other){
-}
-
-m33 matrix_sub(m33 other){
-    //         self.m[0]-n[0], self.m[1]-n[1], self.m[2]-n[2],
-    //         self.m[3]-n[3], self.m[4]-n[4], self.m[5]-n[5],
-    //         self.m[6]-n[6], self.m[7]-n[7], self.m[8]-n[8]     
-}
-
-m44 matrix_sub(m44 other){
-
-}
 
 
 /* multiply two 3X3 matricies together 
@@ -1379,7 +1405,7 @@ class matrix44(object):
                )
    
     def __mul__(self, n):
-        """multiply this 4X4 by another 4X4 matrix or a vector3, vector4 """
+        """multiply this 4X4 by another 4X4 matrix or a vec3 vector4 """
 
         if isinstance(n, vec4):
             #untested
