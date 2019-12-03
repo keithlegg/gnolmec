@@ -60,8 +60,7 @@ static BOOL g_bTexture = FALSE;
 //static GLfloat g_farPlane = 1000;
 
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
-static int g_Width  = 600;                          // Initial window width
-static int g_Height = 600;                          // Initial window height
+
 static int g_yClick = 0;
 static float g_lightPos[4] = { 10, 10, -100, 1 };   // Position of light
 
@@ -810,7 +809,7 @@ void maya_mouse_button(int button, int state, int x, int y)
     // Respond to mouse button presses.
     // If button1 pressed, mark this state so we know in motion function.
 
-    printf("maya button x %f y %f \n",x , y);
+    printf("maya button x %d y %d \n",x , y);
 
     if (button == GLUT_LEFT_BUTTON)
       {
@@ -850,7 +849,7 @@ void maya_mouse_motion(int x, int y)
 
     if (g_bButton1Down)
     {
-        printf("MOVE! %f %f \n", x, y);
+        printf("MOVE! %d %d \n", x, y);
         
         g_fViewDistance = (y - g_yClick) / 3.0;
         if (g_fViewDistance < VIEWING_DISTANCE_MIN)
