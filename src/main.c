@@ -9,28 +9,8 @@
 //#define SERIAL_PORT_ID "/dev/tty.usbserial-FTWWRSIBA" // "/dev/tty.usbserial-A400gnmx" // "/dev/ttyUSB0"
 //#define OUTPUT_BINARY "/Users/klegg/image.bin"
 
-////////////////////////
-#ifdef __linux__
-#include <GL/glut.h>     // Header File For The GLUT Library 
-#include <GL/gl.h>       // Header File For The OpenGL32 Library
-#include <GL/glu.h>      // Header File For The GLu32 Library
-#endif
+#include "gl_setup.h"
 
-////////////////////////
-//OSX related 
-#include <string.h>      //for memset 
-
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
 
 ////////////////////////
 
@@ -381,27 +361,6 @@ void animateTextures3(Image *loaded_texture)
 
 }
 
-/***************************************/
-
-// initialize OpenGL  
-void InitGL(int Width, int Height)          // We call this right after our OpenGL window is created.
-{
-        
-    glEnable(GL_TEXTURE_2D);             // Enable Texture Mapping
-    glClearColor(0.0f, 0.0f, .1f, 0.0f); // Clear The Background Color To Blue 
-    glClearDepth(1.0);                   // Enables Clearing Of The Depth Buffer
-    glDepthFunc(GL_LESS);                // The Type Of Depth Test To Do
-    glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
-    glShadeModel(GL_SMOOTH);             // Enables Smooth Color Shading
-    
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();                    // Reset The Projection Matrix
-
-    //gluOrtho2D(0, 100, 0, 100); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
-    
-    glMatrixMode(GL_MODELVIEW);
-}
 
 /***************************************/
 
