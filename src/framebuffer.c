@@ -1057,8 +1057,8 @@ void draw_circle ( RGBType *fb_image, int imagewidth, int x_orig, int y_orig, in
   
     for (int i = 0; i <=360; i++)
     {  
-        plot_x = x_orig + sin(deg_to_rad(i))*dia ;
-        plot_y = y_orig + cos(deg_to_rad(i))*dia ;
+        plot_x = x_orig + sin(dtr(i))*dia ;
+        plot_y = y_orig + cos(dtr(i))*dia ;
         draw_point(fb_image, imagewidth, plot_x, plot_y, color); 
     }
 

@@ -51,8 +51,8 @@ struct quaternion {
 };
 
 
-double deg_to_rad ( double deg);
-double rad_to_deg ( double rad);
+double dtr ( double deg);
+double rtd ( double rad);
 
 double dotProduct ( vec2 v1, vec2 v2);
 double dotProduct ( vec3 v1, vec3 v2);
@@ -125,19 +125,30 @@ m44 identity44(void);
 
 m33 matrix_add(m33 other);
 m44 matrix_add(m44 other);
+
 m33 matrix_sub(m33 other);
 m44 matrix_sub(m44 other);
+
 m33 mult_mat33(m33 m, m33 n);
 m44 mult_mat44(m44 m, m44 n);
+
 m33 copy_matrix( m33 input );
 m44 copy_matrix( m44 input );
+
 m33 test_indices33(void);
-m33 determinant(void);
+m44 test_indices44(void);
+
+double determinant(m33 input);
+double determinant(m44 input);
+
 m33 transpose(m33 input);
+m44 transpose(m44 input);
+
 void print_matrix(m33 input);
 void print_matrix(m44 input);
 
-
+m33 m33_from_euler(double xrot, double yrot, double zrot);
+m44 m44_from_euler(double xrot, double yrot, double zrot);
 
 
 quaternion new_quaternion( double x, double y, double z, double w );

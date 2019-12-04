@@ -90,8 +90,8 @@ void calc_circle ( pix_coord *out_coords, int numdiv, int x_orig, int y_orig, fl
 
     for (int i = 0; i <360; i=i+divamt)
     {  
-        out_coords[*num].x = x_orig + (sin(deg_to_rad(i-rotation_offset))*dia);
-        out_coords[*num].y = y_orig + (cos(deg_to_rad(i-rotation_offset))*dia);
+        out_coords[*num].x = x_orig + (sin(dtr(i-rotation_offset))*dia);
+        out_coords[*num].y = y_orig + (cos(dtr(i-rotation_offset))*dia);
         *num = *num+1;
     }
 
