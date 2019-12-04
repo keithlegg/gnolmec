@@ -1199,10 +1199,13 @@ void test_math_ops(void){
     
     printf("-------------------------------------------------\n");    
 
-    m33 new_m33 = test_indices33();
-    m44 new_m44 = identity44();
+    //m33 new_m33 = test_indices33();
+    //m44 new_m44 = identity44();
 
-   
+    quaternion quat = quaternion_identity();
+
+    print_quaternion( quat );
+
 
     // print_matrix(transpose(new_m33));
 

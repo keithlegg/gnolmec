@@ -17,8 +17,6 @@
 
        https://github.com/keithlegg/pyrender2/blob/master/pygfx/math_ops.py
 
-
-
 */
 
 /*********************************************************/
@@ -802,10 +800,27 @@ m33 transpose(m33 input){
 
 m44 transpose(m44 input){
     m44 output; 
-    // self.m[0], self.m[4], self.m[8] , self.m[12],
-    // self.m[1], self.m[5], self.m[9] , self.m[13],
-    // self.m[2], self.m[6], self.m[10], self.m[14],
-    // self.m[3], self.m[7], self.m[11], self.m[15]
+
+    output.m0 = input.m0;
+    output.m1 = input.m4;
+    output.m2 = input.m8;
+    output.m3 = input.m12;
+
+    output.m4 = input.m1;
+    output.m5 = input.m5;
+    output.m6 = input.m9;
+    output.m7 = input.m13;
+
+    output.m8  = input.m2;
+    output.m9  = input.m6;
+    output.m10 = input.m10;
+    output.m11 = input.m14;
+
+    output.m12 = input.m3;
+    output.m13 = input.m7;
+    output.m14 = input.m11;
+    output.m15 = input.m15;
+
     return output;  
 }
 
@@ -826,60 +841,58 @@ void print_matrix(m44 input){
 m33 m33_from_euler(double xrot, double yrot, double zrot){
     // build rotationY  
     m33 y_matrix = identity33();
-    y_matrix.m0  = cos( dtr( yrot ) );
-
-    //     y_matrix[2]  = -math.sin(dtr( yrot ))
-    //     y_matrix[6]  =  math.sin(dtr( yrot ))
-    //     y_matrix[8]  =  math.cos(dtr( yrot ))
+    y_matrix.m0  =  cos( dtr( yrot ) );
+    y_matrix.m2  = -sin( dtr( yrot ) );
+    y_matrix.m6  =  sin( dtr( yrot ) );
+    y_matrix.m8  =  cos( dtr( yrot ) );
                
-    // build rotationZ (see diagram above) 
+    // build rotationZ  
     m33 z_matrix = identity33();
-    //  z_matrix[0] =  math.cos(dtr( zrot ))
-    //  z_matrix[1] =  math.sin(dtr( zrot ))
-    //  z_matrix[3] = -math.sin(dtr( zrot ))
-    //  z_matrix[4] =  math.cos(dtr( zrot ))
-    //  tmp_matr =  y_matrix * z_matrix 
-
-    // build rotationX (see diagram above) 
-    m33 x_matrix = identity33();
-    //  x_matrix[4]  =   math.cos(dtr( xrot )) 
-    //  x_matrix[5]  =   math.sin(dtr( xrot )) 
-    //  x_matrix[7]  =  -math.sin(dtr( xrot ))
-    //  x_matrix[8]  =   math.cos(dtr( xrot ))
+    z_matrix.m0 =  cos( dtr( zrot ) );
+    z_matrix.m1 =  sin( dtr( zrot ) );
+    z_matrix.m3 = -sin( dtr( zrot ) );
+    z_matrix.m4 =  cos( dtr( zrot ) );
     
-    m33 output;// = x_matrix * tmp_matr 
+    m33 tmp_matr =  mult_mat33( y_matrix , z_matrix); 
+
+    // build rotationX   
+    m33 x_matrix = identity33();
+    x_matrix.m4  =  cos( dtr( xrot ) ); 
+    x_matrix.m5  =  sin( dtr( xrot ) ); 
+    x_matrix.m7  = -sin( dtr( xrot ) );
+    x_matrix.m8  =  cos( dtr( xrot ) );
+    
+    m33 output = mult_mat33( x_matrix , tmp_matr); 
     return output;
 }
 
 
 
 m44 m44_from_euler(double xrot, double yrot, double zrot){
-    m44 output;
+    // build rotationY  
+    m44 y_matrix = identity44();
+    y_matrix.m0  =  cos( dtr( yrot ) );
+    y_matrix.m2  = -sin( dtr( yrot ) );
+    y_matrix.m8  =  sin( dtr( yrot ) );
+    y_matrix.m10 =  cos( dtr( yrot ) );
 
-    // #build rotationY  
-    // y_matrix     =  self.identity
-    // y_matrix[0]  =  math.cos(dtr( yrot ))
-    // y_matrix[2]  = -math.sin(dtr( yrot ))
-    // y_matrix[8]  =  math.sin(dtr( yrot ))
-    // y_matrix[10] =  math.cos(dtr( yrot ))
+    // build rotationZ (see diagram above) 
+    m44 z_matrix = identity44();
+    z_matrix.m0 =  cos( dtr( zrot ) );
+    z_matrix.m1 =  sin( dtr( zrot ) );
+    z_matrix.m4 = -sin( dtr( zrot ) );
+    z_matrix.m5 =  cos( dtr( zrot ) );
+    m44 tmp_matr = mult_mat44(y_matrix, z_matrix );
 
-    // #build rotationZ (see diagram above) 
-    // z_matrix    =  self.identity
-    // z_matrix[0] =  math.cos(dtr( zrot ))
-    // z_matrix[1] =  math.sin(dtr( zrot ))
-    // z_matrix[4] = -math.sin(dtr( zrot ))
-    // z_matrix[5] =  math.cos(dtr( zrot ))
-    // tmp_matr = y_matrix * z_matrix 
-
-    // #build rotationX (see diagram above) 
-    // x_matrix     =  self.identity
-    // x_matrix[5]  =   math.cos(dtr( xrot )) 
-    // x_matrix[6]  =   math.sin(dtr( xrot )) 
-    // x_matrix[9]  =  -math.sin(dtr( xrot ))
-    // x_matrix[10] =   math.cos(dtr( xrot ))
-    // rotation_44 = x_matrix * tmp_matr
+    // build rotationX (see diagram above) 
+    m44 x_matrix = identity44();
+    x_matrix.m5  =  cos( dtr( xrot ) ); 
+    x_matrix.m6  =  sin( dtr( xrot ) ); 
+    x_matrix.m9  = -sin( dtr( xrot ) );
+    x_matrix.m10 =  cos( dtr( xrot ) );
  
-    // self.insert(rotation_44)
+    m44 output = mult_mat44( x_matrix, tmp_matr );
+
     return output;
 }
 
@@ -962,11 +975,6 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
 
 
 /*************************************************************************/
-
-
-
-
-
     /*       
 
 
@@ -1075,22 +1083,22 @@ void print_quaternion(quaternion input){
 
 void quaternion_rotx(quaternion *input, double theta){
     double theta_over2 = theta * .5;
-    //input.w = math.cos(theta_over2);
-    //input.x = math.sin(theta_over2);
+    input->w = cos( theta_over2 );
+    input->x = sin( theta_over2 );
 }
 
 
 void quaternion_roty(quaternion *input, double theta){
     double theta_over2 = theta * .5;
-    // input.w = math.cos(theta_over2)
-    // input.y = math.sin(theta_over2)
+    input->w = cos( theta_over2 );
+    input->y = sin( theta_over2 );
 }
 
 
 void quaternion_rotz(quaternion *input, double theta){
     double theta_over2 = theta * .5;
-    // input.w = math.cos(theta_over2)
-    // input.z = math.sin(theta_over2)
+    input->w = cos( theta_over2 );
+    input->z = sin( theta_over2 );
 }
 
 
@@ -1139,132 +1147,144 @@ void quaternion_normalize(quaternion *input){
     //     self.set_identity()   
 }
 
-/*
-    def quaternion_dot_product(self, q): 
-        return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
+quaternion dot_product(quaternion q){ 
+    quaternion output;
+    //return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
+    return output;
+}
 
-    def quaternion_conjugate(self, q):
-        result = type(self)()
+quaternion conjugate(quaternion q){
+    quaternion output;
         
-        result.w =  q.w
-        result.x = -q.x
-        result.y = -q.y
-        result.z = -q.z
-        return result
+    // result.w =  q.w
+    // result.x = -q.x
+    // result.y = -q.y
+    // result.z = -q.z
+    return output;
+}        
 
-    def quaternion_mul__(self, a):
-        result = type(self)()
+
+quaternion multiply(quaternion a){
+    quaternion output;
+    /*
+    w = self.w
+    x = self.x
+    y = self.y
+    z = self.z
+
+    result.w = w * a.w - x * a.x - y * a.y - z * a.z
+    result.x = w * a.x + x * a.w + z * a.y + y * a.z
+    result.y = w * a.y + y * a.w + x * a.z + z * a.x
+    result.z = w * a.z + z * a.w + y * a.x + x * a.y
+    */ 
+    return output;
+}
+
+quaternion quaternion_from_m33(m33 input){
+         
+    //   m11  m12 m13 
+    //   m21  m22 m23 
+    //   m31  m32 m33 
+            
+    //four_w_sq_min1 = m33[0] + m33[4] + m33[8]
+    //four_x_sq_min1 = m33[0] - m33[4] - m33[8]
+    //four_y_sq_min1 = m33[4] - m33[0] - m33[8]
+    //four_z_sq_min1 = m33[8] - m33[0] - m33[4]
+
+    quaternion output;
+    /*    
+    maxIndex = 0
+    max = four_w_sq_min1
     
-        w = self.w
-        x = self.x
-        y = self.y
-        z = self.z
+    if four_x_sq_min1 > max:
+        max = four_x_sq_min1
+        maxIndex = 1
+    
+    if (four_y_sq_min1 > max):
+        max = four_y_sq_min1
+        maxIndex = 2
+    
+    if (four_z_sq_min1 > max):
+        max = four_z_sq_min1
+        maxIndex = 3
+    
+    max = math.sqrt (max + 1.0) * 0.5
+    mult = 0.25 / max
+    
+    if maxIndex==0:
+        self.w = max;
+        self.x = (m33[5] - m33[7]) * mult;
+        self.y = (m33[6] - m33[2]) * mult;
+        self.z = (m33[1] - m33[3]) * mult;
 
-        result.w = w * a.w - x * a.x - y * a.y - z * a.z
-        result.x = w * a.x + x * a.w + z * a.y + y * a.z
-        result.y = w * a.y + y * a.w + x * a.z + z * a.x
-        result.z = w * a.z + z * a.w + y * a.x + x * a.y
+    if maxIndex==1:
+        self.x = max;
+        self.w = (m33[5] - m33[7]) * mult;
+        self.y = (m33[1] + m33[3]) * mult;
+        self.z = (m33[6] + m33[2]) * mult;
+
+    if maxIndex==2:
+        self.y = max;
+        self.w = (m33[6] - m33[2]) * mult;
+        self.x = (m33[1] + m33[3]) * mult;
+        self.z = (m33[5] + m33[7]) * mult;
+
+    if maxIndex==3:
+        self.z = max;
+        self.w = (m33[1] - m33[3]) * mult;
+        self.x = (m33[6] + m33[2]) * mult;
+        self.y = (m33[5] + m33[7]) * mult;
+        self.z = (m33[5] + m33[7]) * mult;
+    */
+
+    return output;
+
+}
+
+
+
+m33 quaternion_to_m33(){ //trans_type='inertial2obj'):
+    m33 mo = identity33();  
+    /*
+    q = self 
+
+    if (trans_type == 'inertial2obj'):
+
+        mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        mo[1] = 2.0 * (q.x * q.y + q.w * q.z)
+        mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
         
-        return result;
-
-
-    def quaternion_from_m33(self, m33):
-        """ 
-           m11  m12 m13 
-           m21  m22 m23 
-           m31  m32 m33 
-        """
+        mo[3] = 2.0 * (q.x * q.y - q.w * q.z)
+        mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
+        mo[5] = 2.0 * (q.y * q.z + q.w * q.x)
         
-        four_w_sq_min1 = m33[0] + m33[4] + m33[8]
-        four_x_sq_min1 = m33[0] - m33[4] - m33[8]
-        four_y_sq_min1 = m33[4] - m33[0] - m33[8]
-        four_z_sq_min1 = m33[8] - m33[0] - m33[4]
+        mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
+        mo[7] = 2.0 * (q.y * q.z - q.w * q.x)
+        mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+
+        return mo 
+
+    elif (trans_type == 'obj2inertial'):
+
+        mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        mo[1] = 2.0 * (q.x * q.y - q.w * q.z)
+        mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
         
-        maxIndex = 0
-        max = four_w_sq_min1
-        
-        if four_x_sq_min1 > max:
-            max = four_x_sq_min1
-            maxIndex = 1
-        
-        if (four_y_sq_min1 > max):
-            max = four_y_sq_min1
-            maxIndex = 2
-        
-        if (four_z_sq_min1 > max):
-            max = four_z_sq_min1
-            maxIndex = 3
-        
-        max = math.sqrt (max + 1.0) * 0.5
-        mult = 0.25 / max
-        
-        if maxIndex==0:
-            self.w = max;
-            self.x = (m33[5] - m33[7]) * mult;
-            self.y = (m33[6] - m33[2]) * mult;
-            self.z = (m33[1] - m33[3]) * mult;
+        mo[3] = 2.0 * (q.x * q.y + q.w * q.z)
+        mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
+        mo[5] = 2.0 * (q.y * q.z - q.w * q.x)
 
-        if maxIndex==1:
-            self.x = max;
-            self.w = (m33[5] - m33[7]) * mult;
-            self.y = (m33[1] + m33[3]) * mult;
-            self.z = (m33[6] + m33[2]) * mult;
+        mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
+        mo[7] = 2.0 * (q.y * q.z + q.w * q.x)
+        mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
 
-        if maxIndex==2:
-            self.y = max;
-            self.w = (m33[6] - m33[2]) * mult;
-            self.x = (m33[1] + m33[3]) * mult;
-            self.z = (m33[5] + m33[7]) * mult;
+    else:
+        print("Invalid trans_type!")
+    */     
+    return mo; 
+}
 
-        if maxIndex==3:
-            self.z = max;
-            self.w = (m33[1] - m33[3]) * mult;
-            self.x = (m33[6] + m33[2]) * mult;
-            self.y = (m33[5] + m33[7]) * mult;
-            self.z = (m33[5] + m33[7]) * mult;
- 
-
-
-    def quaternion_to_m33(self, trans_type='inertial2obj'):
- 
-            mo = matrix33() 
-            q = self 
-
-            if (trans_type == 'inertial2obj'):
- 
-                mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-                mo[1] = 2.0 * (q.x * q.y + q.w * q.z)
-                mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
-                
-                mo[3] = 2.0 * (q.x * q.y - q.w * q.z)
-                mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-                mo[5] = 2.0 * (q.y * q.z + q.w * q.x)
-                
-                mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
-                mo[7] = 2.0 * (q.y * q.z - q.w * q.x)
-                mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
- 
-                return mo 
-
-            elif (trans_type == 'obj2inertial'):
- 
-                mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-                mo[1] = 2.0 * (q.x * q.y - q.w * q.z)
-                mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
-                
-                mo[3] = 2.0 * (q.x * q.y + q.w * q.z)
-                mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-                mo[5] = 2.0 * (q.y * q.z - q.w * q.x)
-
-                mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
-                mo[7] = 2.0 * (q.y * q.z + q.w * q.x)
-                mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
- 
-                return mo 
-
-            else:
-                print("Invalid trans_type!")
-   
+/*
     def quaternion_set_rot_zxis(self, axis, theta):
         #assert((vectorMag(axis) - 1.0f) < 0.01f);
         thetaOver2 = theta * .5

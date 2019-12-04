@@ -152,6 +152,8 @@ m44 m44_from_euler(double xrot, double yrot, double zrot);
 
 
 quaternion new_quaternion( double x, double y, double z, double w );
+quaternion quaternion_identity();
+
 void print_quaternion(quaternion input);
 
 void quaternion_rotx(quaternion *input, double theta);
@@ -162,6 +164,11 @@ void quaternion_rotz(quaternion *input, double theta);
 void quaternion_fr_euler(quaternion *input, double h, double p, double b);
 void quaternion_mag(quaternion *input);
 void quaternion_normalize(quaternion *input);
+
+quaternion dot_product(quaternion q);
+quaternion conjugate(quaternion q);
+quaternion multiply(quaternion a);
+quaternion quaternion_from_m33(m33 input);
 
 #endif
 
