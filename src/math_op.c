@@ -1076,6 +1076,13 @@ quaternion quaternion_identity(){
 }
 
 
+void set(  quaternion *input, double x, double y, double z, double w){
+    input->w = w;
+    input->x = x;
+    input->y = y;
+    input->z = z;    
+}
+
 void print_quaternion(quaternion input){
     printf("%f %f %f %f\n", input.w, input.x, input.y, input.z );
 }
@@ -1103,52 +1110,62 @@ void quaternion_rotz(quaternion *input, double theta){
 
 
 void quaternion_fr_euler(quaternion *input, double h, double p, double b){
-    // sp=0;sb=0;sh=0
-    // cp=0;cb=0;ch=0
-    // sp = math.sin(p*.5) 
-    // sb = math.sin(b*.5) 
-    // sh = math.sin(h*.5) 
-    // cp = math.cos(p*.5) 
-    // cb = math.cos(b*.5) 
-    // ch = math.cos(h*.5) 
+    double sp,sb,sh,cp,cb,ch = 0;
+
+    sp = sin( p*.5); 
+    sb = sin( b*.5); 
+    sh = sin( h*.5); 
+    cp = cos( p*.5); 
+    cb = cos( b*.5); 
+    ch = cos( h*.5); 
        
-    // if (trans_type == 'obj2inertial'):
-    //     self.w = ch * cp * cb + sh * sp * sb
-    //     self.x = ch * sp * cb + sh * cp * sb
-    //     self.y = -ch * sp * sb + sh * cp * cb
-    //     self.z = -sh * sp * cb + ch * cp * sb
-    // elif (trans_type == 'inertial2ob'):
-    //     self.w = ch * cp * cb + sh * sp * sb
-    //     self.x = -ch * sp * cb - sh * cp * sb
-    //     self.y = ch * sp * sb - sh * cp * cb
-    //     self.z = sh * sp * cb - ch * cp * sb
+    // if (trans_type == 'obj2inertial'){
+    input->w =  ch * cp * cb + sh * sp * sb;
+    input->x =  ch * sp * cb + sh * cp * sb;
+    input->y = -ch * sp * sb + sh * cp * cb;
+    input->z = -sh * sp * cb + ch * cp * sb;
+    //}
+
+    // elif (trans_type == 'inertial2ob'){
+    // input->w =  ch * cp * cb + sh * sp * sb;
+    // input->x = -ch * sp * cb - sh * cp * sb;
+    // input->y =  ch * sp * sb - sh * cp * cb;
+    // input->z =  sh * sp * cb - ch * cp * sb;
+    //}
+ 
     // else:
     //     printf( "Invalid trans_type!" ) 
+
 }
 
 
-void quaternion_mag(quaternion *input){
-    //mag = float( math.sqrt(  self.w*self.w + 
-    //                         self.x*self.x + 
-    //                         self.y*self.y + 
-    //                         self.z*self.z) )     
+double quaternion_mag(quaternion *input){
+    double mag = float( sqrt(  input->w * input-> w + 
+                               input->x * input-> x + 
+                               input->y * input-> y + 
+                               input->z * input-> z) );
+    return mag;                                 
 }
 
 
 void quaternion_normalize(quaternion *input){
-    // mag = self.mag() 
-    // if mag > 0:
-    //     oneOverMag = float( 1.0 / mag)
-    //     self.w *= oneOverMag
-    //     self.x *= oneOverMag
-    //     self.y *= oneOverMag
-    //     self.z *= oneOverMag
-    // else:
-    //     self.set_identity()   
+    double mag = quaternion_mag( input ); 
+    if (mag > 0){
+        double oneOverMag = ( 1.0 / mag);
+        
+        input->w = input->w * oneOverMag;
+        input->x = input->w * oneOverMag;
+        input->y = input->w * oneOverMag;
+        input->z = input->w * oneOverMag;
+
+    } else {
+        set(input, 1.0, 0, 0, 0);  
+    }    
 }
 
-quaternion dot_product(quaternion q){ 
-    quaternion output;
+double dot_product(quaternion q){ 
+    double output;
+
     //return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
     return output;
 }

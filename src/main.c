@@ -1205,9 +1205,14 @@ void test_math_ops(void){
     quaternion quat = quaternion_identity();
     quaternion *p_quat = &quat;
     
+    //quaternion_fr_euler(p_quat, 90.0, 0, 0 );
+
     //quaternion_rotx(p_quat, 42.2864 );
+    
     //print_quaternion( quat );
     
+    printf("mag %f \n", quaternion_mag(p_quat) );
+
 
 
     // print_matrix(transpose(new_m33));
