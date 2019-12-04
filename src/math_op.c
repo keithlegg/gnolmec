@@ -1077,7 +1077,7 @@ quaternion quaternion_identity(){
 
 
 void print_quaternion(quaternion input){
-    printf("%f %f %f %f\n", input.x, input.y, input.z, input.w );
+    printf("%f %f %f %f\n", input.w, input.x, input.y, input.z );
 }
 
 

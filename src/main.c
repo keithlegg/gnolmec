@@ -1203,8 +1203,11 @@ void test_math_ops(void){
     //m44 new_m44 = identity44();
 
     quaternion quat = quaternion_identity();
-
-    print_quaternion( quat );
+    quaternion *p_quat = &quat;
+    
+    //quaternion_rotx(p_quat, 42.2864 );
+    //print_quaternion( quat );
+    
 
 
     // print_matrix(transpose(new_m33));
