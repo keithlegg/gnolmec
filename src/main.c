@@ -923,103 +923,48 @@ void spinningCubeDemo(int *argc, char** argv){
 
 }
 
-/***************************************/
 
-// top level opengl loop 
-void flatImageDemo(int *argc, char** argv){
-    
-    int screenSize = 512; //defaults to 512
-    if (argv[1]){
-       screenSize = atoi(argv[1]);
-    }
-
-    printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
-
-
-    // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
-    glutInit(argc, argv);  
-
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
-    glutInitWindowSize(screenSize, screenSize);  //window size
-
-    // the window starts at the upper left corner of the screen  
-    glutInitWindowPosition(0, 0);  
-     
-    window_id = glutCreateWindow("2D polygon demo"); //create an opengl window 
-
-    glutDisplayFunc(&drawglscene_2d);//register display callback       
-
-    // Even if there are no events, redraw our gl scene.  
-    glutIdleFunc(&drawglscene_2d);
-
-    glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
-    glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
-    
-    InitGL(screenSize, screenSize); // Initialize window. 
-    
-    ///////////////////////////
-    //test of BMP saving 
-    //create_Image("generated1.bmp");  
-    //create_Image2("generated2.bmp"); 
-    
-    glutMouseFunc (MouseButton);
-    glutMotionFunc (MouseMotion);
-  
-    // Create our popup menu
-    BuildPopupMenu ();
-    glutAttachMenu (GLUT_RIGHT_BUTTON);
-    
-    /***********************/
-    // 2d playground for framebuffer 
-
-    loadImage("textures/generated1.bmp", imageloaded_bfr);
-    loadImage("textures/generated3.bmp", imageloaded_bfr2);
-    
-    /*
-    //test of new framebuffer commands
-    RGBType* pt_rgb_bfr =  createBuffer24(imageloaded_bfr->sizeX, imageloaded_bfr->sizeY);    
-    
-    //copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
-
-    //make a color for some lines 
-    RGBType line_color;
-    RGBType *pt_linecolor = &line_color;
-    pt_linecolor->r = 255;
-    pt_linecolor->g = 0;
-    pt_linecolor->b = 0;
-
-    // draw 4 lines - crisscross applesauce 
-    //draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 20  , 50  , 50  , pt_linecolor); 
-    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 0   , 511 , 511 , pt_linecolor); 
-    draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 511, 0   , 0   , 511 , pt_linecolor); 
-    //draw_line(pt_rgb_bfr, imageloaded_bfr->sizeX, 0  , 511 , 511 , 0   , pt_linecolor);
-
-    // const char *filename = "rgb_buffer.bmp";
-    // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
-    // free(pt_image_bfr);
-
-    //overwrite loaded buffer with lines
-    copyBuffer24( pt_rgb_bfr, imageloaded_bfr ); //convert "RGBType" to "Image"
-   
-    */
-
-
-    //imageloaded_bfr2
-    
-    /***********************/
-
-    glutMainLoop();// Start Event Processing Engine   
-   
-}
 
 
 /********************************************/
+
+//attempt to port code from Unity Engine into pure C 
 
 float zoomSpeed    = 1.2f;
 float moveSpeed    = 1.9f;
 float rotateSpeed  = 4.0f;
 vec3 startpos = newvec3(0.0, 130.0, 60.0);
 
+m33 capsuleObj; //represents a Unity/Maya Transform node 
+quaternion orbt_rot_original;
+vec3 orbt_xform_original;
+
+// Use this for initialization
+void mayanav_start (void ) {
+    // Create a transform (which will be the lookAt target and global orbit vector)
+    
+    //     capsuleObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+    //     capsuleObj.transform.position = Vector3.zero;
+
+   // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
+   
+   // transform.position = startpos;  
+   // transform.LookAt(capsuleObj.transform.position, Vector3.up);
+   // capsuleObj.renderer.enabled = false; //hide the capsule object     
+
+//     ///
+//     orbt_xform_original = capsuleObj.transform.position;
+//     orbt_rot_original   = capsuleObj.transform.rotation;
+}
+
+
+void mayanav_rst_xforms( void ){
+//     transform.parent = capsuleObj.transform;
+//     capsuleObj.transform.position = orbt_xform_original ;
+//     capsuleObj.transform.rotation = orbt_rot_original;
+//     transform.parent = null;
+//     transform.position = startpos;
+}
 
 void maya_navigation_demo(int *argc, char** argv){
     
@@ -1057,40 +1002,6 @@ void maya_navigation_demo(int *argc, char** argv){
     ///////////////////////////    
     glutMouseFunc (maya_mouse_button);
     glutMotionFunc (maya_mouse_motion);
-  
-    ///////////////////////////  
-
-
-
-    // GameObject orbitVector ; (AKA Transform node in Maya )
-    quaternion orbt_rot_original;
-    vec3 orbt_xform_original;
-
-
-    //     // Use this for initialization
-    //     void Start () {
-    //     // Create a capsule (which will be the lookAt target and global orbit vector)
-    //     orbitVector = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-    //     orbitVector.transform.position = Vector3.zero;
-    //     // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
-    //     transform.position = startpos;  
-    //     transform.LookAt(orbitVector.transform.position, Vector3.up);
-    //     orbitVector.renderer.enabled = false; //hide the capsule object     
-    //     ///
-    //     orbt_xform_original = orbitVector.transform.position;
-    //     orbt_rot_original   = orbitVector.transform.rotation;
-    // }
-
-    
-    // void reset_xforms(){
-    //     transform.parent = orbitVector.transform;
-    //     orbitVector.transform.position = orbt_xform_original ;
-    //     orbitVector.transform.rotation = orbt_rot_original;
-    //     transform.parent = null;
-    //     transform.position = startpos;
-    // }
-
-
     
     //var wheelie = Input.GetAxis("Mouse ScrollWheel");
         

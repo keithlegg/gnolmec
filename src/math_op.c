@@ -757,18 +757,12 @@ double determinant(m44 input){
     // e  f  g  h | 4   5  6   7  | |  f g h  |  e  |  g  h |  e  f  |  h  | e  f  g | |
     // i  j  k  l | 8   9  10  11 |    j k l  |  i     k  l |  i  j     l  | i  j  k   |
     // m  n  o  p | 12  13 14  15 |    n o p  |  m     o  p |  m  n     p  | m  n  o   | 
-
-    //  def det33(a):
-    //      #same as matrix33 determinant method 
-    //      o = a[0]* ((a[4]*a[8])-(a[5]*a[7])) - a[1]*((a[3]*a[8])-(a[5]*a[6])) +  a[2]*((a[3]*a[7])-(a[4]*a[6]))
-    //      return o
-
-    //  a = self.copy() 
-    //  a33 = [a[5],a[6],a[7],a[9],a[10],a[11],a[13],a[14],a[15] ]
-    //  b33 = [a[4],a[6],a[7],a[8],a[10],a[11],a[12],a[14],a[15] ]
-    //  c33 = [a[4],a[5],a[7],a[8],a[9] ,a[11],a[12],a[13],a[15] ]
-    //  d33 = [a[4],a[5],a[6],a[8],a[9] ,a[10],a[12],a[13],a[14] ]
-    //  o = (a[0] * det33(a33)) - (a[1]*det33(b33)) + (a[2]*det33(c33)) - (a[3]*det33(d33))
+    m44 a = copy_matrix(input); 
+    m33 a33 = new_m33(a.m5,a.m6,a.m7,a.m9,a.m10,a.m11,a.m13,a.m14,a.m15);
+    m33 b33 = new_m33(a.m4,a.m6,a.m7,a.m8,a.m10,a.m11,a.m12,a.m14,a.m15);
+    m33 c33 = new_m33(a.m4,a.m5,a.m7,a.m8,a.m9 ,a.m11,a.m12,a.m13,a.m15);
+    m33 d33 = new_m33(a.m4,a.m5,a.m6,a.m8,a.m9 ,a.m10,a.m12,a.m13,a.m14);
+    o = (a.m0 * determinant(a33)) - (a.m1*determinant(b33)) + (a.m2*determinant(c33)) - (a.m3*determinant(d33));
     return o;   
 }
 
@@ -1203,56 +1197,59 @@ quaternion quaternion_from_m33(m33 input){
     //   m21  m22 m23 
     //   m31  m32 m33 
             
-    //four_w_sq_min1 = m33[0] + m33[4] + m33[8]
-    //four_x_sq_min1 = m33[0] - m33[4] - m33[8]
-    //four_y_sq_min1 = m33[4] - m33[0] - m33[8]
-    //four_z_sq_min1 = m33[8] - m33[0] - m33[4]
+    double w_sq_min = input.m0 + input.m4 + input.m8;
+    double x_sq_min = input.m0 - input.m4 - input.m8;
+    double y_sq_min = input.m4 - input.m0 - input.m8;
+    double z_sq_min = input.m8 - input.m0 - input.m4;
 
     quaternion output;
-    /*    
-    maxIndex = 0
-    max = four_w_sq_min1
+   
+    int maxIndex = 0;
+    double max = w_sq_min;
     
-    if four_x_sq_min1 > max:
-        max = four_x_sq_min1
-        maxIndex = 1
-    
-    if (four_y_sq_min1 > max):
-        max = four_y_sq_min1
-        maxIndex = 2
-    
-    if (four_z_sq_min1 > max):
-        max = four_z_sq_min1
-        maxIndex = 3
-    
-    max = math.sqrt (max + 1.0) * 0.5
-    mult = 0.25 / max
-    
-    if maxIndex==0:
-        self.w = max;
-        self.x = (m33[5] - m33[7]) * mult;
-        self.y = (m33[6] - m33[2]) * mult;
-        self.z = (m33[1] - m33[3]) * mult;
+    if (x_sq_min > max){
+        max = x_sq_min;
+        maxIndex = 1;
+    }
+    if (y_sq_min > max){
+        max = y_sq_min;
+        maxIndex = 2;
+    }
+    if (z_sq_min > max){
+        max = z_sq_min;
+        maxIndex = 3;
+    }
 
-    if maxIndex==1:
-        self.x = max;
-        self.w = (m33[5] - m33[7]) * mult;
-        self.y = (m33[1] + m33[3]) * mult;
-        self.z = (m33[6] + m33[2]) * mult;
+    max = sqrt (max + 1.0) * 0.5;
+    double mult = 0.25 / max;
+        
+    if (maxIndex == 0){
+        output.w = max;
+        output.x = (input.m5 - input.m7) * mult;
+        output.y = (input.m6 - input.m2) * mult;
+        output.z = (input.m1 - input.m3) * mult;
+    }
+    
+    if (maxIndex == 1){
+        output.x = max;
+        output.w = (input.m5 - input.m7) * mult;
+        output.y = (input.m1 + input.m3) * mult;
+        output.z = (input.m6 + input.m2) * mult;
+    }
 
-    if maxIndex==2:
-        self.y = max;
-        self.w = (m33[6] - m33[2]) * mult;
-        self.x = (m33[1] + m33[3]) * mult;
-        self.z = (m33[5] + m33[7]) * mult;
+    if (maxIndex == 2){
+        output.y = max;
+        output.w = (input.m6 - input.m2) * mult;
+        output.x = (input.m1 + input.m3) * mult;
+        output.z = (input.m5 + input.m7) * mult;
+    }
 
-    if maxIndex==3:
-        self.z = max;
-        self.w = (m33[1] - m33[3]) * mult;
-        self.x = (m33[6] + m33[2]) * mult;
-        self.y = (m33[5] + m33[7]) * mult;
-        self.z = (m33[5] + m33[7]) * mult;
-    */
+    if (maxIndex == 3){
+        output.z = max;
+        output.w = (input.m1 - input.m3) * mult;
+        output.x = (input.m6 + input.m2) * mult;
+        output.y = (input.m5 + input.m7) * mult;
+    }
 
     return output;
 
@@ -1260,73 +1257,75 @@ quaternion quaternion_from_m33(m33 input){
 
 
 
-m33 quaternion_to_m33(){ //trans_type='inertial2obj'):
-    m33 mo = identity33();  
+m33 quaternion_to_m33(quaternion * q ){  
     /*
-    q = self 
+        hmm - does input q need to be a pointer if we only read? 
+        Does it matter?
+    */
 
-    if (trans_type == 'inertial2obj'):
+    m33 mo = identity33();  
 
-        mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-        mo[1] = 2.0 * (q.x * q.y + q.w * q.z)
-        mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
-        
-        mo[3] = 2.0 * (q.x * q.y - q.w * q.z)
-        mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-        mo[5] = 2.0 * (q.y * q.z + q.w * q.x)
-        
-        mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
-        mo[7] = 2.0 * (q.y * q.z - q.w * q.x)
-        mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+    //if (trans_type == 'inertial2obj'):
 
-        return mo 
-
-    elif (trans_type == 'obj2inertial'):
-
-        mo[0] = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-        mo[1] = 2.0 * (q.x * q.y - q.w * q.z)
-        mo[2] = 2.0 * (q.x * q.z + q.w * q.y)
-        
-        mo[3] = 2.0 * (q.x * q.y + q.w * q.z)
-        mo[4] = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
-        mo[5] = 2.0 * (q.y * q.z - q.w * q.x)
-
-        mo[6] = 2.0 * (q.x * q.z + q.w * q.y)
-        mo[7] = 2.0 * (q.y * q.z + q.w * q.x)
-        mo[8] = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
-
-    else:
-        print("Invalid trans_type!")
-    */     
+    mo.m0 = 1.0 - 2.0 * (q->y * q->y + q->z * q->z);
+    mo.m1 = 2.0 * (q->x * q->y + q->w * q->z);
+    mo.m2 = 2.0 * (q->x * q->z + q->w * q->y);
+    mo.m3 = 2.0 * (q->x * q->y - q->w * q->z);
+    mo.m4 = 1.0 - 2.0 * (q->x * q->x + q->z * q->z);
+    mo.m5 = 2.0 * (q->y * q->z + q->w * q->x);
+    mo.m6 = 2.0 * (q->x * q->z + q->w * q->y);
+    mo.m7 = 2.0 * (q->y * q->z - q->w * q->x);
+    mo.m8 = 1.0 - 2.0 * (q->x * q->x + q->y * q->y);
     return mo; 
+
+    // // elif (trans_type == 'obj2inertial'):
+    // mo.m0 = 1.0 - 2.0 * (q->y * q->y + q->z * q->z);
+    // mo.m1 = 2.0 * (q->x * q->y - q->w * q->z);
+    // mo.m2 = 2.0 * (q->x * q->z + q->w * q->y);
+    // mo.m3 = 2.0 * (q->x * q->y + q->w * q->z);
+    // mo.m4 = 1.0 - 2.0 * (q->x * q->x + q->z * q->z);
+    // mo.m5 = 2.0 * (q->y * q->z - q->w * q->x);
+    // mo.m6 = 2.0 * (q->x * q->z + q->w * q->y);
+    // mo.m7 = 2.0 * (q->y * q->z + q->w * q->x);
+    // mo.m8 = 1.0 - 2.0 * (q->x * q->x + q->y * q->y);
+    // return mo; 
 }
 
-/*
-    def quaternion_set_rot_zxis(self, axis, theta):
-        #assert((vectorMag(axis) - 1.0f) < 0.01f);
-        thetaOver2 = theta * .5
-        sinThetaOver2 = math.sin(thetaOver2)
+
+ 
+void quaternion_set_axis( quaternion* input, vec3 axis, double theta){
+    // #assert((vectorMag(axis) - 1.0f) < 0.01f);
+
+    double thetaOver2 = theta * .5;
+    double sinThetaOver2 = sin(thetaOver2);
+
+    input->w = cos(thetaOver2);
+    input->x = axis.x * sinThetaOver2;
+    input->y = axis.y * sinThetaOver2;
+    input->z = axis.z * sinThetaOver2;
+
+}
+
+
+double quaternion_get_rot_angle(quaternion q){
+    double thetaOver2 = acos(q.w);
+    return thetaOver2 * 2.0;
+}
+
+
+vec3 quaternion_get_rot_axis(quaternion q){
+    double sin_theta_over2Sq = 1.0 - q.w * q.w;
+    double one_over_sin_theta = 1.0 / sqrt(sin_theta_over2Sq);
+        
+    double nx = q.x * one_over_sin_theta;
+    double ny = q.y * one_over_sin_theta;
+    double nz = q.z * one_over_sin_theta;
        
-        w = math.cos(thetaOver2)
-        x = axis.x * sinThetaOver2
-        y = axis.y * sinThetaOver2
-        z = axis.z * sinThetaOver2
+    return newvec3(nx, ny, nz);
+}
 
-    def quaternion_get_rot_angle(self):
-        thetaOver2 = math.acos(self.w)
-        return thetaOver2 * 2.0
- 
-    def quaternion_get_rot_axis(self):
-        sin_theta_over2Sq = 1.0 - self.w * self.w
-        one_over_sin_theta = 1.0 / math.sqrt(sin_theta_over2Sq)
-        
-        nx = self.x * one_over_sin_theta
-        ny = self.y * one_over_sin_theta
-        nz = self.z * one_over_sin_theta
-        
-        return vec3(nx, ny, nz)
- 
 
+/*
     def quaternion_slerp (self, q0, q1, t):
  
         if (t <= 0):

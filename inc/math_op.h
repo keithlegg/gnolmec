@@ -175,6 +175,12 @@ double dot_product(quaternion q);
 quaternion conjugate(quaternion q);
 quaternion multiply(quaternion a);
 quaternion quaternion_from_m33(m33 input);
+m33 quaternion_to_m33(quaternion *q);
+void quaternion_set_axis( quaternion *input, vec3 axis, double theta);
+
+double quaternion_get_rot_angle(quaternion q);
+vec3 quaternion_get_rot_axis(quaternion q);
+
 
 #endif
 
