@@ -21,7 +21,6 @@ struct vec3 {
     double z;    
 };
 
-
 //2X2 matrix 
 struct m22 {
     double m0; double m1;
@@ -35,13 +34,20 @@ struct m33 {
     double m6; double m7; double m8;    
 };
 
-
 //4X4 matrix 
 struct m44 {
     double m0 ; double m1 ; double m2 ; double m3;
     double m4 ; double m5 ; double m6 ; double m7;
     double m8 ; double m9 ; double m10; double m11;
     double m12; double m13; double m14; double m15; 
+};
+
+//Quaternion (vector 4) 
+struct quaternion {
+    double x;
+    double y;
+    double z;    
+    double w; 
 };
 
 
@@ -98,6 +104,8 @@ vec3 mult_scalar (double scalar, vec3 v);
 vec3 mult_m33_vec3(m33 m, vec3 v);
 vec3 mult_m44_vec3(m44 m, vec3 v);
 
+void print_vec2(vec2 input);
+void print_vec3(vec3 input);
 
 m33 new_m33( double m0 , double m1 , double m2,  
              double m3 , double m4 , double m5, 
@@ -132,7 +140,17 @@ void print_matrix(m44 input);
 
 
 
+quaternion new_quaternion( double x, double y, double z, double w );
+void print_quaternion(quaternion input);
 
+void quaternion_rotx(quaternion *input, double theta);
+void quaternion_roty(quaternion *input, double theta);
+void quaternion_rotz(quaternion *input, double theta);
+
+
+void quaternion_fr_euler(quaternion *input, double h, double p, double b);
+void quaternion_mag(quaternion *input);
+void quaternion_normalize(quaternion *input);
 
 #endif
 

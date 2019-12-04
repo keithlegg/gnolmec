@@ -1,0 +1,260 @@
+
+
+/*
+
+class vec2(object):    
+
+    def __init__(self,x=0,y=0):
+        self.mu = math_util()
+        self.x = x
+        self.y = y    
+        
+    def __repr__(self):
+        return '(%s, %s)' % (self.x, self.y)
+
+    def __abs__(self):
+        return type(self)(abs(self.x), abs(self.y))
+
+    def __add__(self, other):
+        return type(self)(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return type(self)(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other):
+        
+        #if isinstance(other, matrix22):
+        #    matrix22
+
+        print('## debug vec2 mult type other is ' , type(other) )
+
+        if isinstance(other, tuple) or isinstance(other, list):
+            return type(self)(self.x * other.x, self.y * other.y)
+
+    ## ## ##
+    def div_scalar(self, scalar):
+        self.x = self.x/scalar
+        self.y = self.y/scalar
+        return type(self)(self.x , self.y )
+
+    def __truediv__(self, other):
+
+        #check type and switch 
+
+        #combine with self.div_scalar() 
+
+        #untested - normalized? 
+        #return type(self)(self.x / other.x, self.y / other.y)
+        self.x = other.x/other.length()
+        self.y = other.y/other.length()
+        return type(self)(self.x, self.y)
+
+    def __getitem__(self,index):
+        if index==0:
+            return self.x
+        if index==1:
+            return self.y
+
+    @property
+    def length(self):
+        return math.sqrt(self.x*self.x + self.y*self.y)
+
+    def dtr(self):
+        """ degree to radian """ 
+        return ( self.mu.dtr( self.x ),
+                 self.mu.dtr( self.y ),
+               )
+    def rtd(self, invec):
+        """ radian to degree """
+        return ( self.mu.rtd( self.x ),
+                 self.mu.rtd( self.y ),
+               ) 
+
+    def dot(self, other):
+        """ dot product """
+        return self.x * other.x + self.y * other.y
+
+    def distance_to(self, other):
+        """ """
+        val = math.hypot((self.x - other.x), (self.y - other.y))
+        return val
+
+    def project_pt(self, A, B, offset):
+        """ project a point along a vector """
+
+        nX = B.x - A.x;nY = B.y - A.y
+        distX = pow( (A.x - B.x ) , 2.0 ) 
+        distY = pow( (A.y - B.y ) , 2.0 ) 
+        vecLength = math.sqrt(distX + distY )
+        # normalized vector  
+        calcX = nX / vecLength
+        calcY = nY / vecLength
+        # project point along vector with offset (can use negative too)
+        ptX = B.x + (calcX * offset)
+        ptY = B.y + (calcY * offset)
+        return type(self)(ptX, ptY)
+
+
+    def intersect(self, v1s, v1e, v2s, v2e ):
+        """ intersect 2 lines in 2D 
+            v1s - line1 start 
+            v1e - line1 end 
+            v2s - line2 start
+            v2e - line2 end 
+        """
+
+        #start and end coords for two 2D lines
+        p0_x = float(v1s[0])
+        p0_y = float(v1s[1])
+        p1_x = float(v1e[0])
+        p1_y = float(v1e[1])
+        p2_x = float(v2s[0])
+        p2_y = float(v2s[1])
+        p3_x = float(v2e[0])
+        p3_y = float(v2e[1])
+
+        #return values
+        i_x = 0;i_y = 0 
+
+        s1_x = 0;s1_y = 0
+        s2_x = 0;s2_y = 0
+
+        s1_x = p1_x - p0_x  
+        s1_y = p1_y - p0_y
+        s2_x = p3_x - p2_x
+        s2_y = p3_y - p2_y
+
+        s = 0;t = 0
+
+        try: 
+            s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y)
+            t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y)
+        except:
+            #print('something went wrong in 2D line intersection')
+            return 0
+        
+        if (s >= 0 and s <= 1 and t >= 0 and t <= 1):
+            # Collision detected
+            i_x = p0_x + (t * s1_x);
+            i_y = p0_y + (t * s1_y);
+            return (i_x,i_y)  
+
+        return 0; # No collision
+
+    @property
+    def normal(self):
+        """ untested - normalize a 2d vector """ 
+        invLength = 1.0/math.sqrt(self.x*self.x + self.y*self.y)
+        self.x *= invLength
+        self.y *= invLength
+
+
+
+
+
+
+
+
+###############################################
+class matrix22(object):
+    """ 2D matrix experiment """
+
+    def __init__(self, a=1, b=0, c=0, d=1):
+        self.m = [a,b,c,d]
+        self.mu = math_util()
+    
+    def __getitem__(self, index):
+        return self.m[index]
+
+    def __setitem__(self, key, item):
+        self.m[key] = item
+
+    def __repr__(self):
+        return '(%s, %s, %s, %s)'%(self.m[0], self.m[1], self.m[2],  self.m[3])
+
+    @property
+    def identity(self):
+        return type(self)()
+
+    @property
+    def transpose(self):
+        """
+        UNTESTED 
+        # standard indicies  |  #transposed indicies
+        1  2                 |   1 3 
+        3  4                 |   2 4 
+       
+        """
+
+        return type(self)(
+            self.m[0], self.m[1],
+            self.m[2], self.m[3]
+        )
+
+
+    def __add__(self, other):
+        """ UNTESTED """
+        return type(self)(
+            self.m[0]+n[0], self.m[2]+n[1],
+            self.m[1]+n[2], self.m[3]+n[3]
+        )
+    
+    def __sub__(self, other):
+        """ UNTESTED """        
+        return type(self)(
+            self.m[0]-n[0], self.m[1]-n[2],
+            self.m[2]-n[1], self.m[3]-n[3]
+        )
+
+    # def __truediv__(self, other):
+    #     # matrices don't divide! there is no concept of dividing by a matrix.
+    #     # multiply by an inverse, which achieves the same thing.
+
+    def __mul__(self, n):
+        """ multiply two 2X2 matricies together 
+
+            the order that you mutliply will call a different object!!!
+            make sure you do "this * other", NOT "other * this"
+
+        """
+
+        if isinstance(n, vec2):
+            outx = self.m[0]*n.x + self.m[2]*n.y   
+            outy = self.m[1]*n.x + self.m[3]*n.y  
+            return  (outx, outy)
+
+        if isinstance(n, tuple) or isinstance(n, list):
+            outx = self.m[0]*n[0] + self.m[2]*n[1]   
+            outy = self.m[1]*n[0] + self.m[3]*n[1]  
+            return  (outx, outy)
+
+        if type(n) == type(self):
+            return type(self)(
+                    self.m[0]*n[0] + self.m[1]*n[2], 
+                    self.m[0]*n[1] + self.m[1]*n[3],
+                    self.m[2]*n[0] + self.m[3]*n[2], 
+                    self.m[2]*n[1] + self.m[3]*n[3]                    
+                   )
+
+    def from_euler(self, rot):
+
+        dtr = self.mu.dtr
+
+        self.m[0]  =  math.cos(dtr( rot ))
+        self.m[1]  = -math.sin(dtr( rot ))
+        self.m[2]  =  math.sin(dtr( rot ))
+        self.m[3]  =  math.cos(dtr( rot ))
+
+
+    def batch_mult_pts(self, pts):
+        """ iterate a list of points and multiply them by this matrix """
+
+        tmp_buffer = []
+        out = None
+        for pt in pts:  
+            tmp_buffer.append( self * pt )
+        return tmp_buffer
+
+*/
+
+

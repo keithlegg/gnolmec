@@ -1,0 +1,161 @@
+ 
+#include <stdio.h>
+#include <stdlib.h>
+#include <GL/glut.h>
+
+
+
+int WindowWidth = 19;
+int WindowHeight = 13;
+int mouseClickCount = 0;
+int rectPlotted;
+
+GLint x1;
+GLint y1;
+GLint x2;
+GLint y2;
+
+//Declare our functions with prototypes:
+void display(void);
+void init (void);
+void processNormalKeys(unsigned char key, int x, int y);
+void on_vertex_selected(GLint x, GLint y);
+void on_mouse_event(int button, int state, int x, int y);
+
+
+/////////////////////////////////// MAIN ////////////////////////////////
+int main(int argc, char** argv)
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+    //start calculation of max window size available at 19:13 aspect ratio
+    int screenWidth = glutGet(GLUT_SCREEN_WIDTH);
+    int screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
+    screenWidth = screenWidth/WindowWidth;
+    WindowWidth = WindowWidth*screenWidth;
+    screenHeight = screenHeight/WindowHeight;
+    WindowHeight = screenHeight*WindowHeight;
+    //end calculation
+    glutInitWindowSize (WindowWidth, WindowHeight);
+    glutInitWindowPosition (0, 0);
+    glutCreateWindow ("Plot a rectangle!");
+    glutDisplayFunc(display);
+    glutKeyboardFunc(processNormalKeys);
+    glutMouseFunc(on_mouse_event);
+    init();
+    glutMainLoop();
+    return 0;
+}
+/////////////////////////////////////////////////////////////////////////
+
+void display(void)
+{
+   glClear (GL_COLOR_BUFFER_BIT); //clear all pixels
+   glFlush();
+}
+
+void init (void)
+{
+    /* select clearing (background) color */
+    glClearColor (1.0, 1.0, 1.0, 0.0);
+
+    /* initialize viewing values */
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, WindowWidth, 0, WindowHeight, -1.0, 1.0);
+}
+
+void processNormalKeys(unsigned char key, int x, int y) {
+   if (key == 27) //esc
+    exit(0);
+  //Allows color change of most recently plotted rectangle
+   if (key == 98){ //b
+      glColor3f(0.0, 0.0, 1.0);
+      glBegin(GL_QUADS);
+      glVertex2i(x1, y1);
+      glVertex2i(x1, y2);
+      glVertex2i(x2, y2);
+      glVertex2i(x2, y1);
+      glEnd();
+      glFlush();
+   }
+   if (key == 114){ //r
+      glColor3f(1.0, 0.0, 0.0);
+      glBegin(GL_QUADS);
+      glVertex2i(x1, y1);
+      glVertex2i(x1, y2);
+      glVertex2i(x2, y2);
+      glVertex2i(x2, y1);
+      glEnd();
+      glFlush();
+   }
+   if (key == 103){ //g
+      glColor3f(0.0, 1.0, 0.0);
+      glBegin(GL_QUADS);
+      glVertex2i(x1, y1);
+      glVertex2i(x1, y2);
+      glVertex2i(x2, y2);
+      glVertex2i(x2, y1);
+      glEnd();
+      glFlush();
+   }
+  }
+
+  void on_vertex_selected(GLint x, GLint y){
+
+     if(mouseClickCount == 0){
+        x1 = x;
+        y1 = y;
+        
+        printf("## X %d Y %d \n", x, y );
+
+        glColor3f(0.0, 0.0, 0.0);
+        glEnable(GL_POINT_SMOOTH);
+        glPointSize(5.0);
+        glBegin(GL_POINTS);
+        glVertex2i(x1, y1);
+        glEnd();
+        glFlush();
+     }
+     else{
+        x2 = x;
+        y2 = y;
+        glBegin(GL_POINTS);
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(x1,y1); //"clears" previous point to make way for the rectangle
+        glEnd();
+        glColor3f(0.0, 0.0, 0.0);
+        glBegin(GL_QUADS);
+        glVertex2i(x1, y1);
+        glVertex2i(x1, y2);
+        glVertex2i(x2, y2);
+        glVertex2i(x2, y1);
+        glEnd();
+        glFlush();
+     }
+}
+
+void on_mouse_event(int button, int state, int x, int y){
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_DOWN && mouseClickCount == 0){
+      //y = y+20; //adjusts for VM mouse tracking error
+      on_vertex_selected(x, WindowHeight - y);
+      rectPlotted = 0;
+   }
+
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_UP && mouseClickCount == 0){
+      if(rectPlotted == 1){
+       return;
+      }
+      else{
+       mouseClickCount++;
+      }
+   }
+
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_DOWN && mouseClickCount == 1){
+       //y = y+20; //adjusts for VM mouse tracking error
+       on_vertex_selected(x, WindowHeight - y);
+       mouseClickCount = 0;
+       rectPlotted = 1;
+   }
+}
+

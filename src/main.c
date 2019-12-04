@@ -1062,10 +1062,11 @@ void maya_navigation_demo(int *argc, char** argv){
 
 
 
-    // GameObject orbitVector ;
-    // Quaternion orbt_rot_original;
+    // GameObject orbitVector ; (AKA Transform node in Maya )
+    quaternion orbt_rot_original;
+    vec3 orbt_xform_original;
 
-    // private Vector3 orbt_xform_original;
+
     //     // Use this for initialization
     //     void Start () {
     //     // Create a capsule (which will be the lookAt target and global orbit vector)
