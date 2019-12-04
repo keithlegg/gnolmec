@@ -1,7 +1,24 @@
 
 
 
+#include "framebuffer.h"
+
 #include "gl_setup.h"
+
+
+/***************************************************************/
+
+
+
+//static GLfloat g_nearPlane = 1;
+//static GLfloat g_farPlane = 1000;
+
+
+
+
+
+/***************************************************************/
+
 
 // initialize OpenGL  
 void InitGL(int Width, int Height)          // We call this right after our OpenGL window is created.

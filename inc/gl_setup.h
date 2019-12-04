@@ -1,6 +1,14 @@
- #ifndef GLSETUP_H    
+#ifndef GLSETUP_H    
 #define GLSETUP_H
 
+
+#define TRUE 1
+#define FALSE 0
+
+
+typedef int BOOL;
+
+#define VIEWING_DISTANCE_MIN  3.0
 
 
 ////////////////////////
@@ -29,13 +37,7 @@
 
 
 
-
 void InitGL(int Width, int Height);
-
-
-
-
-
 
 
 
