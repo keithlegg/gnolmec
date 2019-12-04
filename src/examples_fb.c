@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "gl_setup.h" 
+
 #include "examples_fb.h" 
 #include "framebuffer.h" 
 #include "image_util.h" 
@@ -19,9 +21,88 @@
 
 
 
-typedef int BOOL;
-#define TRUE 1
-#define FALSE 0
+
+/***************************************/
+/*
+//example to manually create a buffer and fill it with a color 
+int dynamicImage(Image *image) 
+{
+    FILE *file;
+    unsigned long size;                 // size of the image in bytes.
+    unsigned long i;                    // standard counter.
+    unsigned short int planes;          // number of planes in image (must be 1) 
+    unsigned short int bpp;             // number of bits per pixel (must be 24)
+    char temp;                          // temporary color storage for bgr-rgb conversion.
+   
+
+    image->sizeX = 256;
+    image->sizeY = 256;
+
+    // calculate the size (assuming 24 bits or 3 bytes per pixel).
+    size = image->sizeX * image->sizeY * 3;
+
+    //printf("#### image mem size is %lu \n", size );
+    image->data = (char *) malloc(size);
+
+    if (image->data == NULL) {
+        printf("Error allocating memory for image data");
+        return 0; 
+    }
+ 
+    // iterate data and do something 
+    for (i=0;i<size;i+=3) { 
+        image->data[i]    = (unsigned int)0;
+        image->data[i+1]  = (unsigned int)255; //image->data[i+2];
+        image->data[i+2]  = (unsigned int)255; //temp;
+    }
+
+    free(image->data);
+    return 1;
+}
+
+//second example to use a builtin util to fill a buffer with color 
+int dynamicImage2(Image *image) 
+{
+    unsigned long size; 
+
+    image->sizeX = img_usize;
+    image->sizeY = img_vsize;
+
+    size = image->sizeX * image->sizeY * 3;
+
+    image->data = (char *) malloc(size);  
+
+    RGBType bgcolor;
+    RGBType *pt_bgcolor = &bgcolor;
+
+    pt_bgcolor->r = 25;
+    pt_bgcolor->g = 30;
+    pt_bgcolor->b = 40;
+
+
+    RGBType linecolor;
+    RGBType *pt_linecolor = &linecolor;
+    pt_linecolor->g = 230;
+    pt_linecolor->b = 130;
+   
+    fillbuffer24(image, pt_bgcolor);
+    
+    draw_point ( image, image->sizeX, 0, 0, pt_linecolor  );
+    draw_point ( image, image->sizeX, 511, 511, pt_linecolor  );
+    draw_point ( image, image->sizeX, 511, 0, pt_linecolor  );
+
+    //origin is bottom left - grr 
+    int tl[2] = {10,10};
+    int br[2] = {50,50};
+
+    draw_square( image, image->sizeX, tl, br, pt_linecolor );
+
+    free(image->data);
+    return 1;
+}
+*/
+
+
 
 /***************************************/
 
@@ -145,7 +226,7 @@ void test_framebuffer_funcs(void)
     }
 
 
-
+    printf("# all done testing framebuffer! \n");
 
 }
 

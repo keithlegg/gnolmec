@@ -5,15 +5,15 @@
 #include <stdarg.h>
 #include <unistd.h>      
 
+/********************************************/
 
-////////////////////////
 #ifdef __linux__
 #include <GL/glut.h>     // Header File For The GLUT Library 
 #include <GL/gl.h>       // Header File For The OpenGL32 Library
 #include <GL/glu.h>      // Header File For The GLu32 Library
 #endif
 
-////////////////////////
+/********************************************/
 //OSX related 
 #include <string.h>      //for memset 
 
@@ -34,23 +34,23 @@
 //#define SERIAL_PORT_ID "/dev/tty.usbserial-FTWWRSIBA" // "/dev/tty.usbserial-A400gnmx" // "/dev/ttyUSB0"
 //#define OUTPUT_BINARY "/Users/klegg/image.bin"
 
-#include "gl_setup.h"    // common to all - moved to reduce size 
-#include "math_op.h"     // general math operations
-#include "point_op.h"    // geometry operations
-#include "framebuffer.h" // raster operations
-#include "examples_fb.h" // example raster ops
+#include "gl_setup.h"        // common to all - moved to reduce size 
+#include "math_op.h"         // general math operations
+#include "point_op.h"        // geometry operations
+#include "framebuffer.h"     // raster operations
+#include "examples_fb.h"     // example raster ops
+#include "image_util.h"      // experimental playground - not much here 
+#include "bitmap_io.h"       // load/save bitmaps to disk  
 
-#include "image_util.h"  // experimental features, etc 
-
-#include "bitmap_io.h"   
 //#include "bitmap_cpu.h"  //highly experimental - dont ask 
-   
 
-#include "flat_image_demo.h"
-#include "cube_demo.h"
-#include "maya_demo.h"
+#include "flat_image_demo.h" // 2D openGL demo 
+#include "cube_demo.h"       // 3D openGL demo  
+#include "maya_demo.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
 
-///////////////
+
+/********************************************/
+
 
 int window_id; // The number of our GLUT window 
  
@@ -68,12 +68,8 @@ unsigned int pong_size  = 60;
 unsigned int img_usize  = 512;
 unsigned int img_vsize  = 512;
 
- 
 
-///////////////
 
-// int steps[8] = {1024,512,256,128,64,32,16,8};
-// int step_idx = 2;
 int use_tex = 0;
 
 Image* main_bg_bfr      = createBufferImage(512,512); 
@@ -86,87 +82,6 @@ static enum {
     MENU_TEXTURING,
     MENU_EXIT
 };
-
-
-/***************************************/
-/*
-//example to manually create a buffer and fill it with a color 
-int dynamicImage(Image *image) 
-{
-    FILE *file;
-    unsigned long size;                 // size of the image in bytes.
-    unsigned long i;                    // standard counter.
-    unsigned short int planes;          // number of planes in image (must be 1) 
-    unsigned short int bpp;             // number of bits per pixel (must be 24)
-    char temp;                          // temporary color storage for bgr-rgb conversion.
-   
-
-    image->sizeX = 256;
-    image->sizeY = 256;
-
-    // calculate the size (assuming 24 bits or 3 bytes per pixel).
-    size = image->sizeX * image->sizeY * 3;
-
-    //printf("#### image mem size is %lu \n", size );
-    image->data = (char *) malloc(size);
-
-    if (image->data == NULL) {
-        printf("Error allocating memory for image data");
-        return 0; 
-    }
- 
-    // iterate data and do something 
-    for (i=0;i<size;i+=3) { 
-        image->data[i]    = (unsigned int)0;
-        image->data[i+1]  = (unsigned int)255; //image->data[i+2];
-        image->data[i+2]  = (unsigned int)255; //temp;
-    }
-
-    free(image->data);
-    return 1;
-}
-
-//second example to use a builtin util to fill a buffer with color 
-int dynamicImage2(Image *image) 
-{
-    unsigned long size; 
-
-    image->sizeX = img_usize;
-    image->sizeY = img_vsize;
-
-    size = image->sizeX * image->sizeY * 3;
-
-    image->data = (char *) malloc(size);  
-
-    RGBType bgcolor;
-    RGBType *pt_bgcolor = &bgcolor;
-
-    pt_bgcolor->r = 25;
-    pt_bgcolor->g = 30;
-    pt_bgcolor->b = 40;
-
-
-    RGBType linecolor;
-    RGBType *pt_linecolor = &linecolor;
-    pt_linecolor->g = 230;
-    pt_linecolor->b = 130;
-   
-    fillbuffer24(image, pt_bgcolor);
-    
-    draw_point ( image, image->sizeX, 0, 0, pt_linecolor  );
-    draw_point ( image, image->sizeX, 511, 511, pt_linecolor  );
-    draw_point ( image, image->sizeX, 511, 0, pt_linecolor  );
-
-    //origin is bottom left - grr 
-    int tl[2] = {10,10};
-    int br[2] = {50,50};
-
-    draw_square( image, image->sizeX, tl, br, pt_linecolor );
-
-    free(image->data);
-    return 1;
-}
-*/
 
 /********************************************/
 
@@ -224,13 +139,15 @@ void test_math_ops(void){
 int main(int argc, char **argv) 
 {  
     
-    // test_framebuffer_funcs();
+    //test_framebuffer_funcs();
     
     test_math_ops();
+    
+    // flatImageDemo(&argc, argv); 
+    
+    // spinningCubeDemo(&argc, argv); 
 
-    // flatImageDemo(&argc, argv); //start up openGL 
-    // spinningCubeDemo(&argc, argv); //start up openGL 
-    maya_navigation_demo(&argc, argv);
+    // maya_navigation_demo(&argc, argv);
 
     return 1;
 }
