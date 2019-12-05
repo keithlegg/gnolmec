@@ -5,6 +5,8 @@
 #include "gl_setup.h"
 #include "bitmap_io.h" 
 
+#include "obj_model.h"
+
 #include "demo_maya.h"
 
 
@@ -40,6 +42,7 @@ static int g_yClick = 0;
 
 float gui_rotx = 0.0;
 float gui_roty = 0.0;
+float gui_zoomz = 0.0;
 
 int scr_size_x = 512; //defaults to 512
 int scr_size_y = 512; //defaults to 512
@@ -133,18 +136,21 @@ static void draw_3d_model()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
+    double viewzoom = gui_zoomz-5.0;
+    glTranslatef(0.0f,0, viewzoom);              // move 5 units into the screen.
 
-
-    glTranslatef(0.0f,0, -5.0);              // move 5 units into the screen.
-
+    xrot = gui_roty*-100;
+    yrot = gui_rotx*-100;
+    
     glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
     glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
-    glRotatef( zrot          , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
+    glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
     
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
 
     /******************************************/
+    /*
     glBegin(GL_TRIANGLES);  
     
     glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
@@ -152,10 +158,10 @@ static void draw_3d_model()
     glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
 
     glEnd(); 
-    
+    */ 
     /******************************************/
 
-    /*
+    
     glBegin(GL_QUADS);                      // begin drawing a cube
     // Front Face (note that the texture's corners have to match the quad's corners)
     glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
@@ -188,7 +194,7 @@ static void draw_3d_model()
     glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
     glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
     glEnd();  // done with the polygon.
-    */ 
+   
 
     unsigned int u_edge = img_usize - pong_size;
     unsigned int v_edge = img_vsize - pong_size;
@@ -326,29 +332,42 @@ void maya_mouse_button(int button, int state, int x, int y)
     // Respond to mouse button presses.
     // If button1 pressed, mark this state so we know in motion function.
 
-    printf("maya button x %d y %d \n",x , y);
+    // printf("maya button x %d y %d \n",x , y);
 
+    //left click 
     if (button == GLUT_LEFT_BUTTON)
       {
         g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         g_yClick = y - 3 * g_fViewDistance;
         
-        printf("maya left click \n");
+        // printf("maya left click \n");
 
       }
 
-    if (button == GLUT_MIDDLE_BUTTON)
+      // middle click
+      if ((button == 3) || (button == 4)) // It's a wheel event
       {
-        
-        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        printf("maya middle click \n");
+           // Disregard redundant GLUT_UP events
+           if (state == GLUT_UP) return; 
 
+           if (button == 3){
+               gui_zoomz++;  
+           }
+           if (button == 4){
+               gui_zoomz--; 
+           }
+      }else{  // normal button event
+           if (state == GLUT_DOWN){
+               // printf("maya middle click\n");  
+           }
       }
 
+
+    //Right click
     if (button == GLUT_RIGHT_BUTTON)
       {
         
-        printf("maya right click \n");
+        // printf("maya right click \n");
 
       }
 
@@ -385,7 +404,6 @@ void maya_mouse_motion(int x, int y)
 
 
 }
-
 
 /********************************************/
 
@@ -456,7 +474,7 @@ void maya_navigation_demo(int *argc, char** argv){
     ///////////////////////////    
     glutMouseFunc (maya_mouse_button);
     glutMotionFunc (maya_mouse_motion);
-    
+
     //var wheelie = Input.GetAxis("Mouse ScrollWheel");
         
     // if (wheelie < 0) // back

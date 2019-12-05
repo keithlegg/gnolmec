@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     
     // spinningCubeDemo(&argc, argv); 
 
-     maya_navigation_demo(&argc, argv);
+    maya_navigation_demo(&argc, argv);
 
     return 1;
 }
