@@ -12,16 +12,18 @@
 // };
 
 
+
+
 typedef struct obj_model{
 
-    unsigned int sizeX;
-    unsigned int sizeY;
+    struct vec3 points[1000];
     
     char *data;
 
 };
 
-
+void test_fill(void);
+void show_object(void);
 
 void load_objfile( char *filepath);
 void save_objfile( char *filepath);

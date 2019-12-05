@@ -42,11 +42,17 @@ static int g_yClick = 0;
 
 float gui_rotx = 0.0;
 float gui_roty = 0.0;
-float gui_zoomz = 0.0;
+float gui_zoomz = -5.0;
 
 int scr_size_x = 512; //defaults to 512
 int scr_size_y = 512; //defaults to 512
 
+
+void reset_view(void){
+    gui_rotx = 0.0;
+    gui_roty = 0.0;
+    gui_zoomz = -5.0;  
+}
 
 static void animateTextures3(Image *loaded_texture)
 {
@@ -136,7 +142,7 @@ static void draw_3d_model()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
-    double viewzoom = gui_zoomz-5.0;
+    double viewzoom = gui_zoomz;
     glTranslatef(0.0f,0, viewzoom);              // move 5 units into the screen.
 
     xrot = gui_roty*-100;
@@ -292,7 +298,11 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
-
+    if (key == 114) //r
+    { 
+        reset_view();
+    }
+        
 
     if (key == 101) //e
     { 
@@ -351,7 +361,10 @@ void maya_mouse_button(int button, int state, int x, int y)
            if (state == GLUT_UP) return; 
 
            if (button == 3){
-               gui_zoomz++;  
+               if (gui_zoomz < -1){
+                   gui_zoomz++;                
+               }
+  
            }
            if (button == 4){
                gui_zoomz--; 

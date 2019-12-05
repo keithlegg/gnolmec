@@ -41,6 +41,7 @@
 #include "image_util.h"      // experimental playground - not much here 
 #include "bitmap_io.h"       // load/save bitmaps to disk  
 
+#include "obj_model.h" 
 //#include "examples_fb.h"     // example raster ops
 //#include "bitmap_cpu.h"  //highly experimental - dont ask 
 
@@ -148,6 +149,11 @@ int main(int argc, char **argv)
     // spinningCubeDemo(&argc, argv); 
 
     maya_navigation_demo(&argc, argv);
+    
+    //load_objfile("3d_obj/cone.obj");
+
+    //test_fill();
+    //show_object();
 
     return 1;
 }
