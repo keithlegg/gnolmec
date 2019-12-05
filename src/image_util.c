@@ -1,4 +1,19 @@
 
+/*************************************************************/
+/*
+   image_util.c 
+  
+      playground for random image processing functions that do NOT include:
+          
+          -framebuffers  (use framebuffer.c)
+          -loaders/saves (use bitmap_io.c)
+
+
+   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+
+*/
+/*************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
@@ -10,10 +25,11 @@
   (You still have to free your own buffers maually.)
 */
 
+
+
 /*
 
 #include <png.h>
-
 
 void cleanup_heap( png_bytep* rowpt, int height)
 {

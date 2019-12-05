@@ -1,12 +1,18 @@
+/*************************************************************/
+/*
+   gl_setup.c 
+       -  common home for an openGL application 
+          used by the 3 built in demos (maya, flat and cube)
+          
+   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
 
+*/
+/*************************************************************/
 
 
 #include "framebuffer.h"
 
 #include "gl_setup.h"
-
-
-/***************************************************************/
 
 
 

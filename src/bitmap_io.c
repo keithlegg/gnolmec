@@ -1,14 +1,12 @@
-
-
 /*************************************************************/
 /*
+   bitmap_io.c 
+       -  file importer/ exporters - mostly image loaders and saver
 
-   file importer/ exporters - mostly image loaders and saver
-   they all sort of work and sort of dont 
+   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
 
 */
 /*************************************************************/
-
 
 
 #include <stdio.h>

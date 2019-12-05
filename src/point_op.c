@@ -1,3 +1,18 @@
+
+/*****************************************************************************/
+/*  
+    point_op.c
+
+      Point Generators, create 2D/3D coordinates in all manner of fun ways. 
+
+      AUTHOR: Keith Legg (keithlegg23@gmail.com)
+ 
+    Copyright (C) 2019 Keith Legg   
+
+*/
+
+/*****************************************************************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <cmath>

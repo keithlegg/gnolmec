@@ -38,10 +38,10 @@
 #include "math_op.h"         // general math operations
 #include "point_op.h"        // geometry operations
 #include "framebuffer.h"     // raster operations
-#include "examples_fb.h"     // example raster ops
 #include "image_util.h"      // experimental playground - not much here 
 #include "bitmap_io.h"       // load/save bitmaps to disk  
 
+//#include "examples_fb.h"     // example raster ops
 //#include "bitmap_cpu.h"  //highly experimental - dont ask 
 
 #include "demo_flat.h" // 2D openGL demo 

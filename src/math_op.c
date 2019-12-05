@@ -1,3 +1,28 @@
+/*************************************************************/
+/*
+   math_op.c
+
+       This is an attempt to port the python math library I wrote into the C language
+
+       The original library supports:
+           vector2
+           vector3
+           vector4
+           Quaternion 
+           Matrix2X2
+           Matrix3X3
+           Matrix4X4
+           Spherical/Polar coords 
+
+
+       The original can be found here:
+
+           https://github.com/keithlegg/pyrender2/blob/master/pygfx/math_ops.py
+
+   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+
+*/
+/*************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,18 +33,7 @@
 
 
 /*********************************************************/
-/*
 
-   This is an attempt to port the python math library I wrote into 
-   the C language
-
-   The original can be found here:
-
-       https://github.com/keithlegg/pyrender2/blob/master/pygfx/math_ops.py
-
-*/
-
-/*********************************************************/
 
 
 //degree to radian 
