@@ -38,6 +38,10 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
+float cube_x = 0.0;
+
+int scr_size_x = 512; //defaults to 512
+int scr_size_y = 512; //defaults to 512
 
 
 static void animateTextures3(Image *loaded_texture)
@@ -128,7 +132,10 @@ static void draw_3d_cube()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
-    glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
+
+
+    glTranslatef(0.0f,cube_x, -14.0f);              // move 5 units into the screen.
+
     glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
     glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
     glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
@@ -350,10 +357,14 @@ void maya_mouse_motion(int x, int y)
 {
     // If button1 pressed, zoom in/out if mouse is moved up/down.
  
+    float center_x = (float)img_usize/2;
+    cube_x = (center_x-x)/scr_size_x; 
+
+    // cube_x
 
     if (g_bButton1Down)
     {
-        printf("MOVE! %d %d \n", x, y);
+        printf("MOVE! %f %d \n", cube_x, y);
         
         g_fViewDistance = (y - g_yClick) / 3.0;
         if (g_fViewDistance < VIEWING_DISTANCE_MIN)
@@ -406,20 +417,13 @@ void mayanav_rst_xforms( void ){
 }
 
 void maya_navigation_demo(int *argc, char** argv){
-    
-    int screenSize = 512; //defaults to 512
-    if (argv[1]){
-       screenSize = atoi(argv[1]);
-    }
-
-    printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
-
+   
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
     glutInit(argc, argv);  
 
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
-    glutInitWindowSize(screenSize, screenSize);  //window size
+    glutInitWindowSize(scr_size_x, scr_size_y);  //window size
 
     // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
@@ -435,7 +439,7 @@ void maya_navigation_demo(int *argc, char** argv){
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
     
-    InitGL(screenSize, screenSize); // Initialize window. 
+    InitGL(scr_size_x, scr_size_y); // Initialize window. 
 
 
     ///////////////////////////    
