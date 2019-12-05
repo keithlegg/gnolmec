@@ -38,7 +38,8 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
-float cube_x = 0.0;
+float gui_rotx = 0.0;
+float gui_roty = 0.0;
 
 int scr_size_x = 512; //defaults to 512
 int scr_size_y = 512; //defaults to 512
@@ -134,11 +135,11 @@ static void draw_3d_cube()
 
 
 
-    glTranslatef(0.0f,cube_x, -14.0f);              // move 5 units into the screen.
+    glTranslatef(0.0f,0, -5.0);              // move 5 units into the screen.
 
-    glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
-    glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
-    glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
+    glRotatef( gui_roty*-100 , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
+    glRotatef( gui_rotx*-100 , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
+    glRotatef( zrot          , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
     
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
@@ -358,13 +359,16 @@ void maya_mouse_motion(int x, int y)
     // If button1 pressed, zoom in/out if mouse is moved up/down.
  
     float center_x = (float)img_usize/2;
-    cube_x = (center_x-x)/scr_size_x; 
+    gui_rotx = (center_x-x)/scr_size_x; 
+
+    float center_y = (float)img_vsize/2;
+    gui_roty = (center_y-y)/scr_size_y; 
 
     // cube_x
 
     if (g_bButton1Down)
     {
-        printf("MOVE! %f %d \n", cube_x, y);
+        // printf("MOVE! %f %d \n", cube_x, y);
         
         g_fViewDistance = (y - g_yClick) / 3.0;
         if (g_fViewDistance < VIEWING_DISTANCE_MIN)
