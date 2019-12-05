@@ -22,17 +22,6 @@
 /*********************************************************/
 
 
-
-
-
-
-/*********************************************************/
-/*General linear algebra and trig functions 
-  these can be used by higher order objects like vectors and matricies, 
-  or used directly */
-/*********************************************************/
-
-
 //degree to radian 
 double dtr ( double deg){
    return deg * DEG_TO_RAD;
@@ -65,13 +54,11 @@ double fcalc_distance(int pt1[2], int pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
 }
 
-// distance between 2 vectors in 2D
-double fcalc_distance( vec2 input){
+double length( vec2 input){
     return sqrt( (input.x * input.x) + (input.y * input.y) );
 }
 
-// distance between 2 vectors in 3D
-double fcalc_distance( vec3 input){
+double length( vec3 input){
     return sqrt( (input.x * input.x) + (input.y * input.y) + (input.z * input.z) );
 }
 
@@ -109,8 +96,7 @@ double angle_between( vec2 v_one, vec2 v_two )
 
 
 /*****************************/
-/*****************************/
-/*****************************/
+
 
 vec2 newvec2( int x, int y ){
     vec2 output;
@@ -131,14 +117,14 @@ vec2 newvec2( double x, double y ){
 /* normalize a vector */
 vec2 normalize( vec2 input )
 {
-     double length  = fcalc_distance(input);
+     double vlen  = length(input);
 
      vec2 output;
 
-     if(length != 0)
+     if(vlen != 0)
      {
-        output.x = input.x/length;
-        output.y = input.y/length;
+        output.x = input.x/vlen;
+        output.y = input.y/vlen;
      }
 
      return output; 
@@ -232,15 +218,10 @@ vec3 div_vec3 (vec3 v1, vec3 v2){
     // UNTESTED - normalized? 
     vec3 output;
 
-    // self.x = other.x/other.length()
-    // self.y = other.y/other.length()
-    // self.z = other.y/other.length()
-    // return type(self)(self.x, self.y, self.z)
-    
-    // vec3 output;
-    // output.x = v1.x - v2.x;
-    // output.y = v1.y - v2.y;
-    // output.z = v1.z - v2.z;
+    output.x = v2.x / length(v2);
+    output.y = v2.y / length(v2);
+    output.z = v2.y / length(v2);
+
     return output;
 
 }
@@ -280,15 +261,15 @@ vec3 newvec3( double x, double y, double z ){
 /* normalize a 3d vector */
 vec3 normalize( vec3 input )
 {
-     double length  = fcalc_distance(input);
+     double vlen  = length(input);
 
      vec3 output;
 
-     if(length != 0)
+     if(vlen != 0)
      {
-        output.x = input.x/length;
-        output.y = input.y/length;
-        output.z = input.z/length;
+        output.x = input.x/vlen;
+        output.y = input.y/vlen;
+        output.z = input.z/vlen;
 
      }
 
@@ -320,9 +301,13 @@ vec3 rtd_vec3(vec3 invec){
 }        
 
 /*****************************/
-vec3 vect_add( vec3 v1, vec3 v2){
+vec3 add( vec3 v1, vec3 v2){
     vec3 output;    
-    //return [v1[0]+v2[0], v1[0]+v2[1], v1[2]+v2[2]]
+
+    output.x = v1.x+v2.x;
+    output.y = v1.x+v2.y;
+    output.z = v1.z+v2.z;
+
     return output;
 
 }
@@ -1157,37 +1142,35 @@ void quaternion_normalize(quaternion *input){
     }    
 }
 
-double dot_product(quaternion q){ 
-    double output;
-
-    //return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
-    return output;
+double dot_product(quaternion a, quaternion b){ 
+    return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
 }
 
 quaternion conjugate(quaternion q){
     quaternion output;
-        
-    // result.w =  q.w
-    // result.x = -q.x
-    // result.y = -q.y
-    // result.z = -q.z
+   
+    q.w =  q.w;
+    q.x = -q.x;
+    q.y = -q.y;
+    q.z = -q.z;
+
     return output;
 }        
 
 
 quaternion multiply(quaternion a){
     quaternion output;
-    /*
-    w = self.w
-    x = self.x
-    y = self.y
-    z = self.z
+   
+    double w = a.w;
+    double x = a.x;
+    double y = a.y;
+    double z = a.z;
 
-    result.w = w * a.w - x * a.x - y * a.y - z * a.z
-    result.x = w * a.x + x * a.w + z * a.y + y * a.z
-    result.y = w * a.y + y * a.w + x * a.z + z * a.x
-    result.z = w * a.z + z * a.w + y * a.x + x * a.y
-    */ 
+    output.w = w * a.w - x * a.x - y * a.y - z * a.z;
+    output.x = w * a.x + x * a.w + z * a.y + y * a.z;
+    output.y = w * a.y + y * a.w + x * a.z + z * a.x;
+    output.z = w * a.z + z * a.w + y * a.x + x * a.y;
+ 
     return output;
 }
 

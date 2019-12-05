@@ -59,8 +59,8 @@ double dotProduct ( vec3 v1, vec3 v2);
 
 double fcalc_distance(int pt1[2], int pt2[2]);
 double fcalc_distance(double pt1[2], double pt2[2]);
-double fcalc_distance( vec2 input);
-double fcalc_distance( vec3 input);
+double length( vec2 input);
+double length( vec3 input);
 
 
 double calc_theta_vert ( double start_x, double start_y, double end_x, double end_y);
@@ -98,7 +98,7 @@ vec3 normalize( vec3 input );
 //untested - not done 
 vec3 dtr_vec3(vec3 invec);
 vec3 rtd_vec3(vec3 invec);       
-vec3 vect_add( vec3 v1, vec3 v2);
+vec3 add( vec3 v1, vec3 v2);
 vec3 mult_scalar (double scalar, vec3 v);
 
 vec3 mult_m33_vec3(m33 m, vec3 v);
@@ -171,10 +171,12 @@ void quaternion_fr_euler(quaternion *input, double h, double p, double b);
 double quaternion_mag(quaternion *input);
 void quaternion_normalize(quaternion *input);
 
+
 double dot_product(quaternion q);
 quaternion conjugate(quaternion q);
 quaternion multiply(quaternion a);
 quaternion quaternion_from_m33(m33 input);
+
 m33 quaternion_to_m33(quaternion *q);
 void quaternion_set_axis( quaternion *input, vec3 axis, double theta);
 

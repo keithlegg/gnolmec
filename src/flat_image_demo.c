@@ -36,7 +36,7 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
-static enum {
+enum {
     MENU_ABOUT,
     MENU_POLYMODE,
     MENU_TEXTURING,

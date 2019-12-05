@@ -76,7 +76,7 @@ Image* main_bg_bfr      = createBufferImage(512,512);
 Image* imageloaded_bfr  = createBufferImage(512,512); 
 Image* imageloaded_bfr2 = createBufferImage(512,512); 
 
-static enum {
+enum {
     MENU_ABOUT,
     MENU_POLYMODE,
     MENU_TEXTURING,
@@ -94,7 +94,7 @@ void test_math_ops(void){
     printf("-------------------------------------------------\n");
 
     printf("# 2d vector            %f %f     \n", vec2d.x, vec2d.y );
-    printf("# 2d vector length is  %f        \n", fcalc_distance(vec2d) );
+    printf("# 2d vector length is  %f        \n", length(vec2d) );
     printf("# 2d vector normalized %f %f     \n", nrml_vec2.x, nrml_vec2.y );
 
     printf("\n");
@@ -105,7 +105,7 @@ void test_math_ops(void){
     vec3 nrml_vec3 = normalize(vec3d);
 
     printf("# 3d vector            %f %f %f  \n", vec3d.x, vec3d.y, vec3d.z );
-    printf("# 3d vector length is  %f        \n", fcalc_distance(vec3d) );
+    printf("# 3d vector length is  %f        \n", length(vec3d) );
     printf("# 3d vector normalized %f %f %f  \n", nrml_vec3.x, nrml_vec3.y, nrml_vec3.z );
     
     printf("-------------------------------------------------\n");    
@@ -141,13 +141,13 @@ int main(int argc, char **argv)
     
     //test_framebuffer_funcs();
     
-    test_math_ops();
+    // test_math_ops();
     
     // flatImageDemo(&argc, argv); 
     
     // spinningCubeDemo(&argc, argv); 
 
-    // maya_navigation_demo(&argc, argv);
+     maya_navigation_demo(&argc, argv);
 
     return 1;
 }
