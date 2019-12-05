@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>      
 
-#include "flat_image_demo.h"
+#include "demo_flat.h"
 
 #include "bitmap_io.h"
 #include "gl_setup.h"

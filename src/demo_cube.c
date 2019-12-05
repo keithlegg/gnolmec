@@ -5,7 +5,10 @@
 #include "gl_setup.h"
 #include "bitmap_io.h" 
 
-#include "maya_demo.h"
+#include "demo_cube.h"
+
+
+
 
 
 extern float xrot, yrot, zrot; 
@@ -38,11 +41,6 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
-float gui_rotx = 0.0;
-float gui_roty = 0.0;
-
-int scr_size_x = 512; //defaults to 512
-int scr_size_y = 512; //defaults to 512
 
 
 static void animateTextures3(Image *loaded_texture)
@@ -126,6 +124,8 @@ static void animateTextures3(Image *loaded_texture)
 
 }
 
+
+
 /***************************************/
 
 static void draw_3d_cube()
@@ -133,13 +133,10 @@ static void draw_3d_cube()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
-
-
-    glTranslatef(0.0f,0, -5.0);              // move 5 units into the screen.
-
-    glRotatef( gui_roty*-100 , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
-    glRotatef( gui_rotx*-100 , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
-    glRotatef( zrot          , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
+    glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
+    glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
+    glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
+    glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
     
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
@@ -211,9 +208,8 @@ static void draw_3d_cube()
     glutSwapBuffers();
 }
 
-
-/***************************************/
-
+/*****************************************/
+// callback when window is resized (which shouldn't happen in fullscreen) 
 static void ReSizeGLScene(int Width, int Height)
 {
     
@@ -230,8 +226,6 @@ static void ReSizeGLScene(int Width, int Height)
     
     glMatrixMode(GL_MODELVIEW);
 }//end resize callback
-
-/***************************************/
 
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
@@ -279,8 +273,6 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
-
-
     if (key == 101) //e
     { 
         glutReshapeWindow(800, 800);
@@ -312,213 +304,166 @@ static void keyPressed(unsigned char key, int x, int y)
 }
 
 
-/********************************************/
 
-void maya_mouse_button(int button, int state, int x, int y)
+/***************************************/
+
+
+void drawglscene_3d()
 {
-    // Respond to mouse button presses.
-    // If button1 pressed, mark this state so we know in motion function.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
+    glLoadIdentity();               // Reset The View
 
-    printf("maya button x %d y %d \n",x , y);
+    glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
+    glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
+    glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
+    glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
+    
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
-    if (button == GLUT_LEFT_BUTTON)
-      {
-        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        g_yClick = y - 3 * g_fViewDistance;
-        
-        printf("maya left click \n");
+    glBegin(GL_QUADS);                      // begin drawing a cube
+    
+    // Front Face (note that the texture's corners have to match the quad's corners)
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    
+    // Back Face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    
+    // Top Face
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    
+    // Bottom Face       
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    
+    // Right face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    
+    // Left Face
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    
+    glEnd();  // done with the polygon.
 
-      }
-
-    if (button == GLUT_MIDDLE_BUTTON)
-      {
-        
-        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        printf("maya middle click \n");
-
-      }
-
-    if (button == GLUT_RIGHT_BUTTON)
-      {
-        
-        printf("maya right click \n");
-
-      }
-
-}
-
-
-
-/********************************************/
-// var x = Input.GetAxis("Mouse X") ;
-// var y = Input.GetAxis("Mouse Y") ;
-
-
-void maya_mouse_motion(int x, int y)
-{
-    // If button1 pressed, zoom in/out if mouse is moved up/down.
- 
-    float center_x = (float)img_usize/2;
-    gui_rotx = (center_x-x)/scr_size_x; 
-
-    float center_y = (float)img_vsize/2;
-    gui_roty = (center_y-y)/scr_size_y; 
-
-    // cube_x
-
-    if (g_bButton1Down)
-    {
-        // printf("MOVE! %f %d \n", cube_x, y);
-        
-        g_fViewDistance = (y - g_yClick) / 3.0;
-        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-           g_fViewDistance = VIEWING_DISTANCE_MIN;
-        glutPostRedisplay();
+    if (yrot<100){
+        //xrot+=.1f;  // X Axis Rotation  
+        yrot+=.2f;    // Y Axis Rotation
+        //zrot+=.1f;  // Z Axis Rotation
+    }
+    
+    if (yrot>=100 && yrot<200){
+        xrot+=.2f;    // X Axis Rotation  
+        yrot+=.2f;    // Y Axis Rotation
+        //zrot+=.1f;  // Z Axis Rotation
     }
 
+    if (yrot>=200){
+        xrot-=.2f;    // X Axis Rotation  
+        //yrot+=.2f;    // Y Axis Rotation
+        zrot+=.1f;  // Z Axis Rotation
+ 
+    }
 
-}
+    /**********/
+
+    unsigned int u_edge = img_usize - pong_size;
+    unsigned int v_edge = img_vsize - pong_size;
+
+    if(upos<0)         { upos = 100; }
+    if(vpos<0)         { vpos = 100; }
+    if(upos>img_usize) { upos = 100; }
+    if(vpos>img_vsize) { vpos = 100; }
 
 
-/********************************************/
+    // animate some numbers 
+    if(upos>=u_edge)     { dir_u = 1; }
+    if(upos<=pong_size)  { dir_u = 0; }
 
-//attempt to port code from Unity Engine into pure C 
+    if(vpos>=u_edge)    { dir_v = 1; }
+    if(vpos<=pong_size) { dir_v = 0; }
 
-float zoomSpeed    = 1.2f;
-float moveSpeed    = 1.9f;
-float rotateSpeed  = 4.0f;
-vec3 startpos = newvec3(0.0, 130.0, 60.0);
+    if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
+    if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
 
-m33 capsuleObj; //represents a Unity/Maya Transform node 
-quaternion orbt_rot_original;
-vec3 orbt_xform_original;
-
-// Use this for initialization
-void mayanav_start (void ) {
-    // Create a transform (which will be the lookAt target and global orbit vector)
     
-    //     capsuleObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-    //     capsuleObj.transform.position = Vector3.zero;
+    //animateTextures2(main_bg_bfr);
+    
+    animateTextures3(main_bg_bfr);
 
-   // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
-   
-   // transform.position = startpos;  
-   // transform.LookAt(capsuleObj.transform.position, Vector3.up);
-   // capsuleObj.renderer.enabled = false; //hide the capsule object     
-
-//     ///
-//     orbt_xform_original = capsuleObj.transform.position;
-//     orbt_rot_original   = capsuleObj.transform.rotation;
+    //usleep(100000); 
+    // since this is double buffered, swap the buffers to display what just got drawn.
+    glutSwapBuffers();
 }
 
 
-void mayanav_rst_xforms( void ){
-//     transform.parent = capsuleObj.transform;
-//     capsuleObj.transform.position = orbt_xform_original ;
-//     capsuleObj.transform.rotation = orbt_rot_original;
-//     transform.parent = null;
-//     transform.position = startpos;
-}
+/***************************************/
 
-void maya_navigation_demo(int *argc, char** argv){
-   
+//top level opengl loop 
+void spinningCubeDemo(int *argc, char** argv){
+    
+    int screenSize = 512; //defaults to 512
+    if (argv[1]){
+       screenSize = atoi(argv[1]);
+    }
+
+    printf("\n\nstarting up semraster in %i resolution.\n", screenSize);
+
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
     glutInit(argc, argv);  
 
+    //  Select type of Display mode:   
+    //  Double buffer 
+    //  RGBA color
+    //  Alpha components supported 
+    //  Depth buffer   
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
-    glutInitWindowSize(scr_size_x, scr_size_y);  //window size
+    glutInitWindowSize(screenSize, screenSize);  //window size
 
     // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
      
-    window_id = glutCreateWindow("Maya navigation demo"); //create an opengl window 
+    window_id = glutCreateWindow("3D cube demo"); //create an opengl window 
 
     //register display callback       
-    glutDisplayFunc(&draw_3d_cube);   
+    glutDisplayFunc(&drawglscene_3d);   
 
     // Even if there are no events, redraw our gl scene.  
-    glutIdleFunc(&draw_3d_cube);
+    glutIdleFunc(&drawglscene_3d);
 
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
     
-    InitGL(scr_size_x, scr_size_y); // Initialize window. 
-
+    InitGL(screenSize, screenSize); // Initialize window. 
+    
+    ///////////////////////////
+    //test of BMP saving 
+    //create_Image("generated1.bmp");  
+    //create_Image2("generated2.bmp"); 
 
     ///////////////////////////    
-    glutMouseFunc (maya_mouse_button);
-    glutMotionFunc (maya_mouse_motion);
-    
-    //var wheelie = Input.GetAxis("Mouse ScrollWheel");
-        
-    // if (wheelie < 0) // back
-    // {
-    //     var currentZoomSpeed = 100f;
-    //     transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
-    // }
-    // if (wheelie > 0) // back
-    // {
-    //      var currentZoomSpeed = 100f;
-    //      transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
-    // }
-
-    /*
-    //Input.GetAxis("Mouse ScrollWheel") < 0) // back
-    if( Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.LeftAlt) ){
-
-      // Distance between camera and orbitVector. We'll need this in a few places
-      var distanceToOrbit = Vector3.Distance(transform.position, orbitVector.transform.position);
-    
-        //RMB - ZOOM
-        if (Input.GetMouseButton(1)) {
-            
-            // Refine the rotateSpeed based on distance to orbitVector
-            var currentZoomSpeed = Mathf.Clamp(zoomSpeed * (distanceToOrbit / 50), 0.1f, 2.0f);
-            
-            // Move the camera in/out
-            transform.Translate(Vector3.forward * (x * currentZoomSpeed));
-            
-            // If about to collide with the orbitVector, repulse the orbitVector slightly to keep it in front of us
-            if (Vector3.Distance(transform.position, orbitVector.transform.position) < 3) {
-                orbitVector.transform.Translate(Vector3.forward, transform);
-            }
-
-        
-        //LMB - PIVOT
-        } else if (Input.GetMouseButton(0)) {
-            
-            // Refine the rotateSpeed based on distance to orbitVector
-            var currentRotateSpeed = Mathf.Clamp(rotateSpeed * (distanceToOrbit / 50), 1.0f, rotateSpeed);
-            
-            
-            // Temporarily parent the camera to orbitVector and rotate orbitVector as desired
-            transform.parent = orbitVector.transform;
-            orbitVector.transform.Rotate(Vector3.right * (y * currentRotateSpeed));
-            orbitVector.transform.Rotate(Vector3.up * (x * currentRotateSpeed), Space.World);
-            transform.parent = null;
-                    
-        //MMB - PAN
-        else if (Input.GetMouseButton(2)) {
-            
-            // Calculate move speed
-            var translateX = Vector3.right * (x * moveSpeed) * -1;
-            var translateY = Vector3.up * (y * moveSpeed) * -1;
-            
-            // Move the camera
-            transform.Translate(translateX);
-            transform.Translate(translateY);
-            
-            // Move the orbitVector with the same values, along the camera's axes. In effect causing it to behave as if temporarily parented.
-            orbitVector.transform.Translate(translateX, transform);
-            orbitVector.transform.Translate(translateY, transform);
-        }
-    */        
-
+    //glutMouseFunc (MouseButton);
+    //glutMotionFunc (MouseMotion);
+  
     ///////////////////////////      
     // Create our popup menu
     //BuildPopupMenu ();
-    //glutAttachMenu (GLUT_RIGHT_BUTTON);
+    glutAttachMenu (GLUT_RIGHT_BUTTON);
 
     loadImage("textures/generated1.bmp" , imageloaded_bfr);
     loadImage("textures/generated3.bmp" , imageloaded_bfr2);
@@ -529,3 +474,6 @@ void maya_navigation_demo(int *argc, char** argv){
 }
 
 
+
+
+ 
