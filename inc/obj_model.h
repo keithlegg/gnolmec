@@ -16,9 +16,9 @@
 
 typedef struct obj_model{
 
-    struct vec2 uvs[1000]; // UV coords 
-    struct vec3 points[1000];     // 3 floats  
-    struct vec3 faces[1000];      // 3 floats (ints) for triangles only  
+    struct vec2 uvs[1000];     // UV coords 
+    struct vec3 points[1000];  // 3 floats  
+    struct vec3 faces[1000];   // 3 floats (ints) for triangles only  
 
     //char *data;
 

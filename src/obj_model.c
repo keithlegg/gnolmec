@@ -12,6 +12,44 @@
 /*****************************************************************************/
 
 
+/*
+    glBegin(GL_QUADS);                      // begin drawing a cube
+    // Front Face (note that the texture's corners have to match the quad's corners)
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    // Back Face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    // Top Face
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    // Bottom Face       
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    // Right face
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
+    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
+    // Left Face
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
+    glEnd();  // done with the polygon.
+*/
+
+/*****************************************************************************/
+
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,58 +61,48 @@
 
 
 
+
 void test_loader_data(struct obj_model* loader){
 
-
-    // glTexCoord2f(1.0f, 1.0f); glVertex3f( );  
-
-    // // Back Face
-    // glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
-    // glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
-    // glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
-
-    // // Top Face
+    // Top Face
     // glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
     // glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
     // glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
 
-    // // Bottom Face       
+    // Bottom Face       
     // glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
     // glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
     // glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
 
-    // // Right face
+    // Right face
     // glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
     // glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
     // glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
 
-    // // Left Face
+    // Left Face
     // glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
     // glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
     // glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
 
+    loader->uvs[0]    = newvec2(  0.0 , 0.0         ); // Bottom Left Of The Texture and Quad
+    loader->points[0] = newvec3( -1.0 , -1.0,  1.0  );
+    loader->uvs[1]    = newvec2( 1.0  , 0.0         ); // Bottom Right Of The Texture and Quad
+    loader->points[1] = newvec3( 1.0 , -1.0,  1.0   );
+    loader->uvs[2]    = newvec2( 1.0, 1.0           ); // Top Right Of The Texture and Quad
+    loader->points[2] = newvec3( 1.0,  1.0,  1.0    );
+
+    // Back Face
+    loader->uvs[3]     = newvec2( 1.0, 0.0           ); // Bottom Right Of The Texture and Quad
+    loader->points[3]  = newvec3( -1.0, -1.0, -1.0   );
+    loader->uvs[4]     = newvec2( 1.0, 1.0           ); // Top Right Of The Texture and Quad
+    loader->points[4]  = newvec3( -1.0,  1.0, -1.0   );
+    loader->uvs[5]     = newvec2( 0.0, 1.0           ); // Top Left Of The Texture and Quad
+    loader->points[5]  = newvec3( 1.0,  1.0, -1.0    );
 
     //  uvs     // UV coords 
     //  points  // 3 floats  
     //  faces   // triangles only 
 
-    loader->uvs[0]    = newvec2(  0.0 , 0.0          ); // Bottom Left Of The Texture and Quad
-    loader->points[0] = newvec3( -1.0 , -1.0,  1.0 );
-
-    loader->uvs[1]    = newvec2( 1.0  , 0.0          );// Bottom Right Of The Texture and Quad
-    loader->points[1] = newvec3( 1.0 , -1.0,  1.0 );
-
-    loader->uvs[2]    = newvec2( 1.0, 1.0      );      // Top Right Of The Texture and Quad
-    loader->points[2] = newvec3( 1.0,  1.0,  1.0 );
-    
-    // loader.uvs[3]    = newvec2( 0.0, 0.0      );
-    // loader.points[3] = newvec3( 2.0, 1.0, 9.0 );
-    // loader.uvs[4]    = newvec2( 0.0, 0.0      );
-    // loader.points[4] = newvec3( 2.0, 1.0, 9.0 );
-    // loader.uvs[5]    = newvec2( 0.0, 0.0      );
-    // loader.points[5] = newvec3( 2.0, 1.0, 9.0 );
-
-            
                     
 }
 
