@@ -195,66 +195,80 @@ static void display_loop()
     glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
     glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
     glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
-    
-    glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
-    /******************************************/
-    glBegin(GL_TRIANGLES);  
 
-        int p_i, f_i = 0;
+    int p_i, f_i = 0;
 
-        for (p_i=0;p_i<pt_loader->num_tris;p_i++)
-        { 
 
-            //when you implement N sided polys 
-            //for (f_i=0;f_i<3;f_i++)
-            //{   
-                int tri1 = pt_loader->tris[p_i].pt1;
-                int tri2 = pt_loader->tris[p_i].pt2;
-                int tri3 = pt_loader->tris[p_i].pt3;
 
-                //vec2 uv = pt_loader->uvs[tri1];
-                //glTexCoord2f(uv.x, uv.y);
-                glTexCoord2f(0.5, 1.0);                
-                vec3 pt1 = pt_loader->points[tri1];
-                glVertex3f(pt1.x, pt1.y, pt1.z);
- 
-                //vec2 uv = pt_loader->uvs[tri2];
-                //glTexCoord2f(uv.x, uv.y);
-                glTexCoord2f(0.0, 1.0); 
-                vec3 pt2 = pt_loader->points[tri2];
-                glVertex3f(pt2.x, pt2.y, pt2.z);
-
-                //vec2 uv = pt_loader->uvs[tri3];
-                //glTexCoord2f(uv.x, uv.y);
-                glTexCoord2f(1.0, 0.0);                
-                vec3 pt3 = pt_loader->points[tri3];
-                glVertex3f(pt3.x, pt3.y, pt3.z);
-
-            //}  //when you implement N sided polys 
-        }
-
-    glEnd(); 
-   
     /********************************/
-
-    // GLfloat mycolour[3] = {0,0,1}; // blue
-    // glColor3fv( mycolour );        // blue using vector of floats
-    // glColor3f(1.0, 0.0, 0.0);      // red using floats
-    // glColor3ub(0,255,0);           // green using unsigned bytes
-    
-    //glClearcolor(1.0, 1.0, 1.0, 0.0);   // sets the clear colour to white and opaque
-    //glClear( GL_COLOR_BUFFER_BIT);      // clears the colour frame buffer
-
+    // draw 3D line geometry 
     glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
 
     glBegin(GL_LINES);
-        glColor3f(100.0, 0.0, 0.0);   
-        glVertex2f(0, 0);
         
-        glColor3f(200.0, 200.0, 200.0);           
-        glVertex2f(5, 5);
+        for (p_i=0;p_i<pt_loader->num_lines;p_i++)
+        {   
+
+            // fetch the line indices from vertex list 
+            int lin1 = pt_loader->lines[p_i].pt1;
+            int lin2 = pt_loader->lines[p_i].pt2;
+            
+            vec3 pt1 = pt_loader->points[lin1];
+            vec3 pt2 = pt_loader->points[lin2];
+
+            //print_vec3( pt1 );
+            //print_vec3( pt2 );
+
+            glColor3f(100.0, 0.0, 0.0);   
+            //glVertex3f(pt1.x, pt1.y, pt1.z);
+            glVertex2f(pt1.x, pt1.y);
+
+            glColor3f(200.0, 200.0, 200.0); 
+            //glVertex3f(pt1.x, pt1.y, pt1.z);
+            glVertex2f(pt1.x, pt1.y);
+
+        }
+
+        // glVertex3f(0, 0, 0);    
+        // glVertex3f(5, 5, 5);
+
     glEnd();
+
+    /******************************************/
+    // draw the polygon geometry 
+
+    glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
+
+    glBegin(GL_TRIANGLES);  
+        for (p_i=0;p_i<pt_loader->num_tris;p_i++)
+        { 
+            // fetch the triangle indices from vertex list
+            int tri1 = pt_loader->tris[p_i].pt1;
+            int tri2 = pt_loader->tris[p_i].pt2;
+            int tri3 = pt_loader->tris[p_i].pt3;
+
+            
+            //vec2 uv = pt_loader->uvs[tri1];
+            //glTexCoord2f(uv.x, uv.y);
+            glTexCoord2f(0.5, 1.0);                
+            vec3 pt1 = pt_loader->points[tri1-1];
+            glVertex3f(pt1.x, pt1.y, pt1.z);
+
+            //vec2 uv = pt_loader->uvs[tri2];
+            //glTexCoord2f(uv.x, uv.y);
+            glTexCoord2f(0.0, 1.0); 
+            vec3 pt2 = pt_loader->points[tri2-1];
+            glVertex3f(pt2.x, pt2.y, pt2.z);
+
+            //vec2 uv = pt_loader->uvs[tri3];
+            //glTexCoord2f(uv.x, uv.y);
+            glTexCoord2f(1.0, 0.0);                
+            vec3 pt3 = pt_loader->points[tri3-1];
+            glVertex3f(pt3.x, pt3.y, pt3.z);
+        }
+
+    glEnd(); 
 
     /******************************************/
 
@@ -528,8 +542,6 @@ void olmec_navigation_demo(int *argc, char** argv){
     //shader_test();
     
     load_objfile(obj_filepath, pt_loader ); 
-
-
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size

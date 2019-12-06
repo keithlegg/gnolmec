@@ -56,6 +56,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
         while (tok_spacs) 
         {
               
+            /******************************/
             // look for V / vertices
             if ( strcmp( tok_spacs, "v") == 0)
             {
@@ -71,7 +72,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
                 while (tok_line) 
                 {
-                    printf("%s \n", tok_line );   
+                    // printf("%s \n", tok_line );   
                     
                     if(vidx==0){
                         xc = atof(tok_line);
@@ -89,7 +90,6 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 //if two points its a 2D coord (probably not standard obj file )  
                 if (vidx==2){
                     printf("2D point detected! \n"); 
-                    printf(line);
                 }
                 
                 //if three points its a 3d coord 
@@ -103,7 +103,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
             }//end vertex loader 
             
-            /************/
+            /******************************/
 
             //  look for F / faces
             if ( strcmp( tok_spacs, "f") == 0)
@@ -147,14 +147,15 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 /***********/                    
                 //if two face indices - its a line  
                 if (fidx==2){
+                    loader->lines[line_cnt].pt1 = pt1;
+                    loader->lines[line_cnt].pt2 = pt2;                          
+                    line_cnt++;                    
                 }
 
                 if (fidx==3){
 
-                    // if you want the actual polygons
+                    // if you want the actual point data from this index
                     // print_vec3(loader->points[pt1]);
-                    // print_vec3(loader->points[pt2]);
-                    // print_vec3(loader->points[pt3]);
 
                     //or just store the indices
                     loader->tris[tri_cnt].pt1 = pt1;
@@ -172,23 +173,19 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     // loader->quads[quad_cnt].pt4 = pt4;
                     // quad_cnt++;
                 }
-                    
+
             }//end face loader
 
-            /************/
+            /******************************/
 
             //  look for UV coordinates
             if ( strcmp( tok_spacs, "vt") == 0)
             {
-
+               // uv_cnt++;
             }
 
-            /************/   
 
-            // loader->uvs[5]     = newvec2( 0.0, 1.0       ); // Top Left Of The Texture and Quad
-            // loader->points[i]  = newvec3( 2.0, 1.0, 9.0  );
-
-
+            /******************************/
             tok_spacs = strtok(NULL, " ");
 
         }
@@ -208,9 +205,10 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
     printf("\n\n---------------------------\n", vtx_cnt ) ;
     printf("%d vertices loaded   \n", loader->num_pts    ) ;
+    printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
     printf("%d lines loaded      \n", loader->num_lines  ) ;
     printf("%d triangles loaded  \n", loader->num_tris   ) ;
-    printf("%d quads loaded      \n", loader->num_quads ) ;    
+    printf("%d quads loaded      \n", loader->num_quads  ) ;    
 }
 
 

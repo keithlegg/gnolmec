@@ -21,6 +21,16 @@
 //static GLfloat g_farPlane = 1000;
 
 
+
+    // GLfloat mycolour[3] = {0,0,1}; // blue
+    // glColor3fv( mycolour );        // blue using vector of floats
+    // glColor3f(1.0, 0.0, 0.0);      // red using floats
+    // glColor3ub(0,255,0);           // green using unsigned bytes
+    
+    //glClearcolor(1.0, 1.0, 1.0, 0.0);   // sets the clear colour to white and opaque
+    //glClear( GL_COLOR_BUFFER_BIT);      // clears the colour frame buffer
+
+
 GLuint load_and_compile_shader(const char *fname, GLenum shaderType) {
     // std::vector<char> buffer;
     // read_shader_src(fname, buffer);
