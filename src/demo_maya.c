@@ -164,6 +164,7 @@ static void draw_3d_model()
     double viewzoom = gui_zoomz;
     glTranslatef(0.0f,0, viewzoom);              // move 5 units into the screen.
 
+    //rotate model based on view 
     xrot = gui_roty*-100;
     yrot = gui_rotx*-100;
     
@@ -377,7 +378,7 @@ void maya_mouse_button(int button, int state, int x, int y)
         g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         g_yClick = y - 3 * g_fViewDistance;
         
-        // printf("maya left click \n");
+        printf("maya left click \n");
 
       }
 

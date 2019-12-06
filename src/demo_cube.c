@@ -149,16 +149,18 @@ static void animateTextures3(Image *loaded_texture)
 
 
 /***************************************/
-
+/*
 static void draw_3d_cube()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
     glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
-    glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis
-    glRotatef(yrot,0.0f,1.0f,0.0f);     // Rotate On The Y Axis
-    glRotatef(zrot,0.0f,0.0f,1.0f);     // Rotate On The Z Axis
+
+    glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
+    glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
+    glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
+
     
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
@@ -229,7 +231,7 @@ static void draw_3d_cube()
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
 }
-
+*/
 
 /********************************************/
 
@@ -297,9 +299,11 @@ static void maya_mouse_motion(int x, int y)
 
     if (g_bButton1Down)
     {
+        // printf( "%f" , gui_rotx);
+
         g_fViewDistance = (y - g_yClick) / 3.0;
         if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-           g_fViewDistance = VIEWING_DISTANCE_MIN;
+             g_fViewDistance = VIEWING_DISTANCE_MIN;
         glutPostRedisplay();
     }
 
@@ -411,6 +415,9 @@ void drawglscene_3d()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
+
+    xrot += gui_roty;
+    yrot += gui_rotx;
 
     glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
     glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis

@@ -9,7 +9,7 @@
 
 static void animateTextures3(Image *loaded_texture);
 
-static void draw_3d_cube();
+// static void draw_3d_cube();
 
 static void ReSizeGLScene(int Width, int Height);
 static void keyPressed(unsigned char key, int x, int y);
