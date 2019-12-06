@@ -8,7 +8,6 @@
 */
 /*************************************************************/
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>      
@@ -65,6 +64,24 @@ struct obj_model *pt_loader = &loader;
 
 extern char* obj_filepath;
 
+
+void system_render(void){
+    //#include <sys/syscall.h>  //experiment to call renderer 
+
+    /* test of a system call to an external program 
+       one day I may attempt to implement a seperate software renderer here  
+    */
+
+    // syscall(SYS_write, 1, "hello, world!\n", 14);  //experiment to call render program 
+    // printf("%d\n", SYS_write);
+
+    int ret = system("ls");
+    // if (WIFSIGNALED(ret) &&
+    //     (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT)){            
+    //     break;
+    // }
+
+}
 
 
 void reset_view(void){
@@ -144,7 +161,8 @@ static void animateTextures3(Image *loaded_texture)
     free(pt_rgb_bfr);
      
     // create and apply 2D texture   
-    glGenTextures(1, &texture[0]);
+    glGenTextures(2, &texture[0]);  //create 2 textures
+
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
@@ -221,6 +239,8 @@ static void draw_3d_model()
     
     //glClearcolor(1.0, 1.0, 1.0, 0.0);   // sets the clear colour to white and opaque
     //glClear( GL_COLOR_BUFFER_BIT);      // clears the colour frame buffer
+
+    glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
 
     glBegin(GL_LINES);
        // glColor3f(0.0, 0.0, 0.0);   // red
@@ -483,6 +503,10 @@ void mayanav_rst_xforms( void ){
 //     transform.position = startpos;
 }
 
+
+
+
+
 void maya_navigation_demo(int *argc, char** argv){
 
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
@@ -498,8 +522,6 @@ void maya_navigation_demo(int *argc, char** argv){
     glutInitWindowPosition(0, 0);  
      
     window_id = glutCreateWindow("Maya navigation demo"); //create an opengl window 
-
-
 
     //register display callback       
     glutDisplayFunc(&draw_3d_model);   

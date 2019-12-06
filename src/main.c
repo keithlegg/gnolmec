@@ -162,9 +162,9 @@ int main(int argc, char **argv)
     
     // flatImageDemo(&argc, argv); 
     
-    spinningCubeDemo(&argc, argv); 
+    // spinningCubeDemo(&argc, argv); 
 
-    // maya_navigation_demo(&argc, argv);
+    maya_navigation_demo(&argc, argv);
 
     //test_fill();
     //show_object();
