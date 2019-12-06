@@ -47,7 +47,7 @@
 
 #include "demo_flat.h" // 2D openGL demo 
 #include "demo_cube.h"       // 3D openGL demo  
-#include "demo_maya.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
+#include "demo_olmec.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
 
 
 /********************************************/
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
     
     // spinningCubeDemo(&argc, argv); 
 
-    maya_navigation_demo(&argc, argv);
+    olmec_navigation_demo(&argc, argv);
 
     //test_fill();
     //show_object();
