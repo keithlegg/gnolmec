@@ -119,7 +119,7 @@ void show_loader(struct obj_model* loader)
 
 /*********************************/
 
-void load_objfile( char *filepath)
+void load_objfile( char *filepath, struct obj_model* loader)
 {
     FILE * fp;
     char * line = NULL;
@@ -129,6 +129,10 @@ void load_objfile( char *filepath)
     fp = fopen(filepath, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+
+    int vtx_cnt = 0;  // number of verts loaded 
+    int face_cnt = 0; // number of faces loaded 
+    int uv_cnt  = 0;  // number of UVs loaded 
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
@@ -141,67 +145,85 @@ void load_objfile( char *filepath)
         char* tok_spacs = strtok(line, " ");
         while (tok_spacs) 
         {
-
-            /************/        
-                
+              
             // look for V / vertices
             if ( strcmp( tok_spacs, "v") == 0)
             {
                 strcpy (coords_str, tok_spacs+2);
 
-                // printf("%s\n", coords_str); 
+                // printf("%s\n", coords_str); // <- vertex line 
 
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(coords_str, " ");
                 int idx = 0;
+                
+                float xc, yc, zc = 0.0;
+
                 while (tok_line) 
                 {
                     // printf("%s \n", tok_line );   
                     if(idx==0){
-                        printf("VERTEX x:%s",tok_line);
-                        //x = atof (buffer);
+                        xc = atof(tok_line);
                     }
                     if(idx==1){
-                        printf(" y:%s",tok_line); 
-                        //y = atof (buffer);                        
+                        yc = atof(tok_line);                        
                     }  
                     if(idx==2){
-                        printf(" z:%s",tok_line); 
-                        //z = atof (buffer);                        
+                        zc = atof(tok_line);
+                        vec3 vpt = newvec3( xc, yc, zc  );
+                        loader->points[vtx_cnt] = vpt;
+                        vtx_cnt++;
+                        // print_vec3(vpt); //to view output 
                     }                                        
                     
                     idx++;tok_line = strtok(NULL, " ");
                 }
 
-            }//end vertex  
+            }//end vertex loader 
             
             /************/
 
             //  look for F / faces
             if ( strcmp( tok_spacs, "f") == 0)
             {
+               
 
                 strcpy (fidx_str, tok_spacs+2);
                 char* tok_line = strtok(fidx_str, " ");
                 int idx = 0;
+                
+                int pt1,pt2,pt3,pt4 = 0;;
 
-                //walk the tokens on the line 
+                // walk the tokens on the line 
+                // ASSUME TRIANGLES ONLY! (3 coords per vertex)
                 while (tok_line) 
                 {
-                    //printf("%d %s\n", idx, tok_line);                  
+                    //printf("%d %s\n", idx, tok_line); // <- face line                  
 
                     if(idx==0){
-                        printf("FACE id0- %s ",tok_line);
-                        //x = atoi (buffer);
+                        pt1 = atoi( tok_line);
                     }
                     if(idx==1){
-                        printf(" id1- %s ",tok_line); 
-                        //y = atoi (buffer);                        
+                        pt2 = atoi( tok_line);                       
                     }  
                     if(idx==2){
-                        printf(" id2- %s",tok_line);
-                        //z = atoi (buffer);                        
+                        pt3 = atoi( tok_line);
+
+                        // if you want the actual polygons
+                        // print_vec3(loader->points[pt1]);
+                        // print_vec3(loader->points[pt2]);
+                        // print_vec3(loader->points[pt3]);
+
+                        //or just store the indices
+                        loader->tris[face_cnt].pt1 = pt1;
+                        loader->tris[face_cnt].pt2 = pt2;                          
+                        loader->tris[face_cnt].pt3 = pt3;
+
+                        face_cnt++;
+
                     }   
+
+                    //4 sided not implemented yet 
                     // if(idx==3){
                     //     printf(" idx 3:%s",tok_line);
                     //     //z = atoi (buffer);                        
@@ -212,9 +234,17 @@ void load_objfile( char *filepath)
 
                 }
 
+            }//end face loader
 
+            /************/
+
+            //  look for UV coordinates
+            if ( strcmp( tok_spacs, "vt") == 0)
+            {
 
             }
+
+            /************/   
 
             // loader->uvs[5]     = newvec2( 0.0, 1.0       ); // Top Left Of The Texture and Quad
             // loader->points[i]  = newvec3( 2.0, 1.0, 9.0  );
@@ -229,6 +259,15 @@ void load_objfile( char *filepath)
     fclose(fp);
     if (line)
         free(line);
+
+    loader->num_pts = vtx_cnt;
+    loader->num_faces = face_cnt;
+    loader->num_uvs = 0;
+
+    printf("\n\n---------------------------\n", vtx_cnt ) ;
+    printf("%d vertices loaded \n", vtx_cnt ) ;
+    printf("%d faces loaded    \n", face_cnt ) ;
+
 }
 
 

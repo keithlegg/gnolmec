@@ -61,6 +61,11 @@ int scr_size_y = 512; //defaults to 512
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
 
+
+
+char* obj_filepath = "3d_obj/monkey.obj";
+
+
 void reset_view(void){
     gui_rotx = 0.0;
     gui_roty = 0.0;
@@ -172,17 +177,37 @@ static void draw_3d_model()
   
     glBegin(GL_TRIANGLES);  
 
-    int i = 0;
-    for (i=0;i<=7;i++)
-    { 
-        
-        vec2 uv = pt_loader->uvs[i];
-        vec3 pt = pt_loader->points[i];
-        
-        glTexCoord2f(uv.x, uv.y);
-        glVertex3f(pt.x, pt.y, pt.z);
-       
-    }
+        int p_i, f_i = 0;
+
+        for (p_i=0;p_i<pt_loader->num_faces;p_i++)
+        { 
+
+            //when you implement N sided polys 
+            //for (f_i=0;f_i<3;f_i++)
+            //{   
+                int tri1 = pt_loader->tris[p_i].pt1;
+                int tri2 = pt_loader->tris[p_i].pt2;
+                int tri3 = pt_loader->tris[p_i].pt3;
+
+                //vec2 uv = pt_loader->uvs[tri1];
+                vec3 pt1 = pt_loader->points[tri1];
+                //glTexCoord2f(uv.x, uv.y);
+                glVertex3f(pt1.x, pt1.y, pt1.z);
+
+
+                //vec2 uv = pt_loader->uvs[tri2];
+                vec3 pt2 = pt_loader->points[tri2];
+                //glTexCoord2f(uv.x, uv.y);
+                glVertex3f(pt2.x, pt2.y, pt2.z);
+                
+
+                //vec2 uv = pt_loader->uvs[tri3];
+                vec3 pt3 = pt_loader->points[tri3];
+                //glTexCoord2f(uv.x, uv.y);
+                glVertex3f(pt3.x, pt3.y, pt3.z);
+
+            //}  //when you implement N sided polys 
+        }
 
     glEnd(); 
    
@@ -274,7 +299,7 @@ static void keyPressed(unsigned char key, int x, int y)
         //show_loader(pt_loader);
 
 
-        load_objfile("3d_obj/cone.obj");   
+        load_objfile(obj_filepath, pt_loader );   
     }
 
     if (key == 100) //d
