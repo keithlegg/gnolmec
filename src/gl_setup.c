@@ -9,9 +9,10 @@
 */
 /*************************************************************/
 
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "framebuffer.h"
-
 #include "gl_setup.h"
 
 
@@ -20,7 +21,37 @@
 //static GLfloat g_farPlane = 1000;
 
 
+GLuint load_and_compile_shader(const char *fname, GLenum shaderType) {
+    // std::vector<char> buffer;
+    // read_shader_src(fname, buffer);
+    // const char *src = &buffer[0];
+    // // Compile the shader
+    // GLuint shader = glCreateShader(shaderType);
+    // glShaderSource(shader, 1, &src, NULL);
+    // glCompileShader(shader);
+    // // Check the result of the compilation
+    // GLint test;
+    // glGetShaderiv(shader, GL_COMPILE_STATUS, &test);
+    // if(!test) {
+    //   std::cerr << "Shader compilation failed with this message:" << std::endl;
+    //   std::vector<char> compilation_log(512);
+    //   glGetShaderInfoLog(shader, compilation_log.size(), NULL, &compilation_log[0]);
+    //   std::cerr << &compilation_log[0] << std::endl;
+    //   glfwTerminate();
+    //   exit(-1);
+    // }
+    // return shader;
+}
 
+void shader_test(void){
+  
+    char *path_vert_shader = "hello";
+    GLuint vertexShader = load_and_compile_shader(path_vert_shader, GL_VERTEX_SHADER);
+    
+    printf("shader test ran!\n");
+
+    
+}
 
 
 /***************************************************************/

@@ -1,16 +1,17 @@
 # opengl_in_c
 
 
-One of the first tests I did to learn about writing an openGL app on Linux in C.
+A toolkit for 2D and 3D graphics in C. 
 
+One of the first tests I did to learn about writing an openGL application on Linux in C.
 
 My original motivation for writing this was that I needed a way to display an image on the screen in real time 
-from some electronics that were scanning it and beaming the pixels in byte at a time. 
+from some electronics that were driving a homemade electron microscope.
 
-This is a branch of semraster (https://github.com/keithlegg/semraster), which is a snapshot of the 
-project in some sort of working state. 
+There is some really old serial port code in here, and I would like to revive it as well as hook up an FTDI driver
+so we can have data flowing in/out to visualize cool things. 
 
-That project ended, but this continues to live as a set of tools for playing with graphics and general nerdery.
+For more info on the microscope project go here: (https://github.com/keithlegg/semraster) 
 
 
 Tested on Linux and OSX. 

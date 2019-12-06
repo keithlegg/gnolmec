@@ -16,8 +16,8 @@ void maya_mouse_motion(int x, int y);
 void mouse_wheel(int button, int dir, int x, int y);
 
 
-void mayanav_start (void );
-void mayanav_rst_xforms( void );
+//void mayanav_start (void );
+//void mayanav_rst_xforms( void );
 void maya_navigation_demo(int *argc, char** argv);
 
 

@@ -57,7 +57,17 @@ int window_id; // The number of our GLUT window
  
 GLuint texture[1]; // storage for one texture  
 
+
 float xrot, yrot, zrot;// floats for x rotation, y rotation, z rotation 
+
+
+//3d view properties
+float gui_rotx = 0.0;
+float gui_roty = 0.0;
+float gui_zoomz = -5.0;
+
+int scr_size_x = 512;
+int scr_size_y = 512;
 
 // data for animated "pong" texture 
 unsigned int upos = 100;
@@ -150,12 +160,12 @@ int main(int argc, char **argv)
     
     // test_math_ops();
     
-    // flatImageDemo(&argc, argv); 
+    flatImageDemo(&argc, argv); 
     
     // spinningCubeDemo(&argc, argv); 
 
 
-    maya_navigation_demo(&argc, argv);
+    // maya_navigation_demo(&argc, argv);
     
 
 

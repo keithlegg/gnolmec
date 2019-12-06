@@ -39,6 +39,9 @@ typedef int BOOL;
 
 void InitGL(int Width, int Height);
 
+void shader_test(void);
+GLuint load_and_compile_shader(const char *fname, GLenum shaderType);
+
 
 
 #endif

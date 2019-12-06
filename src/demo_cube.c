@@ -57,6 +57,13 @@ static int g_yClick = 0;
 
 
 
+extern float gui_rotx;
+extern float gui_roty;
+extern float gui_zoomz;
+
+extern int scr_size_x;
+extern int scr_size_y;
+
 
 static void animateTextures3(Image *loaded_texture)
 {
@@ -222,6 +229,83 @@ static void draw_3d_cube()
     // since this is double buffered, swap the buffers to display what just got drawn.
     glutSwapBuffers();
 }
+
+
+/********************************************/
+
+static void maya_mouse_button(int button, int state, int x, int y)
+{
+    // Respond to mouse button presses.
+    // If button1 pressed, mark this state so we know in motion function.
+
+    // printf("maya button x %d y %d \n",x , y);
+
+    //left click 
+    if (button == GLUT_LEFT_BUTTON)
+      {
+        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
+        g_yClick = y - 3 * g_fViewDistance;
+        
+        // printf("maya left click \n");
+
+      }
+
+      // middle click
+      if ((button == 3) || (button == 4)) // It's a wheel event
+      {
+           // Disregard redundant GLUT_UP events
+           if (state == GLUT_UP) return; 
+
+           if (button == 3){
+               if (gui_zoomz < -1){
+                   gui_zoomz++;                
+               }
+  
+           }
+           if (button == 4){
+               gui_zoomz--; 
+           }
+      }else{  // normal button event
+           if (state == GLUT_DOWN){
+               // printf("maya middle click\n");  
+           }
+      }
+
+
+    //Right click
+    if (button == GLUT_RIGHT_BUTTON)
+      {
+        
+        // printf("maya right click \n");
+
+      }
+
+}
+
+
+
+/********************************************/
+static void maya_mouse_motion(int x, int y)
+{
+    // If button1 pressed, zoom in/out if mouse is moved up/down.
+ 
+    float center_x = (float)img_usize/2;
+    gui_rotx = (center_x-x)/scr_size_x; 
+
+    float center_y = (float)img_vsize/2;
+    gui_roty = (center_y-y)/scr_size_y; 
+
+    if (g_bButton1Down)
+    {
+        g_fViewDistance = (y - g_yClick) / 3.0;
+        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+           g_fViewDistance = VIEWING_DISTANCE_MIN;
+        glutPostRedisplay();
+    }
+
+
+}
+
 
 /*****************************************/
 // callback when window is resized (which shouldn't happen in fullscreen) 
@@ -464,7 +548,7 @@ void spinningCubeDemo(int *argc, char** argv){
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
     
-    InitGL(screenSize, screenSize); // Initialize window. 
+    InitGL(scr_size_x, scr_size_y); // Initialize window. 
     
     ///////////////////////////
     //test of BMP saving 
@@ -472,9 +556,10 @@ void spinningCubeDemo(int *argc, char** argv){
     //create_Image2("generated2.bmp"); 
 
     ///////////////////////////    
-    //glutMouseFunc (MouseButton);
-    //glutMotionFunc (MouseMotion);
-  
+   
+    glutMouseFunc (maya_mouse_button);
+    glutMotionFunc (maya_mouse_motion);
+
     ///////////////////////////      
     // Create our popup menu
     //BuildPopupMenu ();

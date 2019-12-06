@@ -51,12 +51,12 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
-float gui_rotx = 0.0;
-float gui_roty = 0.0;
-float gui_zoomz = -5.0;
+extern float gui_rotx;
+extern float gui_roty;
+extern float gui_zoomz;
 
-int scr_size_x = 512; //defaults to 512
-int scr_size_y = 512; //defaults to 512
+extern int scr_size_x;
+extern int scr_size_y;
 
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
@@ -173,9 +173,7 @@ static void draw_3d_model()
     
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
-
     /******************************************/
-  
     glBegin(GL_TRIANGLES);  
 
         int p_i, f_i = 0;
@@ -195,14 +193,12 @@ static void draw_3d_model()
                 glTexCoord2f(0.5, 1.0);                
                 vec3 pt1 = pt_loader->points[tri1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
-
-
+ 
                 //vec2 uv = pt_loader->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.0, 1.0); 
                 vec3 pt2 = pt_loader->points[tri2];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
-                
 
                 //vec2 uv = pt_loader->uvs[tri3];
                 //glTexCoord2f(uv.x, uv.y);
@@ -215,6 +211,24 @@ static void draw_3d_model()
 
     glEnd(); 
    
+    /********************************/
+
+    // GLfloat mycolour[3] = {0,0,1}; // blue
+    // glColor3fv( mycolour );        // blue using vector of floats
+    // glColor3f(1.0, 0.0, 0.0);      // red using floats
+    // glColor3ub(0,255,0);           // green using unsigned bytes
+    
+    //glClearcolor(1.0, 1.0, 1.0, 0.0);   // sets the clear colour to white and opaque
+    //glClear( GL_COLOR_BUFFER_BIT);      // clears the colour frame buffer
+
+    glBegin(GL_LINES);
+       // glColor3f(0.0, 0.0, 0.0);   // red
+        glVertex2f(0, 0);
+        
+        //glColor3f(0.0, 1.0, 0.0);   // red        
+        glVertex2f(10, 10);
+    glEnd();
+
     /******************************************/
 
     unsigned int u_edge = img_usize - pong_size;
@@ -402,9 +416,6 @@ void maya_mouse_button(int button, int state, int x, int y)
 
 
 /********************************************/
-// var x = Input.GetAxis("Mouse X") ;
-// var y = Input.GetAxis("Mouse Y") ;
-
 
 void maya_mouse_motion(int x, int y)
 {
@@ -477,6 +488,8 @@ void maya_navigation_demo(int *argc, char** argv){
     glutInit(argc, argv);  
 
 
+    shader_test();
+
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
 
@@ -484,6 +497,7 @@ void maya_navigation_demo(int *argc, char** argv){
     glutInitWindowPosition(0, 0);  
      
     window_id = glutCreateWindow("Maya navigation demo"); //create an opengl window 
+
 
 
     //register display callback       
