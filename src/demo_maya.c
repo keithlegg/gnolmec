@@ -63,7 +63,8 @@ struct obj_model *pt_loader = &loader;
 
 
 
-char* obj_filepath = "3d_obj/monkey.obj";
+extern char* obj_filepath;
+
 
 
 void reset_view(void){
@@ -190,20 +191,23 @@ static void draw_3d_model()
                 int tri3 = pt_loader->tris[p_i].pt3;
 
                 //vec2 uv = pt_loader->uvs[tri1];
-                vec3 pt1 = pt_loader->points[tri1];
                 //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(0.5, 1.0);                
+                vec3 pt1 = pt_loader->points[tri1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
 
                 //vec2 uv = pt_loader->uvs[tri2];
-                vec3 pt2 = pt_loader->points[tri2];
                 //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(0.0, 1.0); 
+                vec3 pt2 = pt_loader->points[tri2];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
                 
 
                 //vec2 uv = pt_loader->uvs[tri3];
-                vec3 pt3 = pt_loader->points[tri3];
                 //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(1.0, 0.0);                
+                vec3 pt3 = pt_loader->points[tri3];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
             //}  //when you implement N sided polys 

@@ -136,10 +136,16 @@ void test_math_ops(void){
 
 /***************************************/
 
+//char* obj_filepath = "3d_obj/cone.obj";
+char* obj_filepath = "3d_obj/monkey.obj";
+// char* obj_filepath = "3d_obj/teapot.obj";
+
 
 int main(int argc, char **argv) 
 {  
-    
+
+
+
     //test_framebuffer_funcs();
     
     // test_math_ops();
