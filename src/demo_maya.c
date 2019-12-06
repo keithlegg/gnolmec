@@ -270,10 +270,11 @@ static void keyPressed(unsigned char key, int x, int y)
   
     if (key == 99) //c
     { 
-        test_loader_data(pt_loader); 
-        show_loader(pt_loader);
+        //test_loader_data(pt_loader); 
+        //show_loader(pt_loader);
 
-        // load_objfile("3d_obj/cone.obj");   
+
+        load_objfile("3d_obj/cone.obj");   
     }
 
     if (key == 100) //d

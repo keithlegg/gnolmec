@@ -132,16 +132,28 @@ void load_objfile( char *filepath)
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
+      
         // printf("Retrieved line of length %zu:\n", read);
-        // printf("%s", line);
-
+        //printf("%s", line);
         // walk the line, token by token  
         char* token = strtok(line, " ");
         while (token) {
-            printf("token: %s\n", token);
-            token = strtok(NULL, " ");
+            // printf("token: %s\n", token); 
+            
+            //  look for V / vertices
+            if ( strcmp( token, "v") == 0){
+                printf("%s \n", token+2 );
+            }
 
-            // loader.points[i] = newvec3( 2.0, 1.0, 9.0 );
+            // //  look for F / faces
+            // if ( strcmp( token, "f") == 0){
+            //     printf("%s\n", line);
+            // }
+
+            // loader->uvs[5]     = newvec2( 0.0, 1.0       ); // Top Left Of The Texture and Quad
+            // loader->points[i]  = newvec3( 2.0, 1.0, 9.0  );
+
+            token = strtok(NULL, " ");
 
         }
 
