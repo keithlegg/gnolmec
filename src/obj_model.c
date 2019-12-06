@@ -132,28 +132,95 @@ void load_objfile( char *filepath)
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
-      
+     
         // printf("Retrieved line of length %zu:\n", read);
-        //printf("%s", line);
-        // walk the line, token by token  
-        char* token = strtok(line, " ");
-        while (token) {
-            // printf("token: %s\n", token); 
-            
-            //  look for V / vertices
-            if ( strcmp( token, "v") == 0){
-                printf("%s \n", token+2 );
-            }
+        char coords_str[256];
+        char fidx_str[256];
 
-            // //  look for F / faces
-            // if ( strcmp( token, "f") == 0){
-            //     printf("%s\n", line);
-            // }
+        // walk the line, token by token  
+        char* tok_spacs = strtok(line, " ");
+        while (tok_spacs) 
+        {
+
+            /************/        
+                
+            // look for V / vertices
+            if ( strcmp( tok_spacs, "v") == 0)
+            {
+                strcpy (coords_str, tok_spacs+2);
+
+                // printf("%s\n", coords_str); 
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(coords_str, " ");
+                int idx = 0;
+                while (tok_line) 
+                {
+                    // printf("%s \n", tok_line );   
+                    if(idx==0){
+                        printf("VERTEX x:%s",tok_line);
+                        //x = atof (buffer);
+                    }
+                    if(idx==1){
+                        printf(" y:%s",tok_line); 
+                        //y = atof (buffer);                        
+                    }  
+                    if(idx==2){
+                        printf(" z:%s",tok_line); 
+                        //z = atof (buffer);                        
+                    }                                        
+                    
+                    idx++;tok_line = strtok(NULL, " ");
+                }
+
+            }//end vertex  
+            
+            /************/
+
+            //  look for F / faces
+            if ( strcmp( tok_spacs, "f") == 0)
+            {
+
+                strcpy (fidx_str, tok_spacs+2);
+                char* tok_line = strtok(fidx_str, " ");
+                int idx = 0;
+
+                //walk the tokens on the line 
+                while (tok_line) 
+                {
+                    //printf("%d %s\n", idx, tok_line);                  
+
+                    if(idx==0){
+                        printf("FACE id0- %s ",tok_line);
+                        //x = atoi (buffer);
+                    }
+                    if(idx==1){
+                        printf(" id1- %s ",tok_line); 
+                        //y = atoi (buffer);                        
+                    }  
+                    if(idx==2){
+                        printf(" id2- %s",tok_line);
+                        //z = atoi (buffer);                        
+                    }   
+                    // if(idx==3){
+                    //     printf(" idx 3:%s",tok_line);
+                    //     //z = atoi (buffer);                        
+                    // }  
+
+                    //n = atoi (buffer);
+                    idx++;tok_line = strtok(NULL, " ");
+
+                }
+
+
+
+            }
 
             // loader->uvs[5]     = newvec2( 0.0, 1.0       ); // Top Left Of The Texture and Quad
             // loader->points[i]  = newvec3( 2.0, 1.0, 9.0  );
 
-            token = strtok(NULL, " ");
+
+            tok_spacs = strtok(NULL, " ");
 
         }
 
@@ -162,7 +229,6 @@ void load_objfile( char *filepath)
     fclose(fp);
     if (line)
         free(line);
-    //exit(EXIT_SUCCESS);
 }
 
 
