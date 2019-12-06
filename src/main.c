@@ -148,9 +148,10 @@ int main(int argc, char **argv)
     
     // spinningCubeDemo(&argc, argv); 
 
+
     maya_navigation_demo(&argc, argv);
     
-    //load_objfile("3d_obj/cone.obj");
+
 
     //test_fill();
     //show_object();

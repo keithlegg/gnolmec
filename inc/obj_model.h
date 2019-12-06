@@ -16,14 +16,18 @@
 
 typedef struct obj_model{
 
-    struct vec3 points[1000];
-    
-    char *data;
+    struct vec2 uvs[1000]; // UV coords 
+    struct vec3 points[1000];     // 3 floats  
+    struct vec3 faces[1000];      // 3 floats (ints) for triangles only  
+
+    //char *data;
 
 };
 
-void test_fill(void);
-void show_object(void);
+
+void test_loader_data(struct obj_model* loader);
+void show_loader(struct obj_model* loader);
+
 
 void load_objfile( char *filepath);
 void save_objfile( char *filepath);

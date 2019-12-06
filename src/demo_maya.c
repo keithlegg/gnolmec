@@ -1,3 +1,14 @@
+/*************************************************************/
+/*
+   demo_maya.c 
+
+
+   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+
+*/
+/*************************************************************/
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>      
@@ -47,6 +58,8 @@ float gui_zoomz = -5.0;
 int scr_size_x = 512; //defaults to 512
 int scr_size_y = 512; //defaults to 512
 
+struct obj_model loader;
+struct obj_model *pt_loader = &loader;
 
 void reset_view(void){
     gui_rotx = 0.0;
@@ -284,18 +297,15 @@ static void keyPressed(unsigned char key, int x, int y)
   
     if (key == 99) //c
     { 
-        if (pong_size<200){
-            pong_size +=1;
-        }      
+        test_loader_data(pt_loader); 
+        show_loader(pt_loader);
+
+        // load_objfile("3d_obj/cone.obj");   
     }
 
     if (key == 100) //d
     { 
  
-        if (pong_size>4){
-            pong_size -=1;
-        }
-
     }
 
     if (key == 114) //r
@@ -459,7 +469,7 @@ void mayanav_rst_xforms( void ){
 }
 
 void maya_navigation_demo(int *argc, char** argv){
-   
+
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
     glutInit(argc, argv);  
 
@@ -471,6 +481,7 @@ void maya_navigation_demo(int *argc, char** argv){
     glutInitWindowPosition(0, 0);  
      
     window_id = glutCreateWindow("Maya navigation demo"); //create an opengl window 
+
 
     //register display callback       
     glutDisplayFunc(&draw_3d_model);   
