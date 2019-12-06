@@ -11,6 +11,10 @@
 //     double z;    
 // };
 
+typedef struct line{
+    int pt1;
+    int pt2;
+};
 
 typedef struct triangle{
     int pt1;
@@ -27,15 +31,19 @@ typedef struct quad{
 
 typedef struct obj_model{
     int num_pts;
-    int num_faces;
     int num_uvs;
 
-    struct vec2 uvs[1000];     // UV coords 
-    struct vec3 points[1000];  // 3 floats  
-    
-    //struct vec3 faces[1000];  // 3 floats (ints) for triangles only  
-    struct triangle tris[1000]; //3 face polygons 
-    struct quad quads[1000];    //4 face polygons 
+    int num_lines;
+    int num_tris;
+    int num_quads;    
+
+    struct vec2 uvs[1000];         // UV coords 
+    struct vec3 points[1000];      // 3 floats  
+    //struct vec3 vtx_colors[1000];   
+
+    struct line lines[1000];       //2 point lines 
+    struct triangle tris[1000];    //3 point polygons 
+    struct quad quads[1000];       //4 point polygons 
 
 };
 

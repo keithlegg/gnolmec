@@ -5,7 +5,10 @@
 
 
 
-static void draw_3d_cube();
+
+
+static void display_loop();
+
 static void animateTextures3(Image *loaded_texture);
 
 static void ReSizeGLScene(int Width, int Height);

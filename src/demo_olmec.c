@@ -1,8 +1,10 @@
 /*************************************************************/
 /*
    demo_olmec.c 
-
-      make a 3D environment that is navigatable in the waya Maya3D does it
+     
+      Named Olmec - because its not Maya :) 
+      
+      make a 3D environment that is navigatable in the way Maya3D does it
       (alt-click rotate view, etc)
 
 
@@ -135,6 +137,7 @@ static void animateTextures3(Image *loaded_texture)
     // free(pt_image_bfr);
 
     ///////////////////////
+    /*
     int x = 0;
     
     int num_cells = 20;
@@ -143,7 +146,7 @@ static void animateTextures3(Image *loaded_texture)
     for (x=cell_size;x<=loaded_texture->sizeX-cell_size;x=x+cell_size){
         draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, x, vpos, cell_size/2, pt_linecolor2);
     }
-
+    */
 
     ///////////////////////
     /*
@@ -177,7 +180,7 @@ static void animateTextures3(Image *loaded_texture)
 
 /***************************************/
 
-static void draw_3d_model()
+static void display_loop()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
@@ -200,7 +203,7 @@ static void draw_3d_model()
 
         int p_i, f_i = 0;
 
-        for (p_i=0;p_i<pt_loader->num_faces;p_i++)
+        for (p_i=0;p_i<pt_loader->num_tris;p_i++)
         { 
 
             //when you implement N sided polys 
@@ -343,7 +346,7 @@ static void keyPressed(unsigned char key, int x, int y)
         //show_loader(pt_loader);
 
 
-        load_objfile(obj_filepath, pt_loader );   
+        //load_objfile(obj_filepath, pt_loader );   
     }
 
     if (key == 100) //d
@@ -403,7 +406,7 @@ void olmec_mouse_button(int button, int state, int x, int y)
         g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         g_yClick = y - 3 * g_fViewDistance;
         
-        printf("olmec left click \n");
+        // printf("olmec left click \n");
 
       }
 
@@ -522,7 +525,11 @@ void olmec_navigation_demo(int *argc, char** argv){
     glutInit(argc, argv);  
 
 
-    shader_test();
+    //shader_test();
+    
+    load_objfile(obj_filepath, pt_loader ); 
+
+
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
@@ -533,10 +540,10 @@ void olmec_navigation_demo(int *argc, char** argv){
     window_id = glutCreateWindow("Olmec v.000001"); //create an opengl window 
 
     //register display callback       
-    glutDisplayFunc(&draw_3d_model);   
+    glutDisplayFunc(&display_loop);   
 
     // Even if there are no events, redraw our gl scene.  
-    glutIdleFunc(&draw_3d_model);
+    glutIdleFunc(&display_loop);
 
     glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
     glutKeyboardFunc(&keyPressed);    // Register key pressed callback 

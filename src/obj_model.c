@@ -37,16 +37,19 @@ void load_objfile( char *filepath, struct obj_model* loader)
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
-    int vtx_cnt = 0;  // number of verts loaded 
-    int face_cnt = 0; // number of faces loaded 
-    int uv_cnt  = 0;  // number of UVs loaded 
+    int uv_cnt   = 0;  // number of UVs loaded 
+    int vtx_cnt  = 0;  // number of verts loaded 
+    int line_cnt = 0;  
+    int tri_cnt  = 0;  // number of faces loaded 
+    int quad_cnt = 0;   
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
-     
-        // printf("Retrieved line of length %zu:\n", read);
-        char coords_str[256];
-        char fidx_str[256];
+
+        char coords_str[256]; // string that verts get copied to 
+        char fidx_str[256];   // string that faces get copied to
+
+        // printf("%s",line);
 
         // walk the line, token by token  
         char* tok_spacs = strtok(line, " ");
@@ -62,29 +65,41 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(coords_str, " ");
-                int idx = 0;
+                int vidx = 0;
                 
                 float xc, yc, zc = 0.0;
 
                 while (tok_line) 
                 {
-                    // printf("%s \n", tok_line );   
-                    if(idx==0){
+                    printf("%s \n", tok_line );   
+                    
+                    if(vidx==0){
                         xc = atof(tok_line);
                     }
-                    if(idx==1){
+                    if(vidx==1){
                         yc = atof(tok_line);                        
                     }  
-                    if(idx==2){
+                    if(vidx==2){
                         zc = atof(tok_line);
-                        vec3 vpt = newvec3( xc, yc, zc  );
-                        loader->points[vtx_cnt] = vpt;
-                        vtx_cnt++;
-                        // print_vec3(vpt); //to view output 
                     }                                        
                     
-                    idx++;tok_line = strtok(NULL, " ");
+                    vidx++;tok_line = strtok(NULL, " ");
                 }
+                
+                //if two points its a 2D coord (probably not standard obj file )  
+                if (vidx==2){
+                    printf("2D point detected! \n"); 
+                    printf(line);
+                }
+                
+                //if three points its a 3d coord 
+                if (vidx==3){
+                    vec3 vpt = newvec3( xc, yc, zc  );
+                    loader->points[vtx_cnt] = vpt;
+                    vtx_cnt++;
+                    // print_vec3(vpt); //to view output 
+                }                
+
 
             }//end vertex loader 
             
@@ -93,11 +108,10 @@ void load_objfile( char *filepath, struct obj_model* loader)
             //  look for F / faces
             if ( strcmp( tok_spacs, "f") == 0)
             {
-               
 
                 strcpy (fidx_str, tok_spacs+2);
                 char* tok_line = strtok(fidx_str, " ");
-                int idx = 0;
+                int fidx = 0;
                 
                 int pt1,pt2,pt3,pt4 = 0;;
 
@@ -105,42 +119,60 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 // ASSUME TRIANGLES ONLY! (3 coords per vertex)
                 while (tok_line) 
                 {
-                    //printf("%d %s\n", idx, tok_line); // <- face line                  
+                    //printf("%d %s\n", fidx, tok_line); // <- face line                  
 
-                    if(idx==0){
+                    //only supports 2,3,4 sided polygons  
+                    if(fidx==0){
                         pt1 = atoi( tok_line);
                     }
-                    if(idx==1){
+                    if(fidx==1){
                         pt2 = atoi( tok_line);                       
                     }  
-                    if(idx==2){
+                    if(fidx==2){
                         pt3 = atoi( tok_line);
-
-                        // if you want the actual polygons
-                        // print_vec3(loader->points[pt1]);
-                        // print_vec3(loader->points[pt2]);
-                        // print_vec3(loader->points[pt3]);
-
-                        //or just store the indices
-                        loader->tris[face_cnt].pt1 = pt1;
-                        loader->tris[face_cnt].pt2 = pt2;                          
-                        loader->tris[face_cnt].pt3 = pt3;
-
-                        face_cnt++;
-
                     }   
-
-                    //4 sided not implemented yet 
-                    // if(idx==3){
-                    //     printf(" idx 3:%s",tok_line);
-                    //     //z = atoi (buffer);                        
-                    // }  
+                    if(fidx==3){
+                        pt4 = atoi( tok_line);                       
+                    }  
+                    /***********/
 
                     //n = atoi (buffer);
-                    idx++;tok_line = strtok(NULL, " ");
+                    fidx++;tok_line = strtok(NULL, " ");
 
                 }
 
+                /***********/
+                //TODO - implement single point visualization !
+                
+                /***********/                    
+                //if two face indices - its a line  
+                if (fidx==2){
+                }
+
+                if (fidx==3){
+
+                    // if you want the actual polygons
+                    // print_vec3(loader->points[pt1]);
+                    // print_vec3(loader->points[pt2]);
+                    // print_vec3(loader->points[pt3]);
+
+                    //or just store the indices
+                    loader->tris[tri_cnt].pt1 = pt1;
+                    loader->tris[tri_cnt].pt2 = pt2;                          
+                    loader->tris[tri_cnt].pt3 = pt3;
+
+                    tri_cnt++;
+
+                }
+
+                if (fidx==4){
+                    // loader->quads[quad_cnt].pt1 = pt1;
+                    // loader->quads[quad_cnt].pt2 = pt2;                          
+                    // loader->quads[quad_cnt].pt3 = pt3;
+                    // loader->quads[quad_cnt].pt4 = pt4;
+                    // quad_cnt++;
+                }
+                    
             }//end face loader
 
             /************/
@@ -167,14 +199,18 @@ void load_objfile( char *filepath, struct obj_model* loader)
     if (line)
         free(line);
 
-    loader->num_pts = vtx_cnt;
-    loader->num_faces = face_cnt;
+    loader->num_pts   = vtx_cnt;
+    loader->num_lines = line_cnt;
+    loader->num_tris  = tri_cnt;
+    loader->num_quads = quad_cnt;
+
     loader->num_uvs = 0;
 
     printf("\n\n---------------------------\n", vtx_cnt ) ;
-    printf("%d vertices loaded \n", vtx_cnt ) ;
-    printf("%d faces loaded    \n", face_cnt ) ;
-
+    printf("%d vertices loaded   \n", loader->num_pts    ) ;
+    printf("%d lines loaded      \n", loader->num_lines  ) ;
+    printf("%d triangles loaded  \n", loader->num_tris   ) ;
+    printf("%d quads loaded      \n", loader->num_quads ) ;    
 }
 
 
