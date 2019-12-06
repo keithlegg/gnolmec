@@ -18,8 +18,7 @@
 #include <unistd.h>      
 
 #include "gl_setup.h"
-#include "bitmap_io.h" 
-
+#include "bitmap_io.h" // includes framebuffer.h, colors, etc 
 #include "obj_model.h"
 
 #include "demo_olmec.h"
@@ -69,6 +68,18 @@ struct obj_model *pt_loader = &loader;
 
 extern char* obj_filepath;
 
+BOOL draw_lines     = TRUE;
+BOOL draw_quads     = FALSE;
+BOOL draw_triangles = FALSE;
+
+
+RGBType line_color;
+RGBType *pt_linecolor = &line_color;
+
+RGBType line_color2;
+RGBType *pt_linecolor2 = &line_color2;
+
+
 
 void system_render(void){
     //#include <sys/syscall.h>  //experiment to call renderer 
@@ -89,6 +100,20 @@ void system_render(void){
 }
 
 
+void set_colors(void){
+    //make a color for some lines 
+    pt_linecolor->r = 255;
+    pt_linecolor->g = 0;
+    pt_linecolor->b = 0;
+
+    //make a color for some lines 
+    pt_linecolor2->r = 0;
+    pt_linecolor2->g = 255;
+    pt_linecolor2->b = 0;
+
+}
+
+
 void reset_view(void){
     gui_rotx = 0.0;
     gui_roty = 0.0;
@@ -103,22 +128,6 @@ static void animateTextures3(Image *loaded_texture)
     //copyBuffer24( loaded_texture ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
     
     copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
-
-    // 
-
-    //make a color for some lines 
-    RGBType line_color;
-    RGBType *pt_linecolor = &line_color;
-    pt_linecolor->r = 255;
-    pt_linecolor->g = 0;
-    pt_linecolor->b = 0;
-
-    //make a color for some lines 
-    RGBType line_color2;
-    RGBType *pt_linecolor2 = &line_color2;
-    pt_linecolor2->r = 155;
-    pt_linecolor2->g = 255;
-    pt_linecolor2->b = 0;
 
     // int cp_tl[2] = {0};
     // int cp_br[2] = {0};
@@ -203,72 +212,75 @@ static void display_loop()
 
     /********************************/
     // draw 3D line geometry 
-    glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
-
-    glBegin(GL_LINES);
-        
+    if (draw_lines)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
+            
         for (p_i=0;p_i<pt_loader->num_lines;p_i++)
         {   
+            glBegin(GL_LINES);
+                // fetch the line indices from vertex list 
+                int lin1 = pt_loader->lines[p_i].pt1;
+                int lin2 = pt_loader->lines[p_i].pt2;
+                
+                vec3 pt1 = pt_loader->points[lin1];
+                vec3 pt2 = pt_loader->points[lin2];
 
-            // fetch the line indices from vertex list 
-            int lin1 = pt_loader->lines[p_i].pt1;
-            int lin2 = pt_loader->lines[p_i].pt2;
-            
-            vec3 pt1 = pt_loader->points[lin1];
-            vec3 pt2 = pt_loader->points[lin2];
+                glColor3f(pt_linecolor->r, pt_linecolor->g, pt_linecolor->b);   
+                glVertex3f(pt1.x, pt1.y, pt1.z);
 
-            //print_vec3( pt1 );
-            //print_vec3( pt2 );
-
-            glColor3f(100.0, 0.0, 0.0);   
-            //glVertex3f(pt1.x, pt1.y, pt1.z);
-            glVertex2f(pt1.x, pt1.y);
-
-            glColor3f(200.0, 200.0, 200.0); 
-            //glVertex3f(pt1.x, pt1.y, pt1.z);
-            glVertex2f(pt1.x, pt1.y);
-
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glVertex3f(pt2.x, pt2.y, pt2.z);
+            glEnd();
         }
 
-        // glVertex3f(0, 0, 0);    
-        // glVertex3f(5, 5, 5);
 
-    glEnd();
+    }
 
     /******************************************/
     // draw the polygon geometry 
 
-    glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
+    if(draw_triangles)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture[0]);   // choose the texture to use.
 
-    glBegin(GL_TRIANGLES);  
-        for (p_i=0;p_i<pt_loader->num_tris;p_i++)
-        { 
-            // fetch the triangle indices from vertex list
-            int tri1 = pt_loader->tris[p_i].pt1;
-            int tri2 = pt_loader->tris[p_i].pt2;
-            int tri3 = pt_loader->tris[p_i].pt3;
+        glBegin(GL_TRIANGLES);  
+            for (p_i=0;p_i<pt_loader->num_tris;p_i++)
+            { 
+                // fetch the triangle indices from vertex list
+                int tri1 = pt_loader->tris[p_i].pt1;
+                int tri2 = pt_loader->tris[p_i].pt2;
+                int tri3 = pt_loader->tris[p_i].pt3;
 
-            
-            //vec2 uv = pt_loader->uvs[tri1];
-            //glTexCoord2f(uv.x, uv.y);
-            glTexCoord2f(0.5, 1.0);                
-            vec3 pt1 = pt_loader->points[tri1-1];
-            glVertex3f(pt1.x, pt1.y, pt1.z);
+                
+                //vec2 uv = pt_loader->uvs[tri1];
+                //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(0.5, 1.0);                
+                vec3 pt1 = pt_loader->points[tri1-1];
+                glVertex3f(pt1.x, pt1.y, pt1.z);
 
-            //vec2 uv = pt_loader->uvs[tri2];
-            //glTexCoord2f(uv.x, uv.y);
-            glTexCoord2f(0.0, 1.0); 
-            vec3 pt2 = pt_loader->points[tri2-1];
-            glVertex3f(pt2.x, pt2.y, pt2.z);
+                //vec2 uv = pt_loader->uvs[tri2];
+                //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(0.0, 1.0); 
+                vec3 pt2 = pt_loader->points[tri2-1];
+                glVertex3f(pt2.x, pt2.y, pt2.z);
 
-            //vec2 uv = pt_loader->uvs[tri3];
-            //glTexCoord2f(uv.x, uv.y);
-            glTexCoord2f(1.0, 0.0);                
-            vec3 pt3 = pt_loader->points[tri3-1];
-            glVertex3f(pt3.x, pt3.y, pt3.z);
-        }
+                //vec2 uv = pt_loader->uvs[tri3];
+                //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(1.0, 0.0);                
+                vec3 pt3 = pt_loader->points[tri3-1];
 
-    glEnd(); 
+                glVertex3f(pt3.x, pt3.y, pt3.z);
+            }
+
+        glEnd(); 
+    }
+
+    /******************************************/
+    if( draw_quads )
+    {
+
+    }      
 
     /******************************************/
 
@@ -337,37 +349,6 @@ static void keyPressed(unsigned char key, int x, int y)
     
     // ALT is 38?
 
-    if (key == 97) //a
-    { 
-        if (pong_speed<20){
-            pong_speed +=1;
-        }
-
-    }
- 
-    if (key == 98) //b
-    { 
-        //printf("you pressed b\n");
-        if (pong_speed>0){
-            pong_speed -=1;
-        }
-
-    }
-  
-    if (key == 99) //c
-    { 
-        //test_loader_data(pt_loader); 
-        //show_loader(pt_loader);
-
-
-        //load_objfile(obj_filepath, pt_loader );   
-    }
-
-    if (key == 100) //d
-    { 
- 
-    }
-
     if (key == 114) //r
     { 
         reset_view();
@@ -384,22 +365,6 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
         //printf("you pressed f\n");
         glutFullScreen();
-    }
-
-    if (key == 119) //w
-    { 
-        if(use_tex==0){
-            use_tex=1;
-        }
-        else{
-            use_tex=0;
-        }  
-    }
-
-    if (key == 113) //q
-    { 
-        //printf("you pressed q\n");
-        testLoadBinary();      
     }
 
 }
@@ -540,7 +505,8 @@ void olmec_navigation_demo(int *argc, char** argv){
 
 
     //shader_test();
-    
+    set_colors();
+
     load_objfile(obj_filepath, pt_loader ); 
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
