@@ -178,28 +178,32 @@ char* obj_filepath; //= "3d_obj/cross_product.obj";
 
 int main(int argc, char **argv) 
 {  
+    
+    if( argc == 2 ) {
+        obj_filepath = argv[1] ;
+        olmec(&argc, argv);          
+    }
+    else if( argc > 2 ) {
+    }
+    else {
+       printf("One argument expected.\n");
+    }
+    printf("loading %s \n", obj_filepath );
 
-   if( argc == 2 ) {
-       obj_filepath = argv[1] ;
-   }
-   else if( argc > 2 ) {
-      printf("Too many arguments supplied.\n");
-   }
-   else {
-      printf("One argument expected.\n");
-   }
 
-   printf("loading %s \n", obj_filepath );
+
+    
 
     //test_framebuffer_funcs();
     
     // test_math_ops();
-    
-    // flatImageDemo(&argc, argv); 
-    
-    // spinningCubeDemo(&argc, argv); 
- 
-    olmec(&argc, argv);
+
+
+    //flatImageDemo(&argc, argv); 
+
+    spinningCubeDemo(&argc, argv);
+
+
 
     //test_fill();
     //show_object();
