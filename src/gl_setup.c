@@ -72,7 +72,7 @@ void InitGL(int Width, int Height)          // We call this right after our Open
 {
         
     glEnable(GL_TEXTURE_2D);             // Enable Texture Mapping
-    glClearColor(0.0f, 0.0f, .1f, 0.0f); // Clear The Background Color To Blue 
+    glClearColor(0.15f, 0.15f, 0.25f, 0.0f); // Clear The Background Color To Blue 
     glClearDepth(1.0);                   // Enables Clearing Of The Depth Buffer
     glDepthFunc(GL_LESS);                // The Type Of Depth Test To Do
     glEnable(GL_DEPTH_TEST);             // Enables Depth Testing

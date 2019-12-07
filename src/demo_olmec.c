@@ -313,8 +313,8 @@ static void render_loop()
                 int lin1 = pt_loader->lines[p_i].pt1;
                 int lin2 = pt_loader->lines[p_i].pt2;
                 
-                vec3 pt1 = pt_loader->points[lin1];
-                vec3 pt2 = pt_loader->points[lin2];
+                vec3 pt1 = pt_loader->points[lin1-1];
+                vec3 pt2 = pt_loader->points[lin2-1];
 
                 glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
@@ -556,8 +556,7 @@ void olmecnav_start (void ) {
 /********************************************/
 
 void olmec(int *argc, char** argv){
-
-    // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
+ 
     glutInit(argc, argv);  
 
     //shader_test();

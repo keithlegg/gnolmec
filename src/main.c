@@ -171,14 +171,25 @@ void test_math_ops(void){
 /***************************************/
 
 //char* obj_filepath = "3d_obj/cone.obj";
-char* obj_filepath = "3d_obj/monkey.obj";
+// char* obj_filepath = "3d_obj/monkey.obj";
 // char* obj_filepath = "3d_obj/teapot.obj";
 
+char* obj_filepath; //= "3d_obj/cross_product.obj";
 
 int main(int argc, char **argv) 
 {  
 
+   if( argc == 2 ) {
+       obj_filepath = argv[1] ;
+   }
+   else if( argc > 2 ) {
+      printf("Too many arguments supplied.\n");
+   }
+   else {
+      printf("One argument expected.\n");
+   }
 
+   printf("loading %s \n", obj_filepath );
 
     //test_framebuffer_funcs();
     
@@ -187,7 +198,7 @@ int main(int argc, char **argv)
     // flatImageDemo(&argc, argv); 
     
     // spinningCubeDemo(&argc, argv); 
-
+ 
     olmec(&argc, argv);
 
     //test_fill();
