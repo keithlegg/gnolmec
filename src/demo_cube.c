@@ -56,9 +56,6 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 
-
-extern float gui_rotx;
-extern float gui_roty;
 extern float gui_zoomz;
 
 extern int scr_size_x;
@@ -289,24 +286,6 @@ static void maya_mouse_button(int button, int state, int x, int y)
 /********************************************/
 static void maya_mouse_motion(int x, int y)
 {
-    // If button1 pressed, zoom in/out if mouse is moved up/down.
- 
-    float center_x = (float)img_usize/2;
-    gui_rotx = (center_x-x)/scr_size_x; 
-
-    float center_y = (float)img_vsize/2;
-    gui_roty = (center_y-y)/scr_size_y; 
-
-    if (g_bButton1Down)
-    {
-        // printf( "%f" , gui_rotx);
-
-        g_fViewDistance = (y - g_yClick) / 3.0;
-        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-             g_fViewDistance = VIEWING_DISTANCE_MIN;
-        glutPostRedisplay();
-    }
-
 
 }
 
@@ -416,8 +395,6 @@ void drawglscene_3d()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
-    xrot += gui_roty;
-    yrot += gui_rotx;
 
     glTranslatef(0.0f, 0.0f, -4.0f);              // move 5 units into the screen.
     glRotatef(xrot,1.0f,0.0f,0.0f);     // Rotate On The X Axis

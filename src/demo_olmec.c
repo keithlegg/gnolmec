@@ -16,12 +16,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>      
+#include <cmath>
 
 #include "gl_setup.h"
 #include "bitmap_io.h" // includes framebuffer.h, colors, etc 
+#include "point_op.h"
+
 #include "obj_model.h"
 
 #include "demo_olmec.h"
+
+
+// void calc_circle ( pix_coord *out_coords, int numdiv, int x_orig, int y_orig, float dia, int *num)
 
 
 extern float xrot, yrot, zrot; 
@@ -30,15 +36,6 @@ extern int window_id;
 
 extern int use_tex;
 extern GLuint texture[1];  
-
-extern unsigned int pong_size;
-extern unsigned int img_usize;
-extern unsigned int img_vsize;
-extern unsigned int upos  ; 
-extern unsigned int vpos  ;   
-extern unsigned int dir_u ; 
-extern unsigned int dir_v ; 
-extern unsigned int pong_speed;
 
 extern Image* main_bg_bfr      ; 
 extern Image* imageloaded_bfr2 ; 
@@ -50,22 +47,16 @@ static bool g_bLightingEnabled = TRUE;
 static bool g_bFillPolygons = TRUE;
 static bool g_bTexture = FALSE;
 
-static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
-static int g_yClick = 0;
-
-
-extern float gui_rotx;
-extern float gui_roty;
-extern float gui_zoomz;
-
+/***********/
+// window properties 
 extern int scr_size_x;
 extern int scr_size_y;
 extern bool scr_full_toglr;
 
+/***********/
+
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
-
-
 
 extern char* obj_filepath;
 
@@ -73,6 +64,7 @@ bool draw_lines     = FALSE;
 bool draw_quads     = FALSE;
 bool draw_triangles = TRUE;
 
+/***********/
 
 RGBType line_color;
 RGBType *pt_linecolor = &line_color;
@@ -80,7 +72,35 @@ RGBType *pt_linecolor = &line_color;
 RGBType line_color2;
 RGBType *pt_linecolor2 = &line_color2;
 
+/***********/
+//old experiment to interact with mouse
+extern float gui_zoomz;
+// static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
+// static int g_yClick = 0;
 
+/***********/
+
+// // camera properties ( https://learnopengl.com/Getting-started/Camera )
+vec3 camera_pos        = newvec3(0.0, 0.0, 3.0 );
+vec3 camera_target     = newvec3(0.0, 0.0, 0.0 );
+vec3 camera_direction  = normalize(sub( camera_pos, camera_target));
+vec3 up                = newvec3(0.0f, 1.0f, 0.0f); 
+vec3 camera_right      = normalize(cross (up, camera_direction));
+vec3 camera_up         = cross(camera_direction, camera_right);
+
+ 
+float radius = 10.0f;
+float cam_x = sin( 100 ) * radius;
+float cam_z = cos( 200 ) * radius;
+
+// view = new_m44();
+//  gluLookAt( cam_x, 0.0, cam_z,   /* look from camera XYZ */ 
+//             0.0  , 0.0, 0.0  ,   /* look at the origin */
+//             0.0  , 1.0, 0.0  );  /* positive Y up vector */
+
+ 
+
+/***********/
 
 void system_render(void){
     //#include <sys/syscall.h>  //experiment to call renderer 
@@ -100,6 +120,7 @@ void system_render(void){
 
 }
 
+/***************************************/
 
 void warnings(void)
 {
@@ -115,7 +136,7 @@ void warnings(void)
 
 }
 
-
+/***************************************/
 
 void set_colors(void){
     //make a color for some lines 
@@ -124,19 +145,31 @@ void set_colors(void){
     pt_linecolor->b = 0;
 
     //make a color for some lines 
-    pt_linecolor2->r = 0;
+    pt_linecolor2->r = 255;
     pt_linecolor2->g = 255;
-    pt_linecolor2->b = 0;
+    pt_linecolor2->b = 255;
 
 }
 
+/***************************************/
+
+void olmecnav_rst_xforms( void ){
+    //     transform.parent = capsuleObj.transform;
+    //     capsuleObj.transform.position = orbt_xform_original ;
+    //     capsuleObj.transform.rotation = orbt_rot_original;
+    //     transform.parent = null;
+    //     transform.position = startpos;
+}
+
+/***************************************/
 
 void reset_view(void){
-    gui_rotx = 0.0;
-    gui_roty = 0.0;
+    //gui_rotx = 0.0;
+    //gui_roty = 0.0;
     gui_zoomz = -5.0;  
 }
 
+/***************************************/
 static void animateTextures3(Image *loaded_texture)
 {
     //test of new framebuffer commands
@@ -205,27 +238,40 @@ static void animateTextures3(Image *loaded_texture)
 }
 
 /***************************************/
+
+//draw a 3D grid on the "floor" and an indicator to show XYZ axis  
 static void graticulate( void )
 {
 
 
+    glBegin(GL_LINES);
 
+        //glColor3f(pt_linecolor->r, pt_linecolor->g, pt_linecolor->b);   
+
+        glVertex3f(-5.0, 0,  5.0);
+        glVertex3f( 5.0, 0,  5.0);
+        glVertex3f( 5.0, 0, -5.0);
+        glVertex3f(-5.0, 0, -5.0);                
+
+
+    glEnd();
 
 }
 
-
+/***************************************/
 
 static void display_loop()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
     glLoadIdentity();               // Reset The View
 
-    double viewzoom = gui_zoomz;
-    glTranslatef(0.0f,0, viewzoom);              // move 5 units into the screen.
+    glTranslatef(0.0f,0, gui_zoomz);              // move 5 units into the screen.
+
+    graticulate();
 
     //rotate model based on view 
-    xrot = gui_roty*-100;
-    yrot = gui_rotx*-100;
+    //xrot = gui_roty*-100;
+    //yrot = gui_rotx*-100;
     
     glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
     glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
@@ -309,27 +355,7 @@ static void display_loop()
     }      
 
     /******************************************/
-
-    unsigned int u_edge = img_usize - pong_size;
-    unsigned int v_edge = img_vsize - pong_size;
-
-    if(upos<0)         { upos = 100; }
-    if(vpos<0)         { vpos = 100; }
-    if(upos>img_usize) { upos = 100; }
-    if(vpos>img_vsize) { vpos = 100; }
-
-
-    // animate some numbers 
-    if(upos>=u_edge)     { dir_u = 1; }
-    if(upos<=pong_size)  { dir_u = 0; }
-
-    if(vpos>=u_edge)    { dir_v = 1; }
-    if(vpos<=pong_size) { dir_v = 0; }
-
-    if(dir_u==0)        { upos +=pong_speed;}else{ upos -=pong_speed;}
-    if(dir_v==0)        { vpos +=pong_speed;}else{ vpos -=pong_speed;}
-
-    
+   
     //animateTextures2(main_bg_bfr);
     
     animateTextures3(main_bg_bfr);
@@ -389,16 +415,11 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
-    if (key == 114) //r
-    { 
-        reset_view();
-    }
-    
+  
 
     if (key == 102) //f
     { 
-        //printf("you pressed f\n");
-        //glutFullScreen();
+        reset_view();
     }
 
 }
@@ -416,8 +437,8 @@ void olmec_mouse_button(int button, int state, int x, int y)
     //left click 
     if (button == GLUT_LEFT_BUTTON)
       {
-        g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        g_yClick = y - 3 * g_fViewDistance;
+        //g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
+        //g_yClick = y - 3 * g_fViewDistance;
         
         // printf("olmec left click \n");
 
@@ -463,11 +484,11 @@ void olmec_mouse_motion(int x, int y)
 {
     // If button1 pressed, zoom in/out if mouse is moved up/down.
  
-    float center_x = (float)img_usize/2;
-    gui_rotx = (center_x-x)/scr_size_x; 
+    float center_x = (float)scr_size_x/2;
+    //gui_rotx = (center_x-x)/scr_size_x; 
 
-    float center_y = (float)img_vsize/2;
-    gui_roty = (center_y-y)/scr_size_y; 
+    float center_y = (float)scr_size_y/2;
+    //gui_roty = (center_y-y)/scr_size_y; 
 
     // cube_x
 
@@ -475,10 +496,10 @@ void olmec_mouse_motion(int x, int y)
     {
         // printf("MOVE! %f %d \n", cube_x, y);
         
-        g_fViewDistance = (y - g_yClick) / 3.0;
-        if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-           g_fViewDistance = VIEWING_DISTANCE_MIN;
-        glutPostRedisplay();
+        // g_fViewDistance = (y - g_yClick) / 3.0;
+        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
+        // glutPostRedisplay();
     }
 
 
@@ -518,13 +539,6 @@ void olmecnav_start (void ) {
 }
 
 
-void olmecnav_rst_xforms( void ){
-    //     transform.parent = capsuleObj.transform;
-    //     capsuleObj.transform.position = orbt_xform_original ;
-    //     capsuleObj.transform.rotation = orbt_rot_original;
-    //     transform.parent = null;
-    //     transform.position = startpos;
-}
 
 
 

@@ -79,14 +79,19 @@ vec2 line2vect(int start_x, int start_y, int end_x, int end_y);
 vec2 line2vect(double start_x, double start_y, double end_x, double end_y);
 vec2 vmul_2d ( vec2 v1, vec2 v2 );
 
+vec3 add( vec3 v1, vec3 v2 );
+vec3 add( vec3 v1, vec3 v2 );
 
+vec3 sub (vec3 v1, vec3 v2 );
 
-vec3 add_vec3 (vec3 v1, vec3 v2);
-vec3 sub_vec3 (vec3 v1, vec3 v2);
-vec3 mult_vec3 (vec3 v1, vec3 v2);
-vec3 div_vec3 (vec3 v1, vec3 v2);
+vec3 mult( vec3 v1, vec3 v2 );
+vec3 mult( m33 m, vec3 v );
+vec3 mult( m44 m, vec3 v );
+vec3 mult( double scalar, vec3 v );
 
-vec3 crossProduct(vec3 v1, vec3 v2);
+vec3 div (vec3 v1, vec3 v2);
+
+vec3 cross(vec3 v1, vec3 v2);
 
 /////////
 
@@ -98,11 +103,9 @@ vec3 normalize( vec3 input );
 //untested - not done 
 vec3 dtr_vec3(vec3 invec);
 vec3 rtd_vec3(vec3 invec);       
-vec3 add( vec3 v1, vec3 v2);
-vec3 mult_scalar (double scalar, vec3 v);
 
-vec3 mult_m33_vec3(m33 m, vec3 v);
-vec3 mult_m44_vec3(m44 m, vec3 v);
+
+
 
 void print_vec2(vec2 input);
 void print_vec3(vec3 input);

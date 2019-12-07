@@ -32,7 +32,7 @@
 #include "math_op.h"
 
 
-/*********************************************************/
+/************************************************/
 
 
 
@@ -46,7 +46,7 @@ double rtd ( double rad){
    return rad * RAD_TO_DEG;
 }
 
-/*****************************/
+/************************************************/
 double dotProduct ( vec2 v1, vec2 v2){
     return (v1.x*v2.x + v1.y*v2.y ); 
 }
@@ -57,7 +57,7 @@ double dotProduct ( vec3 v1, vec3 v2){
 }
 
 
-/*****************************/
+/************************************************/
 // distance between 2 double points in 2D
 double fcalc_distance(double pt1[2], double pt2[2]){
     return sqrt( ( (pt1[0]-pt2[0])*(pt1[0]-pt2[0])) + ((pt1[1]-pt2[1])*(pt1[1]-pt2[1])) ) ;
@@ -77,7 +77,7 @@ double length( vec3 input){
 }
 
 
-/*****************************/
+/************************************************/
 
 double calc_theta_vert ( double start_x, double start_y, double end_x, double end_y)
 {
@@ -96,7 +96,7 @@ double calc_theta_vert ( double start_x, double start_y, double end_x, double en
     return r;
 }
 
-/*****************************/
+/************************************************/
 
 double angle_between( vec2 v_one, vec2 v_two )
 {
@@ -109,7 +109,7 @@ double angle_between( vec2 v_one, vec2 v_two )
 }
 
 
-/*****************************/
+/************************************************/
 
 
 vec2 newvec2( int x, int y ){
@@ -126,7 +126,7 @@ vec2 newvec2( double x, double y ){
     return output; 
 }
 
-/*****************************/
+/************************************************/
 
 /* normalize a vector */
 vec2 normalize( vec2 input )
@@ -144,7 +144,7 @@ vec2 normalize( vec2 input )
      return output; 
 }
 
-/*****************************/
+/************************************************/
 vec2 scale_vec( vec2 input, double amount ){
     vec2 output;
     output.x = input.x/amount;
@@ -152,15 +152,15 @@ vec2 scale_vec( vec2 input, double amount ){
     return output; 
 }
 
-/*****************************/
-vec2 mult_vec_scalar( vec2 input, double amount ){
+/************************************************/
+vec2 mult( vec2 input, double amount ){
     vec2 output;
     output.x = input.x*amount;
     output.y = input.y*amount;
     return output; 
 }
 
-/*****************************/
+/************************************************/
 
 /*
   convert an arbitrary line segment to a true vector from origin.
@@ -182,7 +182,7 @@ vec2 line2vect(int start_x, int start_y, int end_x, int end_y)
 }
 
 
-/*****************************/
+/************************************************/
 
 /* multiply two 2d vectors */
 vec2 vmul_2d ( vec2 v1, vec2 v2 )
@@ -198,7 +198,7 @@ vec2 vmul_2d ( vec2 v1, vec2 v2 )
 
 /************************************************/
 
-vec3 add_vec3 (vec3 v1, vec3 v2){
+vec3 add (vec3 v1, vec3 v2){
     vec3 output;
     output.x = v1.x + v2.x;
     output.y = v1.y + v2.y;
@@ -208,8 +208,7 @@ vec3 add_vec3 (vec3 v1, vec3 v2){
 
 }
 
-
-vec3 sub_vec3 (vec3 v1, vec3 v2){
+vec3 sub (vec3 v1, vec3 v2){
     vec3 output;
     output.x = v1.x - v2.x;
     output.y = v1.y - v2.y;
@@ -218,7 +217,7 @@ vec3 sub_vec3 (vec3 v1, vec3 v2){
     return output;    
 }
 
-vec3 mult_vec3 (vec3 v1, vec3 v2){
+vec3 mult (vec3 v1, vec3 v2){
     vec3 output;
     output.x = v1.x * v2.x;
     output.y = v1.y * v2.y;
@@ -228,7 +227,7 @@ vec3 mult_vec3 (vec3 v1, vec3 v2){
 }
 
 
-vec3 div_vec3 (vec3 v1, vec3 v2){
+vec3 div (vec3 v1, vec3 v2){
     // UNTESTED - normalized? 
     vec3 output;
 
@@ -241,11 +240,12 @@ vec3 div_vec3 (vec3 v1, vec3 v2){
 }
 
 
-/*****************************/
-/*****************************/
-/*****************************/
+/************************************************/
+/************************************************/
+/************************************************/
 
-vec3 crossProduct(vec3 v1, vec3 v2){
+
+vec3 cross(vec3 v1, vec3 v2){
     // UNTESTED! 
     vec3 output;
     
@@ -303,9 +303,9 @@ vec3 dtr_vec3(vec3 invec){
 
 }
 
-/*****************************/
+/************************************************/
 
-vec3 rtd_vec3(vec3 invec){
+vec3 rtd_vec3( vec3 invec ){
     vec3 output;    
     // return ( rtd( invec[0] ),
     //          rtd( invec[1] ),
@@ -314,30 +314,18 @@ vec3 rtd_vec3(vec3 invec){
     return output;
 }        
 
-/*****************************/
-vec3 add( vec3 v1, vec3 v2){
-    vec3 output;    
-
-    output.x = v1.x+v2.x;
-    output.y = v1.x+v2.y;
-    output.z = v1.z+v2.z;
-
-    return output;
-
-}
-
-/*****************************/
-vec3 mult_scalar (double scalar, vec3 v){
+/************************************************/
+vec3 mult( double scalar, vec3 v ){
     vec3 output; 
     // return [v[0]*scalar, v[1]*scalar, v[2]*scalar ]
     return output;
 }
 
-/*****************************/
+/************************************************/
 /* multiplies a 3X3 matrix by a vec3 
    returns a vec3 */
 
-vec3 mult_m33_vec3(m33 m, vec3 v){
+vec3 mult( m33 m, vec3 v ){
     vec3 output;
     
     output.x = m.m0 * v.x + m.m3 * v.y + m.m6 * v.z; 
@@ -348,11 +336,11 @@ vec3 mult_m33_vec3(m33 m, vec3 v){
 }
 
 
-/*****************************/
+/************************************************/
 /* multiplies a 4X4 matrix by a 3D vector 
    returns a vector tuple */
 
-vec3 mult_m44_vec3(m44 m, vec3 v){
+vec3 mult( m44 m, vec3 v ){
     vec3 output;
 
     output.x = m.m0*v.x + m.m4*v.y + m.m8  * v.z+m.m12;
@@ -363,7 +351,7 @@ vec3 mult_m44_vec3(m44 m, vec3 v){
 }
 
 
-
+/************************************************/
 
 // given 2 points in 3D, create a 3D vector 
 // representing the offset between them 
@@ -380,6 +368,8 @@ vec3 mult_m44_vec3(m44 m, vec3 v){
 // 
 //         return pt2 - self
 // }
+
+/************************************************/
 
 
 /*
@@ -463,7 +453,7 @@ vec3 mult_m44_vec3(m44 m, vec3 v){
 
 */      
 
-
+/************************************************/
  
 void print_vec2(vec2 input){
     printf("%f %f \n", input.x, input.y );
@@ -474,9 +464,10 @@ void print_vec3(vec3 input){
 }
  
 
-/*****************************/
-/*****************************/
-/*****************************/
+/************************************************/
+/************************************************/
+/************************************************/
+
 
 m33 new_m33( double m0 , double m1 , double m2,  
              double m3 , double m4 , double m5, 
@@ -544,7 +535,7 @@ m44 identity44(void){
     return output;
 }
 
-/*****************************/
+/************************************************/
 
 m33 matrix_add(m33 other){
     // self.m[0]+n[0], self.m[1]+n[1], self.m[2]+n[2],
@@ -575,10 +566,10 @@ m44 matrix_sub(m44 other){
 }
 
 
-/*****************************/
+/************************************************/
 /* multiply two 3X3 matricies together */
 
-m33 mult_mat33(m33 m, m33 n){
+m33 mult( m33 m, m33 n ){
     // UNTESTED
     m33 output;    
      
@@ -596,10 +587,10 @@ m33 mult_mat33(m33 m, m33 n){
 }
 
 
-/*****************************/
+/************************************************/
 /* multiply two 4X4 matricies together */
 
-m44 mult_mat44(m44 m, m44 n){
+m44 mult( m44 m, m44 n ){
     // UNTESTED - NOT DONE 
     m44 output;
     
@@ -623,10 +614,7 @@ m44 mult_mat44(m44 m, m44 n){
     return output;
 }
 
-/*****************************/
-
-
-
+/************************************************/
 
 m33 copy_matrix( m33 input ){
 
@@ -647,6 +635,8 @@ m33 copy_matrix( m33 input ){
     return output;  
 
 }
+
+/************************************************/
 
 m44 copy_matrix(m44 input){
     m44 output;
@@ -674,6 +664,7 @@ m44 copy_matrix(m44 input){
     return output;
 }
 
+/************************************************/
 
 m33 test_indices33(void){
      // create a useless matrix with incrementing numbers  
@@ -695,6 +686,8 @@ m33 test_indices33(void){
                 
     return output;      
 }
+
+/************************************************/
 
 m44 test_indices44(void){
      // create a useless matrix with incrementing numbers  
@@ -724,7 +717,7 @@ m44 test_indices44(void){
     return output;   
 }
         
-
+/************************************************/
 double determinant(m33 input){
     //     https://www.mathsisfun.com/algebra/matrix-determinant.html
     //           a b c  |  0 1 2  |        
@@ -739,6 +732,8 @@ double determinant(m33 input){
     return o;  
 
 }
+
+/************************************************/
 
 
 double determinant(m44 input){
@@ -765,7 +760,7 @@ double determinant(m44 input){
     return o;   
 }
 
-
+/************************************************/
 
 // standard indicies  |   transposed indicies
 // 1  2  3            |   1 4 7
@@ -790,7 +785,7 @@ m33 transpose(m33 input){
     return output;     
 }
 
-
+/************************************************/
 m44 transpose(m44 input){
     m44 output; 
 
@@ -817,6 +812,7 @@ m44 transpose(m44 input){
     return output;  
 }
 
+/************************************************/
 void print_matrix(m33 input){
     printf("%f %f %f\n", input.m0, input.m1, input.m2 );
     printf("%f %f %f\n", input.m3, input.m4, input.m5 );
@@ -830,6 +826,7 @@ void print_matrix(m44 input){
     printf("%f %f %f %f\n", input.m12 , input.m13 , input.m14 , input.m15 );        
 }
 
+/************************************************/
 
 m33 m33_from_euler(double xrot, double yrot, double zrot){
     // build rotationY  
@@ -846,7 +843,7 @@ m33 m33_from_euler(double xrot, double yrot, double zrot){
     z_matrix.m3 = -sin( dtr( zrot ) );
     z_matrix.m4 =  cos( dtr( zrot ) );
     
-    m33 tmp_matr =  mult_mat33( y_matrix , z_matrix); 
+    m33 tmp_matr =  mult( y_matrix , z_matrix); 
 
     // build rotationX   
     m33 x_matrix = identity33();
@@ -855,11 +852,11 @@ m33 m33_from_euler(double xrot, double yrot, double zrot){
     x_matrix.m7  = -sin( dtr( xrot ) );
     x_matrix.m8  =  cos( dtr( xrot ) );
     
-    m33 output = mult_mat33( x_matrix , tmp_matr); 
+    m33 output = mult( x_matrix , tmp_matr); 
     return output;
 }
 
-
+/************************************************/
 
 m44 m44_from_euler(double xrot, double yrot, double zrot){
     // build rotationY  
@@ -875,7 +872,7 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
     z_matrix.m1 =  sin( dtr( zrot ) );
     z_matrix.m4 = -sin( dtr( zrot ) );
     z_matrix.m5 =  cos( dtr( zrot ) );
-    m44 tmp_matr = mult_mat44(y_matrix, z_matrix );
+    m44 tmp_matr = mult(y_matrix, z_matrix );
 
     // build rotationX (see diagram above) 
     m44 x_matrix = identity44();
@@ -884,12 +881,12 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
     x_matrix.m9  = -sin( dtr( xrot ) );
     x_matrix.m10 =  cos( dtr( xrot ) );
  
-    m44 output = mult_mat44( x_matrix, tmp_matr );
+    m44 output = mult( x_matrix, tmp_matr );
 
     return output;
 }
 
-
+/************************************************/
     // m33 rotate_pts_3d(points, xrot, yrot, zrot):
     //     //  The "standard" 9 element, Row major, 3X3 rotation matrix used by Maya
     //     //   ⎡0  1  2⎤      xx xy xz 
@@ -938,7 +935,7 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
     //     return rotation_33.batch_mult_pts(points)
 
 
-
+/************************************************/
     // m33 batch_mult_pts(self, pts):
     //     // iterate a list of points and multiply them by this matrix 
     //     tmp_buffer = []
@@ -946,7 +943,7 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
     //     for pvec in pts:  
     //         tmp_buffer.append( self * pvec )
     //     return tmp_buffer
-
+/************************************************/
 
     // m33 align_two_vec3(self, a, b):
     //     //UNFINISHED
@@ -967,7 +964,7 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
     //     return self.from_np(tmpm33)
 
 
-/*************************************************************************/
+/************************************************/
     /*       
 
 
@@ -1051,7 +1048,7 @@ m44 m44_from_euler(double xrot, double yrot, double zrot){
         return rotation_44.batch_mult_pts(points)
 
 
-/*************************************************************************/
+/************************************************/
 
 quaternion new_quaternion( double x, double y, double z, double w ){
     quaternion output;
@@ -1064,10 +1061,12 @@ quaternion new_quaternion( double x, double y, double z, double w ){
     return output; 
 }
 
+/************************************************/
 quaternion quaternion_identity(){
     return new_quaternion(1.0,0,0,0);
 }
 
+/************************************************/
 
 void set(  quaternion *input, double x, double y, double z, double w){
     input->w = w;
@@ -1076,9 +1075,13 @@ void set(  quaternion *input, double x, double y, double z, double w){
     input->z = z;    
 }
 
+/************************************************/
+
 void print_quaternion(quaternion input){
     printf("%f %f %f %f\n", input.w, input.x, input.y, input.z );
 }
+
+/************************************************/
 
 
 void quaternion_rotx(quaternion *input, double theta){
@@ -1087,6 +1090,7 @@ void quaternion_rotx(quaternion *input, double theta){
     input->x = sin( theta_over2 );
 }
 
+/************************************************/
 
 void quaternion_roty(quaternion *input, double theta){
     double theta_over2 = theta * .5;
@@ -1095,13 +1099,14 @@ void quaternion_roty(quaternion *input, double theta){
 }
 
 
+/************************************************/
 void quaternion_rotz(quaternion *input, double theta){
     double theta_over2 = theta * .5;
     input->w = cos( theta_over2 );
     input->z = sin( theta_over2 );
 }
 
-
+/************************************************/
 void quaternion_fr_euler(quaternion *input, double h, double p, double b){
     double sp,sb,sh,cp,cb,ch = 0;
 
@@ -1131,7 +1136,7 @@ void quaternion_fr_euler(quaternion *input, double h, double p, double b){
 
 }
 
-
+/************************************************/
 double quaternion_mag(quaternion *input){
     double mag = float( sqrt(  input->w * input-> w + 
                                input->x * input-> x + 
@@ -1140,7 +1145,7 @@ double quaternion_mag(quaternion *input){
     return mag;                                 
 }
 
-
+/************************************************/
 void quaternion_normalize(quaternion *input){
     double mag = quaternion_mag( input ); 
     if (mag > 0){
@@ -1156,10 +1161,12 @@ void quaternion_normalize(quaternion *input){
     }    
 }
 
+/************************************************/
 double dot_product(quaternion a, quaternion b){ 
     return a.x * b.x + a.y * b.y + a.z * b.z + a.z * a.z;   
 }
 
+/************************************************/
 quaternion conjugate(quaternion q){
     quaternion output;
    
@@ -1171,7 +1178,7 @@ quaternion conjugate(quaternion q){
     return output;
 }        
 
-
+/************************************************/
 quaternion multiply(quaternion a){
     quaternion output;
    
@@ -1188,6 +1195,7 @@ quaternion multiply(quaternion a){
     return output;
 }
 
+/************************************************/
 quaternion quaternion_from_m33(m33 input){
          
     //   m11  m12 m13 
@@ -1253,7 +1261,7 @@ quaternion quaternion_from_m33(m33 input){
 }
 
 
-
+/************************************************/
 m33 quaternion_to_m33(quaternion * q ){  
     /*
         hmm - does input q need to be a pointer if we only read? 
@@ -1288,7 +1296,7 @@ m33 quaternion_to_m33(quaternion * q ){
     // return mo; 
 }
 
-
+/************************************************/
  
 void quaternion_set_axis( quaternion* input, vec3 axis, double theta){
     // #assert((vectorMag(axis) - 1.0f) < 0.01f);
@@ -1303,12 +1311,13 @@ void quaternion_set_axis( quaternion* input, vec3 axis, double theta){
 
 }
 
-
+/************************************************/
 double quaternion_get_rot_angle(quaternion q){
     double thetaOver2 = acos(q.w);
     return thetaOver2 * 2.0;
 }
 
+/************************************************/
 
 vec3 quaternion_get_rot_axis(quaternion q){
     double sin_theta_over2Sq = 1.0 - q.w * q.w;
@@ -1321,7 +1330,7 @@ vec3 quaternion_get_rot_axis(quaternion q){
     return newvec3(nx, ny, nz);
 }
 
-
+/************************************************/
 /*
     def quaternion_slerp (self, q0, q1, t):
  
@@ -1372,7 +1381,7 @@ vec3 quaternion_get_rot_axis(quaternion q){
 
 */
 
-/**********************************************************************/
+/************************************************/
 
 
 /*
@@ -1454,7 +1463,7 @@ class spherical(object):
 */
 
 
-
+/************************************************/
 
 
 /*

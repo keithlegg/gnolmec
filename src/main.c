@@ -50,7 +50,7 @@
 #include "demo_olmec.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
 
 
-/********************************************/
+/*******************************************************/
 
 
 int window_id; // The number of our GLUT window 
@@ -61,14 +61,44 @@ GLuint texture[1]; // storage for one texture
 float xrot, yrot, zrot;// floats for x rotation, y rotation, z rotation 
 
 
-//3d view properties
-float gui_rotx = 0.0;
-float gui_roty = 0.0;
+/*******************************************************/
+
+// // camera properties ( https://learnopengl.com/Getting-started/Camera )
+// vec3 camera_pos        = newvec3(0.0, 0.0, 3.0 );
+// vec3 camera_target     = newvec3(0.0, 0.0, 0.0 );
+// vec3 camera_direction  = normalize(sub( camera_pos, camera_target));
+// vec3 up                = newvec3(0.0f, 1.0f, 0.0f); 
+// vec3 camera_right      = normalize(cross (up, camera_direction));
+// vec3 camera_up         = cross(camera_direction, camera_right);
+// 
+// // float radius = 10.0f;
+// // float camX = sin(glfwGetTime()) * radius;
+// // float camZ = cos(glfwGetTime()) * radius;
+// // m44 view = new_m44();
+// // //view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0);
+
+/*******************************************************/
+
+
+
+
+
+//have to build this in my math lib?
+// view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
+//                    glm::vec3(0.0f, 0.0f, 0.0f), 
+//                    glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+
 float gui_zoomz = -5.0;
 
+
+// window properties
 int scr_size_x      = 512;
 int scr_size_y      = 512;
 bool scr_full_toglr = TRUE;
+
+
 
 // data for animated "pong" texture 
 unsigned int upos = 100;
@@ -81,12 +111,13 @@ unsigned int img_usize  = 512;
 unsigned int img_vsize  = 512;
 
 
-
 int use_tex = 0;
+
 
 Image* main_bg_bfr      = createBufferImage(512,512); 
 Image* imageloaded_bfr  = createBufferImage(512,512); 
 Image* imageloaded_bfr2 = createBufferImage(512,512); 
+
 
 enum {
     MENU_ABOUT,
