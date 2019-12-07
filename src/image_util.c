@@ -9,7 +9,7 @@
           -loaders/saves (use bitmap_io.c)
 
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg  - keithlegg23@gmail.com
 
 */
 /*************************************************************/

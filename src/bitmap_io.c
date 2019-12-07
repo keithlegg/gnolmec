@@ -3,7 +3,7 @@
    bitmap_io.c 
        -  file importer/ exporters - mostly image loaders and saver
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/

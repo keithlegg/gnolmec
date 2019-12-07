@@ -3,7 +3,7 @@
    framebuffer.c 
        -  Create and process framebuffers for image manipulation
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/

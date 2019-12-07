@@ -6,7 +6,7 @@
 #define FALSE 0
 
 
-typedef int BOOL;
+// typedef int bool;
 
 #define VIEWING_DISTANCE_MIN  3.0
 

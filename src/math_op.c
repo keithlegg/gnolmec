@@ -19,7 +19,7 @@
 
            https://github.com/keithlegg/pyrender2/blob/master/pygfx/math_ops.py
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/

@@ -5,7 +5,7 @@
     Example code to use as a copy/paste repository and 
     for testing various framebuffer functions 
 
-    Copyright (C) 2019 Keith Legg  (keithlegg23@gmail.com)
+    Copyright (C) 2019 Keith Legg  - keithlegg23@gmail.com
 */
 /*************************************************************/
 

@@ -66,8 +66,9 @@ float gui_rotx = 0.0;
 float gui_roty = 0.0;
 float gui_zoomz = -5.0;
 
-int scr_size_x = 512;
-int scr_size_y = 512;
+int scr_size_x      = 512;
+int scr_size_y      = 512;
+bool scr_full_toglr = TRUE;
 
 // data for animated "pong" texture 
 unsigned int upos = 100;
@@ -146,9 +147,9 @@ void test_math_ops(void){
 
 /***************************************/
 
-char* obj_filepath = "3d_obj/cone.obj";
-//char* obj_filepath = "3d_obj/monkey.obj";
-// char* obj_filepath = "3d_obj/teapot.obj";
+//char* obj_filepath = "3d_obj/cone.obj";
+ char* obj_filepath = "3d_obj/monkey.obj";
+//char* obj_filepath = "3d_obj/teapot.obj";
 
 
 int main(int argc, char **argv) 

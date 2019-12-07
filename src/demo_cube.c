@@ -5,7 +5,7 @@
    3D demo - display a rotating cube 
 
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/
@@ -47,10 +47,10 @@ extern Image* imageloaded_bfr2 ;
 extern Image* imageloaded_bfr  ; 
 
 
-static BOOL g_bButton1Down = FALSE;
-static BOOL g_bLightingEnabled = TRUE;
-static BOOL g_bFillPolygons = TRUE;
-static BOOL g_bTexture = FALSE;
+static bool g_bButton1Down = FALSE;
+static bool g_bLightingEnabled = TRUE;
+static bool g_bFillPolygons = TRUE;
+static bool g_bTexture = FALSE;
 
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;

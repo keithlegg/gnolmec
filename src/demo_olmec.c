@@ -8,7 +8,7 @@
       (alt-click rotate view, etc)
 
 
-   Copyright (C) 2019 Keith Legg (keithlegg23@gmail.com)
+   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/
@@ -45,10 +45,10 @@ extern Image* imageloaded_bfr2 ;
 extern Image* imageloaded_bfr  ; 
 
 
-static BOOL g_bButton1Down = FALSE;
-static BOOL g_bLightingEnabled = TRUE;
-static BOOL g_bFillPolygons = TRUE;
-static BOOL g_bTexture = FALSE;
+static bool g_bButton1Down = FALSE;
+static bool g_bLightingEnabled = TRUE;
+static bool g_bFillPolygons = TRUE;
+static bool g_bTexture = FALSE;
 
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
@@ -60,6 +60,7 @@ extern float gui_zoomz;
 
 extern int scr_size_x;
 extern int scr_size_y;
+extern bool scr_full_toglr;
 
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
@@ -68,9 +69,9 @@ struct obj_model *pt_loader = &loader;
 
 extern char* obj_filepath;
 
-BOOL draw_lines     = TRUE;
-BOOL draw_quads     = FALSE;
-BOOL draw_triangles = FALSE;
+bool draw_lines     = FALSE;
+bool draw_quads     = FALSE;
+bool draw_triangles = TRUE;
 
 
 RGBType line_color;
@@ -98,6 +99,22 @@ void system_render(void){
     // }
 
 }
+
+
+void warnings(void)
+{
+    if(!draw_lines || !pt_loader->num_lines){
+        printf("#warn - no lines or disabled.     \n");
+    }
+
+    if(!draw_triangles || !pt_loader->num_tris){
+        printf("#warn - no triangles or disabled. \n");
+    }
+
+    if(!draw_quads || !pt_loader->num_quads){ ; }    
+
+}
+
 
 
 void set_colors(void){
@@ -188,6 +205,15 @@ static void animateTextures3(Image *loaded_texture)
 }
 
 /***************************************/
+static void graticulate( void )
+{
+
+
+
+
+}
+
+
 
 static void display_loop()
 {
@@ -347,24 +373,32 @@ static void keyPressed(unsigned char key, int x, int y)
         exit(0);                   
     }
     
-    // ALT is 38?
+    // printf("scancode is  %d \n", key );
+
+    if (key == 32) //space
+    { 
+
+        if (scr_full_toglr == TRUE){
+            glutFullScreen();
+            scr_full_toglr = FALSE;
+        }else{
+            glutReshapeWindow(800, 800);
+            glutPositionWindow(0,0);  
+            scr_full_toglr = TRUE;
+        }
+
+    }
 
     if (key == 114) //r
     { 
         reset_view();
     }
-        
-
-    if (key == 101) //e
-    { 
-        glutReshapeWindow(800, 800);
-        glutPositionWindow(0,0);
-    }        
+    
 
     if (key == 102) //f
     { 
         //printf("you pressed f\n");
-        glutFullScreen();
+        //glutFullScreen();
     }
 
 }
@@ -508,6 +542,8 @@ void olmec_navigation_demo(int *argc, char** argv){
     set_colors();
 
     load_objfile(obj_filepath, pt_loader ); 
+
+    warnings();
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
