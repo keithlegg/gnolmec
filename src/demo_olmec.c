@@ -33,9 +33,10 @@ extern int scr_size_y;
 extern bool scr_full_toglr;
 
 // view prefs 
-bool draw_lines     = FALSE;
-bool draw_quads     = FALSE;
+bool draw_lines     = TRUE;
+bool draw_quads     = TRUE;
 bool draw_triangles = TRUE;
+bool draw_grid      = TRUE;
 
 /***********/
 // object related 
@@ -59,22 +60,14 @@ RGBType *pt_linecolor = &line_color;
 RGBType line_color2;
 RGBType *pt_linecolor2 = &line_color2;
 
+RGBType grid_color;
+RGBType *pt_gridcolor = &grid_color;
+
 /***********/
 //old experiment to interact with mouse
 extern float gui_zoomz;
 // static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 // static int g_yClick = 0;
-
-/***********/
-
-// camera properties ( https://learnopengl.com/Getting-started/Camera )
-vec3 camera_pos        = newvec3( 0.0, 0.0, 3.0 );
-vec3 camera_target     = newvec3( 0.0, 0.0, 0.0 );
-vec3 camera_direction  = normalize(sub( camera_pos, camera_target));
-vec3 up                = newvec3( 0.0f, 1.0f, 0.0f ); 
-vec3 camera_right      = normalize(cross (up, camera_direction));
-vec3 camera_up         = cross(camera_direction, camera_right);
- 
 
 float orbit_x = 0;
 float orbit_y = 0;
@@ -93,9 +86,14 @@ void set_colors(void){
     pt_linecolor->b = 0;
 
     //make a color for some lines 
-    pt_linecolor2->r = 255;
-    pt_linecolor2->g = 255;
-    pt_linecolor2->b = 255;
+    pt_linecolor2->r = 25;
+    pt_linecolor2->g = 25;
+    pt_linecolor2->b = 155;
+
+    //make a color for some lines 
+    pt_gridcolor->r = 200;
+    pt_gridcolor->g = 200;
+    pt_gridcolor->b = 200;
 
 }
 
@@ -105,6 +103,7 @@ void set_colors(void){
 void warnings(void)
 {
     // let us know if there is a discernable problem 
+    printf("\n\n\n\n###########################################\n");
 
     if(!draw_lines || !pt_loader->num_lines){
         printf("#warn - no lines or disabled.     \n");
@@ -145,8 +144,8 @@ static void redraw_textures(Image *loaded_texture)
     copyBuffer24( imageloaded_bfr, loaded_texture ); //convert "RGBType" to "Image"
 
     // create and apply 2D texture   
-    glGenTextures(2, &texture[0]);  //create 2 textures
-    glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
+    glGenTextures(3, &texture[0]);            //create 3 textures
+    glBindTexture(GL_TEXTURE_2D, texture[0]); // 2d texture (x and y size)
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
@@ -159,33 +158,77 @@ static void redraw_textures(Image *loaded_texture)
 //draw a 3D grid on the "floor" and an indicator to show XYZ axis  
 static void graticulate( void )
 {
-
-    float grd_size = 3.0;
+ 
+    int grd_num       = 10;
     
-    glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
+    float grd_height  = 0.0;
+    float grd_size    = 2.5;
+    float gspac = grd_size/(grd_num/2);
+
+    glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
+
+    float id = 0;
+
+    //"swim bag" tile effect
+    // for(id=0; id<=grd_size; id+=gspac)
+    // {
+    //     glVertex3f(-id, 0,  grd_size);
+    //     glVertex3f(-id, 0, -grd_size);  
+    //     glVertex3f(-id, 0, -id);
+    //     glVertex3f( id, 0, -id);                
+    // }
 
     glBegin(GL_LINES);
+  
+        for(id=-gspac; id<=grd_size; id+=gspac)
+        {
+            if(id==0)
+            {  
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);                 
+                glVertex3f( id, grd_height,   (grd_size+1) );
 
-        //glColor3f(pt_linecolor->r, pt_linecolor->g, pt_linecolor->b);   
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);                 
+                glVertex3f( id, grd_height,  -(grd_size+1) );  
 
-        glVertex3f(-grd_size, 0,  grd_size);
-        glVertex3f( grd_size, 0,  grd_size);
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glVertex3f(  (grd_size+1), grd_height, id );
 
-        glVertex3f(-grd_size, 0,  grd_size);
-        glVertex3f(-grd_size, 0, -grd_size);  
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glVertex3f( -(grd_size+1), grd_height, id ); 
 
-        glVertex3f( grd_size, 0, -grd_size);
-        glVertex3f(-grd_size, 0, -grd_size);                
+            }else if (draw_grid) {
+               
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+                glVertex3f(-id, grd_height,  grd_size);
 
-        glVertex3f( grd_size, 0,  grd_size);
-        glVertex3f(-grd_size, 0, -grd_size);  
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                 
+                glVertex3f(-id, grd_height, -grd_size);  
+ 
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+                glVertex3f( id, grd_height,  grd_size);
 
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                  
+                glVertex3f( id, grd_height, -grd_size); 
 
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+                glVertex3f(-grd_size, grd_height, -id);
+                
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+                glVertex3f( grd_size, grd_height, -id);                
+                
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+                glVertex3f(-grd_size, grd_height,  id);
+
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                  
+                glVertex3f( grd_size, grd_height,  id);                 
+            }
+
+        }
     glEnd();
-
 }
 
 /***************************************/
+/*
 void set_camera(void){
 
     // https://stackoverflow.com/questions/5717654/glulookat-explanation 
@@ -199,32 +242,36 @@ void set_camera(void){
     // glGet with argument GL_TEXTURE_MATRIX
 
     glMatrixMode(GL_PROJECTION); 
-
-    //glLoadIdentity();               // Reset The View
+    glLoadIdentity();               // Reset The View
 
     // view = new_m44();
-    // gluLookAt( cam_x , 0.0, cam_z ,   /* look from camera XYZ */ 
-    //             0.0  , 0.0, 0.0  ,    /* look at the origin */
-    //             0.0  , 1.0, 0.0  );   /* positive Y up vector */   
+    // gluLookAt( cam_x , 0.0, cam_z ,   // look from camera XYZ  
+    //             0.0  , 0.0, 0.0  ,    // look at the origin 
+    //             0.0  , 1.0, 0.0  );   // positive Y up vector    
 
-    // gluLookAt(camera[0], camera[1], camera[2],  /* look from camera XYZ */ 
-    //                   0,         0,         0,  /* look at the origin */ 
-    //                   0,         1,         0); /* positive Y up vector */ 
+    // gluLookAt(camera[0], camera[1], camera[2],  // look from camera XYZ  
+    //                   0,         0,         0,  // look at the origin  
+    //                   0,         1,         0); // positive Y up vector  
     
     //printf("# orbit %f \n", orbit_x );
 
     //glRotatef(orbit_x, 0.f, 1.0f, 0.f);             
-    //glCallList(SCENE); /* draw the scene */
+    //glCallList(SCENE); // draw the scene 
 
 }
+*/
 
+float cam_x;
+float cam_y;
+float cam_z;
 
 
 static void render_loop()
 {
 
-    float cam_x  = sin( orbit_x ) * gui_zoomz;
-    float cam_z  = cos( orbit_x ) * gui_zoomz;
+    cam_x = sin( orbit_x*5 ) * gui_zoomz;
+    cam_y = (-orbit_y*10);
+    cam_z = cos( orbit_x*5 ) * gui_zoomz;
 
     /******************************************/
     // Clear The Screen And The Depth Buffer
@@ -232,23 +279,20 @@ static void render_loop()
 
     /******************************************/
     //process geometry GL_PROJECTION
-    
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();           
 
     glTranslatef( 0.0, 0.0, -10.0);  
 
-    gluLookAt( cam_x, (-orbit_y*10), cam_z,
-                 0.0, 0.0          , 0.0,
-                 0.0, 1.0          , 0.0 
+    
+    gluLookAt( cam_x, cam_y , cam_z,
+                 0.0, 0.0   , 0.0,
+                 0.0, 1.0   , 0.0 
              );
 
-
-
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity(); 
-
     graticulate();
+    
     
     // glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
     // glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
@@ -323,11 +367,11 @@ static void render_loop()
     }
 
 
-    redraw_textures(main_bg_bfr);
+    //redraw_textures(main_bg_bfr);
 
     // swap the other (double) buffer to display what just got drawn.
     glutSwapBuffers();
-     
+  
 }
 
 /***************************************/
@@ -380,6 +424,15 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 102) //f
     { 
         reset_view();
+    }
+
+    if (key == 103) //g
+    { 
+        if (draw_grid == TRUE){
+            draw_grid = FALSE;
+        }else{
+            draw_grid = TRUE;
+        }
     }
 
 }
@@ -509,6 +562,8 @@ void olmec(int *argc, char** argv){
 
     //shader_test();
     set_colors();
+
+    redraw_textures(main_bg_bfr);
 
     load_objfile(obj_filepath, pt_loader ); 
 

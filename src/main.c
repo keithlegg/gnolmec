@@ -170,8 +170,8 @@ void test_math_ops(void){
 
 /***************************************/
 
-char* obj_filepath = "3d_obj/cone.obj";
-//char* obj_filepath = "3d_obj/monkey.obj";
+//char* obj_filepath = "3d_obj/cone.obj";
+char* obj_filepath = "3d_obj/monkey.obj";
 // char* obj_filepath = "3d_obj/teapot.obj";
 
 
