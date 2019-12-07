@@ -5,6 +5,7 @@
 
 
 
+void pycore_vector(void);
 
 void software_render(void);
 

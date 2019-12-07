@@ -49,12 +49,14 @@ typedef struct obj_model{
 };
 
 
+void reset_objfile(struct obj_model* loader);
+void load_objfile( char *filepath, struct obj_model* loader);
+void save_objfile( char *filepath);
+
 void test_loader_data(struct obj_model* loader);
 void show_loader(struct obj_model* loader);
 
 
-void load_objfile( char *filepath, struct obj_model* loader);
-void save_objfile( char *filepath);
 
 
 

@@ -421,6 +421,26 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
+
+    if (key == 111) //o
+    { 
+        // reset_objfile(pt_loader);
+        char* file2 = "3d_obj/normals.obj";
+        load_objfile(file2, pt_loader );
+
+    }
+
+    if (key == 112) //p
+    { 
+        pycore_vector(); 
+    }
+
+    if (key == 114) //r
+    { 
+        // reset_objfile(pt_loader);
+        load_objfile(obj_filepath, pt_loader ); 
+    }
+
     if (key == 102) //f
     { 
         reset_view();
@@ -688,5 +708,16 @@ void software_render(void){
     //     break;
     // }
 
+}
+
+
+
+void pycore_vector(void){
+    //call python from here!!
+    int ret = system("python3 vect.py");
+    
+    //load the result in !!
+    //char* newfilepath = "3d_obj/normals.obj";
+    //load_objfile( newfilepath, pt_loader ); 
 }
 

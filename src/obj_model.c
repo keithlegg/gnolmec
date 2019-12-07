@@ -23,6 +23,23 @@
 
 
 
+/*******************************************************************/
+void reset_objfile(struct obj_model* loader)
+{
+     
+    loader->num_pts = 0;
+    loader->num_uvs;
+    loader->num_lines;
+    loader->num_tris;
+    loader->num_quads;    
+
+    // loader->uvs[num_vtx];      // UV coords 
+    // loader->points[num_vtx];   // 3 floats  
+    // loader->lines[num_faces];  //2 point lines 
+    // loader->tris[num_faces];   //3 point polygons 
+    // loader->quads[num_faces];  //4 point polygons 
+
+}
 
 /*******************************************************************/
 
