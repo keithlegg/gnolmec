@@ -6,6 +6,7 @@
 
 
 
+void software_render(void);
 
 static void display_loop();
 
@@ -17,7 +18,7 @@ static void keyPressed(unsigned char key, int x, int y);
 void olmec_mouse_button(int button, int state, int x, int y);
 void olmec_mouse_motion(int x, int y);
 
-void olmec_navigation_demo(int *argc, char** argv);
+void olmec(int *argc, char** argv);
 
 
 

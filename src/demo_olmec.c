@@ -1,3 +1,4 @@
+
 /*************************************************************/
 /*
    demo_olmec.c 
@@ -17,54 +18,40 @@
 #include <stdio.h>
 #include <unistd.h>      
 #include <cmath>
-
 #include "gl_setup.h"
 #include "bitmap_io.h" // includes framebuffer.h, colors, etc 
 #include "point_op.h"
-
 #include "obj_model.h"
-
 #include "demo_olmec.h"
 
 
-// void calc_circle ( pix_coord *out_coords, int numdiv, int x_orig, int y_orig, float dia, int *num)
-
-
-extern float xrot, yrot, zrot; 
-
-extern int window_id;
-
-extern int use_tex;
-extern GLuint texture[1];  
-
-extern Image* main_bg_bfr      ; 
-extern Image* imageloaded_bfr2 ; 
-extern Image* imageloaded_bfr  ; 
-
-
-static bool g_bButton1Down = FALSE;
-static bool g_bLightingEnabled = TRUE;
-static bool g_bFillPolygons = TRUE;
-static bool g_bTexture = FALSE;
-
 /***********/
-// window properties 
+// window related 
+extern int window_id;
 extern int scr_size_x;
 extern int scr_size_y;
 extern bool scr_full_toglr;
 
-/***********/
-
-struct obj_model loader;
-struct obj_model *pt_loader = &loader;
-
-extern char* obj_filepath;
-
+// view prefs 
 bool draw_lines     = FALSE;
 bool draw_quads     = FALSE;
 bool draw_triangles = TRUE;
 
 /***********/
+// object related 
+extern GLuint texture[1];
+extern char* obj_filepath;
+struct obj_model loader;
+struct obj_model *pt_loader = &loader;
+
+float xrot, yrot, zrot; 
+
+/***********/
+// data containers 
+
+extern Image* main_bg_bfr      ; 
+extern Image* imageloaded_bfr2 ; 
+extern Image* imageloaded_bfr  ; 
 
 RGBType line_color;
 RGBType *pt_linecolor = &line_color;
@@ -80,61 +67,22 @@ extern float gui_zoomz;
 
 /***********/
 
-// // camera properties ( https://learnopengl.com/Getting-started/Camera )
-vec3 camera_pos        = newvec3(0.0, 0.0, 3.0 );
-vec3 camera_target     = newvec3(0.0, 0.0, 0.0 );
+// camera properties ( https://learnopengl.com/Getting-started/Camera )
+vec3 camera_pos        = newvec3( 0.0, 0.0, 3.0 );
+vec3 camera_target     = newvec3( 0.0, 0.0, 0.0 );
 vec3 camera_direction  = normalize(sub( camera_pos, camera_target));
-vec3 up                = newvec3(0.0f, 1.0f, 0.0f); 
+vec3 up                = newvec3( 0.0f, 1.0f, 0.0f ); 
 vec3 camera_right      = normalize(cross (up, camera_direction));
 vec3 camera_up         = cross(camera_direction, camera_right);
-
- 
-float radius = 10.0f;
-float cam_x = sin( 100 ) * radius;
-float cam_z = cos( 200 ) * radius;
-
-// view = new_m44();
-//  gluLookAt( cam_x, 0.0, cam_z,   /* look from camera XYZ */ 
-//             0.0  , 0.0, 0.0  ,   /* look at the origin */
-//             0.0  , 1.0, 0.0  );  /* positive Y up vector */
-
  
 
-/***********/
+float orbit_x = 0;
+float orbit_y = 0;
 
-void system_render(void){
-    //#include <sys/syscall.h>  //experiment to call renderer 
 
-    /* test of a system call to an external program 
-       one day I may attempt to implement a seperate software renderer here  
-    */
+float ticker = 0;
 
-    // syscall(SYS_write, 1, "hello, world!\n", 14);  //experiment to call render program 
-    // printf("%d\n", SYS_write);
 
-    int ret = system("ls");
-    // if (WIFSIGNALED(ret) &&
-    //     (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT)){            
-    //     break;
-    // }
-
-}
-
-/***************************************/
-
-void warnings(void)
-{
-    if(!draw_lines || !pt_loader->num_lines){
-        printf("#warn - no lines or disabled.     \n");
-    }
-
-    if(!draw_triangles || !pt_loader->num_tris){
-        printf("#warn - no triangles or disabled. \n");
-    }
-
-    if(!draw_quads || !pt_loader->num_quads){ ; }    
-
-}
 
 /***************************************/
 
@@ -151,88 +99,57 @@ void set_colors(void){
 
 }
 
+
 /***************************************/
 
-void olmecnav_rst_xforms( void ){
-    //     transform.parent = capsuleObj.transform;
-    //     capsuleObj.transform.position = orbt_xform_original ;
-    //     capsuleObj.transform.rotation = orbt_rot_original;
-    //     transform.parent = null;
-    //     transform.position = startpos;
+void warnings(void)
+{
+    // let us know if there is a discernable problem 
+
+    if(!draw_lines || !pt_loader->num_lines){
+        printf("#warn - no lines or disabled.     \n");
+    }
+
+    if(!draw_triangles || !pt_loader->num_tris){
+        printf("#warn - no triangles or disabled. \n");
+    }
+
+    if(!draw_quads || !pt_loader->num_quads){ ; }    
+
 }
 
 /***************************************/
 
 void reset_view(void){
-    //gui_rotx = 0.0;
-    //gui_roty = 0.0;
     gui_zoomz = -5.0;  
+    orbit_x = 0;
+    orbit_y = 0;
+ 
+    //     transform.parent = capsuleObj.transform;
+    //     capsuleObj.transform.position = orbt_xform_original ;
+    //     capsuleObj.transform.rotation = orbt_rot_original;
+    //     transform.parent = null;
+    //     transform.position = startpos;
+
 }
 
 /***************************************/
-static void animateTextures3(Image *loaded_texture)
+static void redraw_textures(Image *loaded_texture)
 {
-    //test of new framebuffer commands
-    RGBType* pt_rgb_bfr =  createBuffer24(loaded_texture->sizeX, loaded_texture->sizeY);    
-    
-    //copyBuffer24( loaded_texture ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
-    
-    copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+    // //test of new framebuffer commands
+    // RGBType* pt_rgb_bfr =  createBuffer24(loaded_texture->sizeX, loaded_texture->sizeY);    
+    // //copyBuffer24( loaded_texture ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+    // copyBuffer24( imageloaded_bfr2 ,  pt_rgb_bfr ); //convert "Image" to "RGBType"
+    // free(pt_rgb_bfr);
 
-    // int cp_tl[2] = {0};
-    // int cp_br[2] = {0};
-    // cp_tl[0] = upos-pong_size;
-    // cp_tl[1] = vpos-pong_size;
-    // cp_br[0] = upos+pong_size;
-    // cp_br[1] = vpos+pong_size;
-    // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_br[0] , cp_br[1] , pt_linecolor); 
-    // draw_line(pt_rgb_bfr, loaded_texture->sizeX , cp_tl[0] , cp_tl[1] , cp_tl[0] , cp_br[1] , pt_linecolor);
-    
-    //just to show its alive - bounce a ball around 
-    //draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, upos, vpos, pong_size, pt_linecolor);
+    copyBuffer24( imageloaded_bfr, loaded_texture ); //convert "RGBType" to "Image"
 
-    // const char *filename = "rgb_buffer.bmp";
-    // saveBMP_24bit (pt_rgb_bfr, filename , image_x, image_y);
-    // free(pt_image_bfr);
-
-    ///////////////////////
-    /*
-    int x = 0;
-    
-    int num_cells = 20;
-    int cell_size = (int)loaded_texture->sizeX/num_cells;
-    
-    for (x=cell_size;x<=loaded_texture->sizeX-cell_size;x=x+cell_size){
-        draw_fill_circle ( pt_rgb_bfr, loaded_texture->sizeX, x, vpos, cell_size/2, pt_linecolor2);
-    }
-    */
-
-    ///////////////////////
-    /*
-    // first stab at some matrix and vector art 
-    m33 identity = new_m33(1,0,0,
-                           0,1,0,
-                           0,0,1);
-
-    vec2 v1 = newvec2(102.0, 301.0);
-
-    draw_line(pt_rgb_bfr, loaded_texture->sizeX , v1.x , v1.y , 0 , 0 , pt_linecolor);
-    */
-    ///////////////////////
-
-    //overwrite loaded buffer with lines
-    copyBuffer24( pt_rgb_bfr, loaded_texture ); //convert "RGBType" to "Image"
-
-    free(pt_rgb_bfr);
-     
     // create and apply 2D texture   
     glGenTextures(2, &texture[0]);  //create 2 textures
-
     glBindTexture(GL_TEXTURE_2D, texture[0]);   // 2d texture (x and y size)
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smalled than texture
-
     glTexImage2D(GL_TEXTURE_2D, 0, 3, loaded_texture->sizeX, loaded_texture->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, loaded_texture->data);
 
 }
@@ -243,15 +160,25 @@ static void animateTextures3(Image *loaded_texture)
 static void graticulate( void )
 {
 
+    float grd_size = 3.0;
+    
+    glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
 
     glBegin(GL_LINES);
 
         //glColor3f(pt_linecolor->r, pt_linecolor->g, pt_linecolor->b);   
 
-        glVertex3f(-5.0, 0,  5.0);
-        glVertex3f( 5.0, 0,  5.0);
-        glVertex3f( 5.0, 0, -5.0);
-        glVertex3f(-5.0, 0, -5.0);                
+        glVertex3f(-grd_size, 0,  grd_size);
+        glVertex3f( grd_size, 0,  grd_size);
+
+        glVertex3f(-grd_size, 0,  grd_size);
+        glVertex3f(-grd_size, 0, -grd_size);  
+
+        glVertex3f( grd_size, 0, -grd_size);
+        glVertex3f(-grd_size, 0, -grd_size);                
+
+        glVertex3f( grd_size, 0,  grd_size);
+        glVertex3f(-grd_size, 0, -grd_size);  
 
 
     glEnd();
@@ -259,30 +186,77 @@ static void graticulate( void )
 }
 
 /***************************************/
+void set_camera(void){
 
-static void display_loop()
+    // https://stackoverflow.com/questions/5717654/glulookat-explanation 
+    // https://learnopengl.com/Getting-started/Camera
+
+    // https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glRotate.xml
+    // glGet with argument GL_MATRIX_MODE
+    // glGet with argument GL_COLOR_MATRIX
+    // glGet with argument GL_MODELVIEW_MATRIX
+    // glGet with argument GL_PROJECTION_MATRIX
+    // glGet with argument GL_TEXTURE_MATRIX
+
+    glMatrixMode(GL_PROJECTION); 
+
+    //glLoadIdentity();               // Reset The View
+
+    // view = new_m44();
+    // gluLookAt( cam_x , 0.0, cam_z ,   /* look from camera XYZ */ 
+    //             0.0  , 0.0, 0.0  ,    /* look at the origin */
+    //             0.0  , 1.0, 0.0  );   /* positive Y up vector */   
+
+    // gluLookAt(camera[0], camera[1], camera[2],  /* look from camera XYZ */ 
+    //                   0,         0,         0,  /* look at the origin */ 
+    //                   0,         1,         0); /* positive Y up vector */ 
+    
+    //printf("# orbit %f \n", orbit_x );
+
+    //glRotatef(orbit_x, 0.f, 1.0f, 0.f);             
+    //glCallList(SCENE); /* draw the scene */
+
+}
+
+
+
+static void render_loop()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // Clear The Screen And The Depth Buffer
-    glLoadIdentity();               // Reset The View
 
-    glTranslatef(0.0f,0, gui_zoomz);              // move 5 units into the screen.
+    float cam_x  = sin( orbit_x ) * gui_zoomz;
+    float cam_z  = cos( orbit_x ) * gui_zoomz;
+
+    /******************************************/
+    // Clear The Screen And The Depth Buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
+
+    /******************************************/
+    //process geometry GL_PROJECTION
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();           
+
+    glTranslatef( 0.0, 0.0, -10.0);  
+
+    gluLookAt( cam_x, (-orbit_y*10), cam_z,
+                 0.0, 0.0          , 0.0,
+                 0.0, 1.0          , 0.0 
+             );
+
+
+
+    //glMatrixMode(GL_MODELVIEW);
+    //glLoadIdentity(); 
 
     graticulate();
-
-    //rotate model based on view 
-    //xrot = gui_roty*-100;
-    //yrot = gui_rotx*-100;
     
-    glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
-    glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
-    glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
-
+    // glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
+    // glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
+    // glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
 
     int p_i, f_i = 0;
 
-
-
-    /********************************/
+    /******************************************/
     // draw 3D line geometry 
     if (draw_lines)
     {
@@ -298,7 +272,7 @@ static void display_loop()
                 vec3 pt1 = pt_loader->points[lin1];
                 vec3 pt2 = pt_loader->points[lin2];
 
-                glColor3f(pt_linecolor->r, pt_linecolor->g, pt_linecolor->b);   
+                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
                 glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
@@ -348,40 +322,28 @@ static void display_loop()
         glEnd(); 
     }
 
-    /******************************************/
-    if( draw_quads )
-    {
 
-    }      
+    redraw_textures(main_bg_bfr);
 
-    /******************************************/
-   
-    //animateTextures2(main_bg_bfr);
-    
-    animateTextures3(main_bg_bfr);
-
-    // since this is double buffered, swap the buffers to display what just got drawn.
+    // swap the other (double) buffer to display what just got drawn.
     glutSwapBuffers();
+     
 }
 
-
+/***************************************/
+void animate(){
+    ticker += .01;
+    render_loop();
+}
 /***************************************/
 
-static void ReSizeGLScene(int Width, int Height)
+static void reshape_window(int width, int height)
 {
     
-    if (Height==0)  // Prevent A Divide By Zero If The Window Is Too Small
-    Height=1;
+    if ( height == 0 )                // Prevent A Divide By Zero If The Window Is Too Small
+        height=1;
+    glViewport(0, 0, width, height);  // Reset The Current Viewport And Perspective Transformation
 
-    glViewport(0, 0, Width, Height);    // Reset The Current Viewport And Perspective Transformation
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    //gluOrtho2D(0, 100, 0, 100);
-    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);
-    
-    glMatrixMode(GL_MODELVIEW);
 }//end resize callback
 
 /***************************************/
@@ -414,8 +376,6 @@ static void keyPressed(unsigned char key, int x, int y)
         }
 
     }
-
-  
 
     if (key == 102) //f
     { 
@@ -451,8 +411,8 @@ void olmec_mouse_button(int button, int state, int x, int y)
            if (state == GLUT_UP) return; 
 
            if (button == 3){
-               if (gui_zoomz < -1){
-                   gui_zoomz++;                
+               if (gui_zoomz < -1.5){
+                   gui_zoomz+=1;                
                }
   
            }
@@ -485,22 +445,22 @@ void olmec_mouse_motion(int x, int y)
     // If button1 pressed, zoom in/out if mouse is moved up/down.
  
     float center_x = (float)scr_size_x/2;
-    //gui_rotx = (center_x-x)/scr_size_x; 
+    orbit_x = (center_x-x)/scr_size_x; 
 
     float center_y = (float)scr_size_y/2;
-    //gui_roty = (center_y-y)/scr_size_y; 
+    orbit_y = (center_y-y)/scr_size_y; 
 
-    // cube_x
+    // printf("# orbit %f \n", orbit_y);
 
-    if (g_bButton1Down)
-    {
-        // printf("MOVE! %f %d \n", cube_x, y);
-        
-        // g_fViewDistance = (y - g_yClick) / 3.0;
-        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
-        // glutPostRedisplay();
-    }
+    // if (g_bButton1Down)
+    // {
+    //     // printf("MOVE! %f %d \n", cube_x, y);
+    //     
+    //     // g_fViewDistance = (y - g_yClick) / 3.0;
+    //     // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
+    //     //    g_fViewDistance = VIEWING_DISTANCE_MIN;
+    //     // glutPostRedisplay();
+    // }
 
 
 }
@@ -539,18 +499,13 @@ void olmecnav_start (void ) {
 }
 
 
-
-
-
-
 /********************************************/
 /********************************************/
 
-void olmec_navigation_demo(int *argc, char** argv){
+void olmec(int *argc, char** argv){
 
     // you can find documentation at http://reality.sgi.com/mjk/spec3/spec3.html   
     glutInit(argc, argv);  
-
 
     //shader_test();
     set_colors();
@@ -561,25 +516,24 @@ void olmec_navigation_demo(int *argc, char** argv){
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
-
-    // the window starts at the upper left corner of the screen  
     glutInitWindowPosition(0, 0);  
-     
+    
     window_id = glutCreateWindow("Olmec v.000001"); //create an opengl window 
 
-    //register display callback       
-    glutDisplayFunc(&display_loop);   
+    /***********/
+    //THERE IS A MEMORY LEAK, PROBABLY IN THIS FUNCTION!!
+    //TO TEST RUN AND LEAVE WINDOW FOR A WHILE 
+    //GO LEARN VALGRIND AND FIX IT ?
 
-    // Even if there are no events, redraw our gl scene.  
-    glutIdleFunc(&display_loop);
+    //register GL callbacks       
+    glutDisplayFunc(&render_loop);   
+    glutIdleFunc(&animate);
+    glutReshapeFunc(&reshape_window);  // register window resize callback 
 
-    glutReshapeFunc(&ReSizeGLScene);  //register window resize callback 
-    glutKeyboardFunc(&keyPressed);    // Register key pressed callback 
-    
+    glutKeyboardFunc(&keyPressed);     // register key pressed callback 
+
     InitGL(scr_size_x, scr_size_y); // Initialize window. 
-
-
-    ///////////////////////////    
+  
     glutMouseFunc (olmec_mouse_button);
     glutMotionFunc (olmec_mouse_motion);
 
@@ -648,17 +602,37 @@ void olmec_navigation_demo(int *argc, char** argv){
         }
     */        
 
-    ///////////////////////////      
-    // Create our popup menu
-    //BuildPopupMenu ();
-    //glutAttachMenu (GLUT_RIGHT_BUTTON);
+    loadImage("textures/generated1.bmp" , imageloaded_bfr2);
+    loadImage("textures/generated3.bmp" , imageloaded_bfr);
 
-    loadImage("textures/generated1.bmp" , imageloaded_bfr);
-    loadImage("textures/generated3.bmp" , imageloaded_bfr2);
+    redraw_textures(main_bg_bfr);
 
     glutMainLoop();// Start Event Processing Engine   
 
 
 }
 
+
+
+
+
+/***********/
+
+void software_render(void){
+    //#include <sys/syscall.h>  //experiment to call renderer 
+
+    /* test of a system call to an external program 
+       one day I may attempt to implement a seperate software renderer here  
+    */
+
+    // syscall(SYS_write, 1, "hello, world!\n", 14);  //experiment to call render program 
+    // printf("%d\n", SYS_write);
+
+    int ret = system("ls");
+    // if (WIFSIGNALED(ret) &&
+    //     (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT)){            
+    //     break;
+    // }
+
+}
 
