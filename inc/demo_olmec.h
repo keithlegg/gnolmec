@@ -5,7 +5,7 @@
 
 
 
-void pycore_vector(void);
+void init_pycore(void);
 
 void software_render(void);
 

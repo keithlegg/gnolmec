@@ -5,11 +5,24 @@
      
       Named Olmec - because its not Maya :) 
       
-      make a 3D environment that is navigatable in the way Maya3D does it
-      (alt-click rotate view, etc)
+      make a 3D environment to view models and play in that is navigatable in the way Maya does it
 
 
-   Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
+       -------------------------------------------------------------------------------------
+       Maya coordinate system    |  Blender coordinate system  |    Fusion 360 Coordinate System
+                                 |                             |  
+            Y                    |        Z                    |  
+            |                    |        |                    |      
+            |                    |        |                    | 
+            ______X (look on Z)  |        ____X (look on Y)    |
+       -------------------------------------------------------------------------------------
+
+ 
+
+
+
+
+      Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/
@@ -63,18 +76,31 @@ RGBType *pt_linecolor2 = &line_color2;
 RGBType grid_color;
 RGBType *pt_gridcolor = &grid_color;
 
-/***********/
-//old experiment to interact with mouse
-extern float gui_zoomz;
-// static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
-// static int g_yClick = 0;
-
-float orbit_x = 0;
-float orbit_y = 0;
 
 
 float ticker = 0;
 
+/***************************************/
+// camera properties 
+
+
+// static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
+// static int g_yClick = 0;
+// float total_orbitx;
+
+bool view_ismoving = FALSE;
+
+float orbit_x  = 0;     // 2d click to set 3d view 
+float orbit_y  = 0;   
+extern float gui_zoomz; //Z zoom 
+
+float cam_rotx = 0; // camera rotation
+float cam_roty = 0;
+float cam_rotz = 0;
+
+float cam_posx = 0; // camera location
+float cam_posy = 0;
+float cam_posz = 0;
 
 
 /***************************************/
@@ -120,10 +146,20 @@ void warnings(void)
 /***************************************/
 
 void reset_view(void){
-    gui_zoomz = -5.0;  
-    orbit_x = 0;
-    orbit_y = 0;
  
+    orbit_x   = 0; //2d click to set 3d view 
+    orbit_y   = 0;   
+    gui_zoomz = -5.0;  
+
+    cam_rotx = 0; //camera rotation
+    cam_roty = 0;
+    cam_rotz = 0;
+
+    cam_posx = 0; //camera location
+    cam_posy = 0;
+    cam_posz = 0;
+
+
     //     transform.parent = capsuleObj.transform;
     //     capsuleObj.transform.position = orbt_xform_original ;
     //     capsuleObj.transform.rotation = orbt_rot_original;
@@ -261,17 +297,24 @@ void set_camera(void){
 }
 */
 
-float cam_x;
-float cam_y;
-float cam_z;
 
 
 static void render_loop()
 {
 
-    cam_x = sin( orbit_x*5 ) * gui_zoomz;
-    cam_y = (-orbit_y*10);
-    cam_z = cos( orbit_x*5 ) * gui_zoomz;
+    // if (view_ismoving){
+    //     //total_orbitx += orbit_x;
+    //     printf("view difference is  %f \n" , orbit_x );
+    //     printf("last difference was %f \n" , total_orbitx );
+    // }
+
+
+    // this is an absolute world move 
+    //  it will never work right
+    // you need to do move relative to the view and transform that to world 
+    cam_posx = sin( orbit_x*5 ) * gui_zoomz;
+    cam_posy = (-orbit_y*10);
+    cam_posz = cos( orbit_x*5 ) * gui_zoomz;
 
     /******************************************/
     // Clear The Screen And The Depth Buffer
@@ -282,14 +325,11 @@ static void render_loop()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();           
-
-    glTranslatef( 0.0, 0.0, -10.0);  
-
     
-    gluLookAt( cam_x, cam_y , cam_z,
-                 0.0, 0.0   , 0.0,
-                 0.0, 1.0   , 0.0 
-             );
+    gluLookAt( cam_posx, cam_posy , cam_posz,  // look from camera XYZ
+                 0.0, 0.0   , 0.0,    // look at the origin
+                 0.0, 1.0   , 0.0     // positive Y up vector
+             ); 
 
     graticulate();
     
@@ -372,6 +412,7 @@ static void render_loop()
     // swap the other (double) buffer to display what just got drawn.
     glutSwapBuffers();
   
+    view_ismoving = FALSE;
 }
 
 /***************************************/
@@ -405,6 +446,31 @@ static void keyPressed(unsigned char key, int x, int y)
         exit(0);                   
     }
     
+
+    /*
+        //MAYA keys 
+        // 1 - persp 
+        // 2 - front (pos Z)
+        // 3 - side  
+
+        // 4 wireframe 
+        // 5 shaded 
+        // 6 shaded textured 
+        // 7 use all lights 
+        // q - select tool 
+        // a - frame all objects 
+        // w - move 
+        // e - rotate 
+        // r - scale 
+        // f - frame selected 
+        // t - show manipulator 
+        // p - parent 
+        // shft p - unparent 
+
+
+    */
+
+
     // printf("scancode is  %d \n", key );
 
     if (key == 32) //space
@@ -425,14 +491,14 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 111) //o
     { 
         // reset_objfile(pt_loader);
-        char* file2 = "3d_obj/normals.obj";
+        char* file2 = "3d_obj/PYCORE.obj";
         load_objfile(file2, pt_loader );
 
     }
 
     if (key == 112) //p
     { 
-        pycore_vector(); 
+        init_pycore(); 
     }
 
     if (key == 114) //r
@@ -516,7 +582,9 @@ void olmec_mouse_button(int button, int state, int x, int y)
 void olmec_mouse_motion(int x, int y)
 {
     // If button1 pressed, zoom in/out if mouse is moved up/down.
- 
+    view_ismoving = TRUE;
+
+    //take offset from center of screen to get "X,Y delta"
     float center_x = (float)scr_size_x/2;
     orbit_x = (center_x-x)/scr_size_x; 
 
@@ -712,10 +780,15 @@ void software_render(void){
 
 
 
-void pycore_vector(void){
+void init_pycore(void){
     //call python from here!!
-    int ret = system("python3 vect.py");
-    
+
+    char* pycore_cmd = "triangulate";    
+    char buffer[128];
+
+    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", obj_filepath, pycore_cmd);
+    int ret = system(buffer);
+
     //load the result in !!
     //char* newfilepath = "3d_obj/normals.obj";
     //load_objfile( newfilepath, pt_loader ); 
