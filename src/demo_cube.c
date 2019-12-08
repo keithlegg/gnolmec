@@ -55,7 +55,7 @@ static bool g_bTexture = FALSE;
 static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
-
+extern bool scr_full_toglr;
 extern float gui_zoomz;
 
 extern int scr_size_x;
@@ -321,7 +321,21 @@ static void keyPressed(unsigned char key, int x, int y)
         glutDestroyWindow(window_id); 
         exit(0);                   
     }
-    
+
+    if (key == 32) //space
+    { 
+
+        if (scr_full_toglr == TRUE){
+            glutFullScreen();
+            scr_full_toglr = FALSE;
+        }else{
+            glutReshapeWindow(800, 800);
+            glutPositionWindow(0,0);  
+            scr_full_toglr = TRUE;
+        }
+
+    }
+
     if (key == 97) //a
     { 
         if (pong_speed<20){
@@ -356,16 +370,10 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
     if (key == 101) //e
-    { 
-        glutReshapeWindow(800, 800);
-        glutPositionWindow(0,0);
-    }        
+    { }        
 
     if (key == 102) //f
-    { 
-        //printf("you pressed f\n");
-        glutFullScreen();
-    }
+    { }
 
     if (key == 119) //w
     { 

@@ -19,6 +19,16 @@
 
  
 
+    TODO:
+
+        - LOAD MULTIPLE OBJECTS IN SCENE 
+        - TEXTURES, LINE COLORS
+        - LIGHTING 
+        - OBJ SAVE 
+        - WIDGETS, BUTTONS
+        - SCENE FORMAT ?
+        - ON SCREEN TEXT 
+        - HANDLE PYCORE ERRORS 
 
 
 
@@ -147,24 +157,17 @@ void warnings(void)
 
 void reset_view(void){
  
-    orbit_x   = 0; //2d click to set 3d view 
-    orbit_y   = 0;   
-    gui_zoomz = -5.0;  
+    orbit_x   = .125; //2d click to set 3d view 
+    orbit_y   = -.06;   
+    gui_zoomz = -1.0;  
 
     cam_rotx = 0; //camera rotation
     cam_roty = 0;
     cam_rotz = 0;
 
-    cam_posx = 0; //camera location
-    cam_posy = 0;
-    cam_posz = 0;
-
-
-    //     transform.parent = capsuleObj.transform;
-    //     capsuleObj.transform.position = orbt_xform_original ;
-    //     capsuleObj.transform.rotation = orbt_rot_original;
-    //     transform.parent = null;
-    //     transform.position = startpos;
+    cam_posx = .5; //camera location
+    cam_posy = 1.5;
+    cam_posz = .5;
 
 }
 
@@ -313,9 +316,11 @@ static void render_loop()
     //  it will never work right
     // you need to do move relative to the view and transform that to world 
     cam_posx = sin( orbit_x*5 ) * gui_zoomz;
-    cam_posy = (-orbit_y*10);
+    cam_posy = (-orbit_y*5);
     cam_posz = cos( orbit_x*5 ) * gui_zoomz;
 
+
+    //printf("render loop %f %f %f %f %f %f \n", orbit_x, orbit_y, gui_zoomz, cam_posx, cam_posy, cam_posz );
     /******************************************/
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
@@ -338,7 +343,7 @@ static void render_loop()
     // glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
     // glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
 
-    int p_i, f_i = 0;
+    int q_i, p_i, f_i = 0;
 
     /******************************************/
     // draw 3D line geometry 
@@ -399,9 +404,48 @@ static void render_loop()
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(1.0, 0.0);                
                 vec3 pt3 = pt_loader->points[tri3-1];
-
                 glVertex3f(pt3.x, pt3.y, pt3.z);
+
             }
+
+        glEnd(); 
+    }
+
+
+    if (draw_quads )
+    {
+        glBegin(GL_QUADS);                      
+
+            for (q_i=0;q_i<pt_loader->num_quads;q_i++)
+            { 
+
+                int qu1 = pt_loader->quads[q_i].pt1;
+                int qu2 = pt_loader->quads[q_i].pt2;
+                int qu3 = pt_loader->quads[q_i].pt3;
+                int qu4 = pt_loader->quads[q_i].pt4;
+
+
+                glTexCoord2f(0.5, 1.0);                
+                vec3 pt1 = pt_loader->points[qu1-1];
+                glVertex3f(pt1.x, pt1.y, pt1.z);
+
+                //vec2 uv = pt_loader->uvs[tri2];
+                //glTexCoord2f(uv.x, uv.y);
+                glTexCoord2f(0.0, 1.0); 
+                vec3 pt2 = pt_loader->points[qu2-1];
+                glVertex3f(pt2.x, pt2.y, pt2.z);
+
+                glTexCoord2f(1.0, 0.0);                
+                vec3 pt3 = pt_loader->points[qu3-1];
+                glVertex3f(pt3.x, pt3.y, pt3.z);
+
+                glTexCoord2f(1.0, 0.0);                
+                vec3 pt4 = pt_loader->points[qu4-1];
+                glVertex3f(pt4.x, pt4.y, pt4.z);
+
+
+            }
+        
 
         glEnd(); 
     }
@@ -667,6 +711,8 @@ void olmec(int *argc, char** argv){
     //TO TEST RUN AND LEAVE WINDOW FOR A WHILE 
     //GO LEARN VALGRIND AND FIX IT ?
 
+    reset_view();
+
     //register GL callbacks       
     glutDisplayFunc(&render_loop);   
     glutIdleFunc(&animate);
@@ -783,7 +829,7 @@ void software_render(void){
 void init_pycore(void){
     //call python from here!!
 
-    char* pycore_cmd = "triangulate";    
+    char* pycore_cmd = "runcommand";    
     char buffer[128];
 
     snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", obj_filepath, pycore_cmd);

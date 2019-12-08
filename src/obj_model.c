@@ -184,11 +184,11 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 }
 
                 if (fidx==4){
-                    // loader->quads[quad_cnt].pt1 = pt1;
-                    // loader->quads[quad_cnt].pt2 = pt2;                          
-                    // loader->quads[quad_cnt].pt3 = pt3;
-                    // loader->quads[quad_cnt].pt4 = pt4;
-                    // quad_cnt++;
+                    loader->quads[quad_cnt].pt1 = pt1;
+                    loader->quads[quad_cnt].pt2 = pt2;                          
+                    loader->quads[quad_cnt].pt3 = pt3;
+                    loader->quads[quad_cnt].pt4 = pt4;
+                    quad_cnt++;
                 }
 
             }//end face loader
