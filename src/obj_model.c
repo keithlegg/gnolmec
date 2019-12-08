@@ -22,11 +22,23 @@
 #include "obj_model.h"
 
 
+int uv_cnt   = 0;  // number of UVs loaded 
+int vtx_cnt  = 0;  // number of verts loaded 
+int line_cnt = 0;  
+int tri_cnt  = 0;  // number of faces loaded 
+int quad_cnt = 0;   
+
 
 /*******************************************************************/
 void reset_objfile(struct obj_model* loader)
 {
-     
+
+    uv_cnt   = 0;  // number of UVs loaded 
+    vtx_cnt  = 0;  // number of verts loaded 
+    line_cnt = 0;  
+    tri_cnt  = 0;  // number of faces loaded 
+    quad_cnt = 0;        
+
     loader->num_pts = 0;
     loader->num_uvs;
     loader->num_lines;
@@ -54,11 +66,11 @@ void load_objfile( char *filepath, struct obj_model* loader)
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
-    int uv_cnt   = 0;  // number of UVs loaded 
-    int vtx_cnt  = 0;  // number of verts loaded 
-    int line_cnt = 0;  
-    int tri_cnt  = 0;  // number of faces loaded 
-    int quad_cnt = 0;   
+    uv_cnt   = 0;  // number of UVs loaded 
+    vtx_cnt  = 0;  // number of verts loaded 
+    line_cnt = 0;  
+    tri_cnt  = 0;  // number of faces loaded 
+    quad_cnt = 0;   
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
@@ -104,12 +116,12 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     vidx++;tok_line = strtok(NULL, " ");
                 }
                 
-                //if two points its a 2D coord (probably not standard obj file )  
+                //if two points its a 2D coord (probably not a standard obj file )  
                 if (vidx==2){
                     printf("2D point detected! \n"); 
                 }
                 
-                //if three points its a 3d coord 
+                //if three points its a proper vertex 
                 if (vidx==3){
                     vec3 vpt = newvec3( xc, yc, zc  );
                     loader->points[vtx_cnt] = vpt;
@@ -278,7 +290,7 @@ void save_objfile( char *filepath)
    FILE * fp;
 
    fp = fopen (filepath, "w+");
-   fprintf(fp, "%s %s %s %d", "We", "are", "in", 2012);
+   fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
    
    fclose(fp);
       

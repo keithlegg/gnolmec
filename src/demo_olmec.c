@@ -65,6 +65,7 @@ bool draw_grid      = TRUE;
 // object related 
 extern GLuint texture[1];
 extern char* obj_filepath;
+
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
 

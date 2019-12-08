@@ -113,13 +113,22 @@ def circle_cube_pts():
 
     # PYCORE_OBJ_IN not needed 
     obj = object3d()
-    obj.prim_circle(axis='z', pos=(0,0,0), spokes=34) 
+    obj.prim_circle(axis='z', pos=(0,0,0), spokes=30) 
+    
+    ###obj.scale_pts(5)
+    ###obj.rotate_pts((45,45,0))
+    
     obj.triangulate(force=True)
+
+    ##for f in range(2,30,1):
+    ##    if f%3==0:
+    ##        obj.extrude_face(f, 1)
+
     pts = obj.get_face_pts(0) 
     ct = 0
     for pt in pts:
         tmp = object3d()
-        tmp.prim_cube(size=.05, pos=pt, rot=(ct,ct,ct), pivot='world')
+        tmp.prim_cube(size=.02, pos=pt, rot=(ct,ct,ct), pivot='world')
         ct += 10
         obj.insert(tmp)  
     obj.save(PYCORE_OBJ_OUT)
@@ -225,7 +234,46 @@ def pt_transform():
     obj.save(PYCORE_OBJ_OUT)
 
 
-def scratch_obj():
+
+def scratch_obj1():
+
+    """ build a new polygon object in memory from points 
+        
+        This could be used for a million things like procedural modeling,
+        custom file importers, exporters., etc  
+        
+        PYCORE_OBJ_IN not needed since we are generating the model           
+    """ 
+
+    geom  = [[],[]]
+    geom2 = [[],[]]
+
+    obj = object3d()
+    #obj.load(PYCORE_OBJ_IN)
+
+    #add new geom and auto increment the ids
+
+    #3 sided polygons 
+    polys = [(1,2,3),  (4,3,1) ]
+    pts = [(1,1,1),(0,1,1),(-1,-1,1),(2,-2,1)]
+    geom = obj.insert_polygons(polys, pts, geom=geom) 
+ 
+    #4 sided polygons
+    polys = [(1,2,3,4) ]
+    pts = [(4,-4.3,-3),(1.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
+    geom2 = obj.insert_polygons(polys, pts, geom=geom2) 
+
+    # use insert to add geom to object 
+    obj.insert(geom) 
+    obj.insert(geom2) 
+
+    obj.save( PYCORE_OBJ_OUT )
+
+
+def scratch_obj2():
+    """ another demo of a model built from coordinates
+        when you use asnew_shell , you can append to other models 
+    """
     obj = object3d()
  
     obj.load(PYCORE_OBJ_IN)
@@ -246,45 +294,6 @@ def scratch_obj():
     obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
 
     obj.save(PYCORE_OBJ_OUT)
-
-
-
-def scratch_obj2():
-
-    """ build a new polygon object in memory from points 
-        then insert it into an object and export  
-        
-        PYCORE_OBJ_IN not needed          
-    """ 
-
-    geom  = [[],[]]
-    geom2 = [[],[]]
-
-    obj = object3d()
-    #obj.load(PYCORE_OBJ_IN)
-
-    #add new geom and auto increment the ids
-
-    #3 sided polygons 
-    polys = [(1,2,3),  (4,3,1) ]
-    pts = [(1,1,1),(0,1,1),(-1,-1,1),(2,-2,1)]
-    geom = obj.insert_polygons(polys, pts, geom=geom) 
-
- 
-    #4 sided polygons
-    polys = [(1,2,3,4) ]
-    pts = [(4,-4.3,-3),(1.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
-    geom2 = obj.insert_polygons(polys, pts, geom=geom2) 
-
-    # use insert to add geom to object 
-    obj.insert(geom) 
-    obj.insert(geom2) 
- 
-    # see what we have done, or not done 
-    #obj.show() 
-
-    obj.save( PYCORE_OBJ_OUT )
-
 
 
 def face_extrude():
@@ -310,17 +319,28 @@ def face_extrude():
 ## parse commands coming in and run them
 
 def runcommand():
-    face_extrude()
+    #face_extrude()
+    
+    scratch_obj1()
+    
     #scratch_obj2()
-    #scratch_obj()
+    
     #pt_transform()
+    
     #primitive('sphere')
+    
     #sphericalcoords()
+    
     #circle_cube_pts()
+    
     #modify_partial()
+    
     #triangulate()
+    
     #gen_normals()
+    
     #matrix_rotate()
+    
     #copy_sop()
 
 
