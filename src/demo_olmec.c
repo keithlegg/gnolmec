@@ -482,6 +482,8 @@ static void reshape_window(int width, int height)
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
+    //printf("key %u \n", key );
+
     usleep(100);
 
     //ESCAPE KEY
@@ -514,7 +516,18 @@ static void keyPressed(unsigned char key, int x, int y)
 
 
     */
+    
 
+
+    if (key == 45) //minus
+    { 
+        gui_zoomz--;  
+    }
+    
+    if (key == 61) //plus
+    { 
+        gui_zoomz++;  
+    }
 
     // printf("scancode is  %d \n", key );
 
@@ -531,6 +544,8 @@ static void keyPressed(unsigned char key, int x, int y)
         }
 
     }
+    
+
 
 
     if (key == 111) //o
