@@ -695,7 +695,6 @@ void olmec(int *argc, char** argv){
     //shader_test();
     set_colors();
 
-    redraw_textures(main_bg_bfr);
 
     load_objfile(obj_filepath, pt_loader ); 
 
