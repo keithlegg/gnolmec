@@ -319,9 +319,9 @@ def face_extrude():
 ## parse commands coming in and run them
 
 def runcommand():
-    #face_extrude()
+    face_extrude()
     
-    scratch_obj1()
+    #scratch_obj1()
     
     #scratch_obj2()
     

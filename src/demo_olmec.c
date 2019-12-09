@@ -317,7 +317,7 @@ static void render_loop()
     //  it will never work right
     // you need to do move relative to the view and transform that to world 
     cam_posx = sin( orbit_x*5 ) * gui_zoomz;
-    cam_posy = (-orbit_y*5);
+    cam_posy = (-orbit_y*5)     * gui_zoomz;
     cam_posz = cos( orbit_x*5 ) * gui_zoomz;
 
 
