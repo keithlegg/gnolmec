@@ -12,6 +12,28 @@
 
 
 
+#include "math_op.h"
+
+struct material {
+  vec3 diffuse_color;
+  vec3 specular_color;
+  float shininess;
+  float transparency;
+};
+
+
+
+struct directional_light
+{
+    vec3 color;
+    float ambient_intensity;
+    vec3 direction;
+    float diffuse_intensity;
+}; 
+
+
+
+
 
 /********************************************/
 

@@ -7,8 +7,8 @@
 //dynamically set the size of the 3D object 
 //DEBUG TODO - ENSURE OBJECT EXISTS IN HEAP, NOT STACK  
 
-const int num_vtx   = 1000;
-const int num_faces = 1000;
+const int num_vtx   = 12000;
+const int num_faces = 5000;
 
 
 

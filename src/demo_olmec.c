@@ -114,6 +114,7 @@ float cam_posy = 0;
 float cam_posz = 0;
 
 
+
 /***************************************/
 
 void set_colors(void){
@@ -306,6 +307,14 @@ void set_camera(void){
 static void render_loop()
 {
 
+    // vec3 Intensity = Intensity(ambient) * DiffuseColor + Intensity(diffuse) * DiffuseColor + Intensity(specular) * SpecularColo
+    // vec3 I = Ia * Kd + Id * Kd + Is * Ks
+    // vec3 I = (Ia + Id) * Kd + Is * Ks
+
+    // vec3 Intensity(diffuse) = Intensity(incoming_lightray) * DiffuseSurfaceColor * cosine(phi)
+    // vec3 Intensity(specular) = Intensity(incoming_lightray) * SpecularSurfaceColor * cosine(phi) ^ Shininess
+
+
     // if (view_ismoving){
     //     //total_orbitx += orbit_x;
     //     printf("view difference is  %f \n" , orbit_x );
@@ -345,6 +354,23 @@ static void render_loop()
     // glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
 
     int q_i, p_i, f_i = 0;
+ 
+    /******************************************/
+    bool draw_points = TRUE;
+
+    if (draw_points)
+    {
+        //http://ogldev.atspace.co.uk/www/tutorial02/tutorial02.html 
+        vec3 vertices[1];
+        vertices[0] = newvec3(0.0f, 0.0f, 0.0f);
+        
+        GLuint VBO;
+
+        //glGenBuffers(1, &VBO);
+        //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        //glEnableVertexAttribArray(0);
+    }
 
     /******************************************/
     // draw 3D line geometry 
@@ -482,7 +508,7 @@ static void reshape_window(int width, int height)
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -495,11 +521,12 @@ static void keyPressed(unsigned char key, int x, int y)
     
 
     /*
-        //MAYA keys 
-        // 1 - persp 
-        // 2 - front (pos Z)
-        // 3 - side  
 
+        // 1 - persp 
+        // 2 - ortho front (pos Z)
+        // 3 - ortho side  
+
+        //MAYA keys 
         // 4 wireframe 
         // 5 shaded 
         // 6 shaded textured 
@@ -515,9 +542,76 @@ static void keyPressed(unsigned char key, int x, int y)
         // shft p - unparent 
 
 
+
+
     */
     
 
+
+
+
+    if (key == 49) //1
+    { 
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();                  
+
+        gluPerspective(45.0f,(GLfloat)scr_size_x/(GLfloat)scr_size_y,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
+       
+        glMatrixMode(GL_MODELVIEW);
+
+    }
+
+    if (key == 50) //2
+    { 
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();                   
+
+        gluOrtho2D(scr_size_x/2, scr_size_y/2, 500, 500); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+
+    if (key == 51) //3
+    { 
+
+    }
+
+    if (key == 52) //4
+    { 
+        glDisable(GL_TEXTURE_2D);        
+        glDisable(GL_LIGHTING);
+        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+
+
+    if (key == 53) //5
+    { 
+        // glShadeModel(GL_SMOOTH);              
+
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LIGHTING);
+        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    }
+    
+    if (key == 54) //6
+    { 
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_LIGHTING);
+        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    if (key == 55) //7
+    { 
+
+        glEnable(GL_LIGHTING);
+        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    //------
 
     if (key == 45) //minus
     { 
@@ -529,7 +623,7 @@ static void keyPressed(unsigned char key, int x, int y)
         gui_zoomz++;  
     }
 
-    // printf("scancode is  %d \n", key );
+     //------
 
     if (key == 32) //space
     { 
@@ -546,7 +640,7 @@ static void keyPressed(unsigned char key, int x, int y)
     }
     
 
-
+    //------
 
     if (key == 111) //o
     { 
@@ -561,6 +655,7 @@ static void keyPressed(unsigned char key, int x, int y)
         init_pycore(); 
     }
 
+    //------
     if (key == 114) //r
     { 
         // reset_objfile(pt_loader);
@@ -569,6 +664,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 102) //f
     { 
+        //TODO - set gui_zoomz to X2 model size  
         reset_view();
     }
 

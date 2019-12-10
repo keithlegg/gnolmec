@@ -307,7 +307,7 @@ def face_extrude():
     obj.load(PYCORE_OBJ_IN)
 
     for i in range(1,len(obj.polygons) ):   
-        obj.extrude_face(i, 1)
+        obj.extrude_face(i, .1)
 
     obj.save(PYCORE_OBJ_OUT)
 

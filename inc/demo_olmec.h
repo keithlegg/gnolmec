@@ -3,8 +3,6 @@
 
 
 
-
-
 void init_pycore(void);
 
 void software_render(void);
