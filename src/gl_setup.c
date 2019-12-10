@@ -16,6 +16,61 @@
 #include "gl_setup.h"
 
 
+/*
+
+internal inline void
+GLSetArrayBuffer(u32 ArrayBuffer, u32 Size, void *Data)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, ArrayBuffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, Size, Data);
+}
+
+internal u32
+GLGenArrayBuffer(u32 SizeInBytes, void *Data, u32 Mode)
+{
+    u32 ArrayBuffer;
+    glGenBuffers(1, &ArrayBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, ArrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, SizeInBytes, Data, Mode);
+    return (ArrayBuffer);
+}
+
+internal inline void
+GLAttribute(u32 Index, u32 Count, u32 Type = GL_FLOAT, u32 Stride = 0, u32 Offset = 0)
+{
+    glEnableVertexAttribArray(Index);
+    glVertexAttribPointer(Index, Count, Type, GL_FALSE, Stride, (char *)0 + Offset);
+}
+
+internal inline void
+GLBindVBO(u32 VBO)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+}
+
+internal inline void
+GLBindVAO(u32 VAO)
+{
+    glBindVertexArray(VAO);
+}
+
+internal inline void
+GLDrawLines(u32 NumLines)
+{
+    glDrawArrays(GL_LINES, 0, NumLines * 2);
+}
+
+internal inline u32
+GLGenVertexArray()
+{
+    u32 VertexArray;
+    glGenVertexArrays(1, &VertexArray);
+    glBindVertexArray(VertexArray);
+    return (VertexArray);
+}
+
+*/
+
 
 //static GLfloat g_nearPlane = 1;
 //static GLfloat g_farPlane = 1000;
