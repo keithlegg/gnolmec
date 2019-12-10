@@ -20,6 +20,9 @@
  
 
     TODO:
+        - obj loader - get object info 
+        - obj loader - calc bbox /bsphere 
+
         - TEXTURES, LINE COLORS
         - LIGHTING 
         - LOAD MULTIPLE OBJECTS IN SCENE 
@@ -123,14 +126,14 @@ float cam_posz = 0;
 
 void set_colors(void){
     //make a color for some lines 
-    pt_gridcolor->r = 100;
-    pt_gridcolor->g = 100;
-    pt_gridcolor->b = 100;
+    pt_gridcolor->r = 30;
+    pt_gridcolor->g = 30;
+    pt_gridcolor->b = 30;
 
     //make a color for some lines 
-    pt_gridcolor2->r = 255;
-    pt_gridcolor2->g = 0;
-    pt_gridcolor2->b = 0;
+    pt_gridcolor2->r = 0;
+    pt_gridcolor2->g = 20;
+    pt_gridcolor2->b = 20;
 
     //make a color for some lines 
     pt_linecolor->r = 0;
@@ -195,6 +198,8 @@ static void graticulate( void )
  
     int grd_num       = 10;
     
+    float pastedge    = .3;
+
     float grd_height  = 0.0;
     float grd_size    = 2.5;
     float gspac = grd_size/(grd_num/2);
@@ -218,45 +223,27 @@ static void graticulate( void )
         {
             if(id==0)
             {  
-                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);                 
-                glVertex3f( id, grd_height,   (grd_size+1) );
+                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
 
-                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);                 
-                glVertex3f( id, grd_height,  -(grd_size+1) );  
-
-                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);    
-                glVertex3f(  (grd_size+1), grd_height, id );
-
-                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);    
-                glVertex3f( -(grd_size+1), grd_height, id ); 
+                glVertex3f( id, grd_height,   (grd_size+pastedge) );
+                glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
+                glVertex3f(  (grd_size+pastedge), grd_height, id );
+                glVertex3f( -(grd_size+pastedge), grd_height, id ); 
 
             }else if (draw_grid) {
-               
                 glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+
                 glVertex3f(-id, grd_height,  grd_size);
-
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                 
                 glVertex3f(-id, grd_height, -grd_size);  
- 
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
                 glVertex3f( id, grd_height,  grd_size);
-
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                  
                 glVertex3f( id, grd_height, -grd_size); 
-
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
                 glVertex3f(-grd_size, grd_height, -id);
-                
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
                 glVertex3f( grd_size, grd_height, -id);                
-                
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
                 glVertex3f(-grd_size, grd_height,  id);
-
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);                  
                 glVertex3f( grd_size, grd_height,  id);                 
             }
-
+            
+            glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b); 
         }
     glEnd();
 }
