@@ -144,24 +144,32 @@ def circle_cube_pts():
 
     # PYCORE_OBJ_IN not needed 
     obj = object3d()
-    obj.prim_circle(axis='x', pos=(1,0,0), spokes=10) 
+    obj.prim_circle(axis='z', pos=(0,0,0), spokes=10, dia=.5) 
     
-    ###obj.scale_pts(5)
-    ###obj.rotate_pts((45,45,0))
+    #obj.scale_pts((1,5,1))
+    
+    obj.rotate_pts((0,45,0))
     
     obj.triangulate(force=True)
 
-    #for f in range(0,30,2):
-    #    if f%4==0:
-    #        obj.extrude_face(f, 1)
+    for f in range(1,len(obj.polygons)-1,1):
+        if f%2==0:
+            obj.extrude_face(f, 1)
+    
+    #obj.scale_pts((1,5,1))
+    
+    #obj.extrude_face(len(obj.polygons)-1, 2)
 
-    pts = obj.get_face_pts(0) 
+    #obj.extrude_face(len(obj.polygons)-2, -2)
+
+    pts = obj.get_face_pts(15) 
     ct = 0
-    # for pt in pts:
-    #     tmp = object3d()
-    #     tmp.prim_cube(size=.07, pos=pt, rot=(ct,ct,ct), pivot='world')
-    #     ct += 10
-    #     obj.insert(tmp)  
+    for pt in pts:
+        tmp = object3d()
+        tmp.prim_cube(size=.06, pos=pt, rot=(ct,ct,ct), pivot='world')
+        ct += 10
+        obj.insert(tmp)  
+
     obj.save(PYCORE_OBJ_OUT)
 
 ##------------------
@@ -182,6 +190,45 @@ def sphericalcoords():
             obj.prim_cube(pos=pt, size=.1, linecolor=(255,0,0), rot=(0,0,0), pivot='world')
 
     obj.save(PYCORE_OBJ_OUT) 
+
+
+##------------------
+def procedural_1():
+    obj = object3d()
+
+
+    obj.prim_circle(axis='y', pos=(0,0,0), spokes=10, dia=1.2) 
+    obj.triangulate(force=True)
+
+    for i in range(1,len(obj.polygons) ):   
+        obj.extrude_face(i, 5)
+
+
+
+
+    for theta in range(-180,180,20):
+        print('## theta ', theta )
+        for phi in range(-180,180,20):        
+            sp = spherical(1.5, mu.dtr(theta), mu.dtr(phi) ) 
+            pt = sp.to_cartesian() 
+            obj.prim_cube(pos=pt, size=.1, linecolor=(255,0,0), rot=(0,0,0), pivot='world')
+
+    obj.scale_pts( (1,.5,1) )
+    obj.rotate_pts( (0, 45, 0) )
+    
+    #there is NO MOVE???
+    #obj.move_pts( (0,-3,0) )
+
+    for theta in range(-180,180,20):
+        print('## theta ', theta )
+        for phi in range(-180,180,20):        
+            sp = spherical(1.5, mu.dtr(theta), mu.dtr(phi) ) 
+            pt = sp.to_cartesian() 
+            obj.prim_cube(pos=pt, size=.1, linecolor=(255,0,0), rot=(0,0,0), pivot='world')
+
+    obj.save(PYCORE_OBJ_OUT) 
+
+
 
 ##------------------
 def primitive(primtype):
@@ -360,7 +407,11 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    circle_cube_pts()
+    #circle_cube_pts()
+    #primitive('sphere')
+    
+    #procedural_1()
+    #primitive('sphere')
 
     #gen_normals()
 
@@ -370,9 +421,9 @@ def runcommand():
     
     #pt_transform()
     
-    #primitive('sphere')
+
     
-    #sphericalcoords()
+    procedural_1()
     
 
     
