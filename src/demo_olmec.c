@@ -20,8 +20,8 @@
  
 
     TODO:
-        - obj loader - get object info 
-        - obj loader - calc bbox /bsphere 
+        - obj model_buffer - get object info 
+        - obj model_buffer - calc bbox /bsphere 
 
         - TEXTURES, LINE COLORS
         - LIGHTING 
@@ -60,20 +60,32 @@ extern int scr_size_y;
 extern bool scr_full_toglr;
 
 // view prefs 
-bool draw_lines     = TRUE;
-bool draw_quads     = TRUE;
-bool draw_triangles = TRUE;
-bool draw_grid      = TRUE;
+bool draw_lines      = TRUE;
+bool draw_quads      = TRUE;
+bool draw_triangles  = TRUE;
+bool draw_grid       = TRUE;
+bool draw_cntrgrid   = TRUE;
+bool draw_bbox       = FALSE;
 
 /***********/
 // object related 
 extern GLuint texture[1];
 extern char* obj_filepath;
 
-struct obj_model loader;
-struct obj_model *pt_loader = &loader;
+
+struct obj_model model_buffer;
+struct obj_model *pt_model_buffer = &model_buffer;
+
+// struct obj_model loader;
+// struct obj_model *pt_loader = &loader;
+
+struct obj_info obj_info;
+struct obj_info* pt_obinfo = &obj_info;
+
 
 float xrot, yrot, zrot; 
+
+float obj_len_x, obj_len_y, obj_len_z = 0;
 
 /***********/
 // data containers 
@@ -110,7 +122,7 @@ bool view_ismoving = FALSE;
 
 float orbit_x  = 0;     // 2d click to set 3d view 
 float orbit_y  = 0;   
-extern float gui_zoomz; //Z zoom 
+extern float orbit_dist; //Z zoom 
 
 float cam_rotx = 0; // camera rotation
 float cam_roty = 0;
@@ -120,6 +132,19 @@ float cam_posx = 0; // camera location
 float cam_posy = 0;
 float cam_posz = 0;
 
+
+
+
+//attempt to port code from Unity Engine into pure C 
+
+float zoomSpeed    = 1.2f;
+float moveSpeed    = 1.9f;
+float rotateSpeed  = 4.0f;
+vec3 startpos = newvec3(0.0, 130.0, 60.0);
+
+m33 capsuleObj; //represents a Unity/Maya Transform node 
+quaternion orbt_rot_original;
+vec3 orbt_xform_original;
 
 
 /***************************************/
@@ -141,13 +166,9 @@ void set_colors(void){
     pt_linecolor->b = 0;
 
     //make a color for some lines 
-    pt_linecolor2->r = 255;
-    pt_linecolor2->g = 0;
-    pt_linecolor2->b = 0;
-
-
-
-
+    pt_linecolor2->r = 155;
+    pt_linecolor2->g = 160;
+    pt_linecolor2->b = 50;
 
 }
 
@@ -159,15 +180,15 @@ void warnings(void)
     // let us know if there is a discernable problem 
     printf("\n\n\n\n###########################################\n");
 
-    if(!draw_lines || !pt_loader->num_lines){
+    if(!draw_lines || !pt_model_buffer->num_lines){
         printf("#warn - no lines or disabled.     \n");
     }
 
-    if(!draw_triangles || !pt_loader->num_tris){
+    if(!draw_triangles || !pt_model_buffer->num_tris){
         printf("#warn - no triangles or disabled. \n");
     }
 
-    if(!draw_quads || !pt_loader->num_quads){ ; }    
+    if(!draw_quads || !pt_model_buffer->num_quads){ ; }    
 
 }
 
@@ -177,7 +198,7 @@ void reset_view(void){
  
     orbit_x   = .125; //2d click to set 3d view 
     orbit_y   = -.06;   
-    gui_zoomz = -1.0;  
+    orbit_dist = 1.0;  
 
     cam_rotx = 0; //camera rotation
     cam_roty = 0;
@@ -189,6 +210,62 @@ void reset_view(void){
 
 }
 
+/***************************************/
+void show_bbox(){
+
+   if (draw_bbox)
+   {
+        glBindTexture(GL_TEXTURE_2D, texture[0]);    
+
+        float id = 0;
+
+        glBegin(GL_LINES);
+            
+            glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);            
+            
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+              
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);            
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+
+        glEnd();
+
+
+    }
+
+}
 
 /***************************************/
 
@@ -223,12 +300,15 @@ static void graticulate( void )
         {
             if(id==0)
             {  
-                glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
+                if (draw_cntrgrid)
+                {
+                    glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
 
-                glVertex3f( id, grd_height,   (grd_size+pastedge) );
-                glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
-                glVertex3f(  (grd_size+pastedge), grd_height, id );
-                glVertex3f( -(grd_size+pastedge), grd_height, id ); 
+                    glVertex3f( id, grd_height,   (grd_size+pastedge) );
+                    glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
+                    glVertex3f(  (grd_size+pastedge), grd_height, id );
+                    glVertex3f( -(grd_size+pastedge), grd_height, id ); 
+                }
 
             }else if (draw_grid) {
                 glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
@@ -301,16 +381,22 @@ static void render_loop()
     //     printf("last difference was %f \n" , total_orbitx );
     // }
 
+    
+    //if (orbit_dist < obj_len_x){
+    //    orbit_dist = obj_len_x;
+    //}
+    // if (orbit_dist < obj_len_y){
+    //     orbit_dist = obj_len_y;
+    // }
+    // if (orbit_dist < obj_len_z){
+    //     orbit_dist = obj_len_z;
+    // }
+            
+    cam_posx = sin( orbit_x * moveSpeed ) * orbit_dist;
+    cam_posy =     -orbit_y * moveSpeed   * orbit_dist;
+    cam_posz = cos( orbit_x * moveSpeed ) * orbit_dist;
 
-    // this is an absolute world move 
-    //  it will never work right
-    // you need to do move relative to the view and transform that to world 
-    cam_posx = sin( orbit_x*5 ) * gui_zoomz;
-    cam_posy = (-orbit_y*5)     * gui_zoomz;
-    cam_posz = cos( orbit_x*5 ) * gui_zoomz;
 
-
-    //printf("render loop %f %f %f %f %f %f \n", orbit_x, orbit_y, gui_zoomz, cam_posx, cam_posy, cam_posz );
     /******************************************/
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
@@ -328,6 +414,8 @@ static void render_loop()
 
     graticulate();
     
+    show_bbox();
+
     
     // glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
     // glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
@@ -358,15 +446,15 @@ static void render_loop()
     {
         glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
             
-        for (p_i=0;p_i<pt_loader->num_lines;p_i++)
+        for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   
             glBegin(GL_LINES);
                 // fetch the line indices from vertex list 
-                int lin1 = pt_loader->lines[p_i].pt1;
-                int lin2 = pt_loader->lines[p_i].pt2;
+                int lin1 = pt_model_buffer->lines[p_i].pt1;
+                int lin2 = pt_model_buffer->lines[p_i].pt2;
                 
-                vec3 pt1 = pt_loader->points[lin1-1];
-                vec3 pt2 = pt_loader->points[lin2-1];
+                vec3 pt1 = pt_model_buffer->points[lin1-1];
+                vec3 pt2 = pt_model_buffer->points[lin2-1];
 
                 glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
@@ -387,30 +475,30 @@ static void render_loop()
         glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
 
         glBegin(GL_TRIANGLES);  
-            for (p_i=0;p_i<pt_loader->num_tris;p_i++)
+            for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
             { 
                 // fetch the triangle indices from vertex list
-                int tri1 = pt_loader->tris[p_i].pt1;
-                int tri2 = pt_loader->tris[p_i].pt2;
-                int tri3 = pt_loader->tris[p_i].pt3;
+                int tri1 = pt_model_buffer->tris[p_i].pt1;
+                int tri2 = pt_model_buffer->tris[p_i].pt2;
+                int tri3 = pt_model_buffer->tris[p_i].pt3;
 
                 
-                //vec2 uv = pt_loader->uvs[tri1];
+                //vec2 uv = pt_model_buffer->uvs[tri1];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.5, 1.0);                
-                vec3 pt1 = pt_loader->points[tri1-1];
+                vec3 pt1 = pt_model_buffer->points[tri1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                //vec2 uv = pt_loader->uvs[tri2];
+                //vec2 uv = pt_model_buffer->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.0, 1.0); 
-                vec3 pt2 = pt_loader->points[tri2-1];
+                vec3 pt2 = pt_model_buffer->points[tri2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
-                //vec2 uv = pt_loader->uvs[tri3];
+                //vec2 uv = pt_model_buffer->uvs[tri3];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(1.0, 0.0);                
-                vec3 pt3 = pt_loader->points[tri3-1];
+                vec3 pt3 = pt_model_buffer->points[tri3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
             }
@@ -426,31 +514,31 @@ static void render_loop()
 
         glBegin(GL_QUADS);                      
 
-            for (q_i=0;q_i<pt_loader->num_quads;q_i++)
+            for (q_i=0;q_i<pt_model_buffer->num_quads;q_i++)
             { 
 
-                int qu1 = pt_loader->quads[q_i].pt1;
-                int qu2 = pt_loader->quads[q_i].pt2;
-                int qu3 = pt_loader->quads[q_i].pt3;
-                int qu4 = pt_loader->quads[q_i].pt4;
+                int qu1 = pt_model_buffer->quads[q_i].pt1;
+                int qu2 = pt_model_buffer->quads[q_i].pt2;
+                int qu3 = pt_model_buffer->quads[q_i].pt3;
+                int qu4 = pt_model_buffer->quads[q_i].pt4;
 
 
                 glTexCoord2f(0.5, 1.0);                
-                vec3 pt1 = pt_loader->points[qu1-1];
+                vec3 pt1 = pt_model_buffer->points[qu1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                //vec2 uv = pt_loader->uvs[tri2];
+                //vec2 uv = pt_model_buffer->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.0, 1.0); 
-                vec3 pt2 = pt_loader->points[qu2-1];
+                vec3 pt2 = pt_model_buffer->points[qu2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
                 glTexCoord2f(1.0, 0.0);                
-                vec3 pt3 = pt_loader->points[qu3-1];
+                vec3 pt3 = pt_model_buffer->points[qu3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
                 glTexCoord2f(1.0, 0.0);                
-                vec3 pt4 = pt_loader->points[qu4-1];
+                vec3 pt4 = pt_model_buffer->points[qu4-1];
                 glVertex3f(pt4.x, pt4.y, pt4.z);
 
 
@@ -488,7 +576,7 @@ static void reshape_window(int width, int height)
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("scancode key %u \n", key );
+    // printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -558,15 +646,19 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
+    if (key == 36) //Shift 4
+    { 
+        // to draw points  
+        glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
+        glPointSize(4);
+    
+    }
+
     if (key == 52) //4
     { 
         glDisable(GL_TEXTURE_2D);        
         glDisable(GL_LIGHTING);
         glPolygonMode (GL_FRONT_AND_BACK,  GL_LINE);
-
-        // to draw points  
-        //glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
-        //glPointSize(4);
 
     }
 
@@ -600,12 +692,12 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 45) //minus
     { 
-        gui_zoomz--;  
+        orbit_dist--;  
     }
     
     if (key == 61) //plus
     { 
-        gui_zoomz++;  
+        orbit_dist++;  
     }
 
      //------
@@ -626,12 +718,22 @@ static void keyPressed(unsigned char key, int x, int y)
     
 
     //------
+    if (key == 105) //i
+    { 
+        get_obj_info( pt_model_buffer, pt_obinfo);
+
+        if (draw_bbox == TRUE){
+            draw_bbox = FALSE;
+        }else{
+            draw_bbox = TRUE;
+        }
+    }
 
     if (key == 111) //o
     { 
-        // reset_objfile(pt_loader);
+        // reset_objfile(pt_model_buffer);
         char* file2 = "3d_obj/PYCORE.obj";
-        load_objfile(file2, pt_loader );
+        load_objfile(file2, pt_model_buffer );
 
     }
 
@@ -641,16 +743,31 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
     //------
+    if (key == 82) //shift r
+    { 
+        reset_objfile(pt_model_buffer, pt_obinfo);
+    }
+
     if (key == 114) //r
     { 
-        // reset_objfile(pt_loader);
-        load_objfile(obj_filepath, pt_loader ); 
+        // reset_objfile(pt_model_buffer);
+        load_objfile(obj_filepath, pt_model_buffer ); 
     }
 
     if (key == 102) //f
     { 
-        //TODO - set gui_zoomz to X2 model size  
+        //TODO - set orbit_dist to X2 model size  
         reset_view();
+    }
+
+    if (key == 71) //shift g
+    { 
+        if (draw_cntrgrid == TRUE){
+            draw_cntrgrid = FALSE;
+        }else{
+            draw_cntrgrid = TRUE;
+        }
+
     }
 
     if (key == 103) //g
@@ -691,13 +808,13 @@ void olmec_mouse_button(int button, int state, int x, int y)
            if (state == GLUT_UP) return; 
 
            if (button == 3){
-               if (gui_zoomz < -1.5){
-                   gui_zoomz+=1;                
+               if (orbit_dist < -1.5){
+                   orbit_dist+=1;                
                }
   
            }
            if (button == 4){
-               gui_zoomz--; 
+               orbit_dist--; 
            }
       }else{  // normal button event
            if (state == GLUT_DOWN){
@@ -717,6 +834,28 @@ void olmec_mouse_button(int button, int state, int x, int y)
 }
 
 
+
+/********************************************/
+void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
+
+    pt_m44->m0  = m44_glfloat[0];
+    pt_m44->m1  = m44_glfloat[1];
+    pt_m44->m2  = m44_glfloat[2];
+    pt_m44->m3  = m44_glfloat[3];
+    pt_m44->m4  = m44_glfloat[4];
+    pt_m44->m5  = m44_glfloat[5];
+    pt_m44->m6  = m44_glfloat[6];
+    pt_m44->m7  = m44_glfloat[7];
+    pt_m44->m8  = m44_glfloat[8];
+    pt_m44->m9  = m44_glfloat[9];
+    pt_m44->m10 = m44_glfloat[10];
+    pt_m44->m11 = m44_glfloat[11];
+    pt_m44->m12 = m44_glfloat[12];
+    pt_m44->m13 = m44_glfloat[13];
+    pt_m44->m14 = m44_glfloat[14];
+    pt_m44->m15 = m44_glfloat[15];
+
+} 
 
 /********************************************/
 
@@ -743,7 +882,21 @@ void olmec_mouse_motion(int x, int y)
     //     //    g_fViewDistance = VIEWING_DISTANCE_MIN;
     //     // glutPostRedisplay();
     // }
+    
+    /**************/
 
+    
+    // Test to attach geometry to camera (crappy widgets) 
+    
+    /*
+    GLfloat model[16]; 
+    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    m44 my_model_matrix;
+    m44 *pt_mmm = &my_model_matrix;
+    glutm44_to_m44(pt_mmm, model);
+
+    print_matrix(my_model_matrix);
+    */ 
 
 }
 
@@ -751,16 +904,7 @@ void olmec_mouse_motion(int x, int y)
 /********************************************/
 /********************************************/
 
-//attempt to port code from Unity Engine into pure C 
 
-float zoomSpeed    = 1.2f;
-float moveSpeed    = 1.9f;
-float rotateSpeed  = 4.0f;
-vec3 startpos = newvec3(0.0, 130.0, 60.0);
-
-m33 capsuleObj; //represents a Unity/Maya Transform node 
-quaternion orbt_rot_original;
-vec3 orbt_xform_original;
 
 // Use this for initialization
 void olmecnav_start (void ) {
@@ -792,7 +936,7 @@ void olmec(int *argc, char** argv){
     set_colors();
 
 
-    load_objfile(obj_filepath, pt_loader ); 
+    load_objfile(obj_filepath, pt_model_buffer ); 
 
     warnings();
 
@@ -966,6 +1110,6 @@ void init_pycore(void){
 
     //load the result in !!
     //char* newfilepath = "3d_obj/normals.obj";
-    //load_objfile( newfilepath, pt_loader ); 
+    //load_objfile( newfilepath, pt_model_buffer ); 
 }
 

@@ -17,7 +17,7 @@ mu = math_util()
 
 if __name__=="__main__":
 
-    print( sys.argv )
+    # print( sys.argv )
 
 
     PYCORE_OBJ_IN   = sys.argv[1]
@@ -34,6 +34,37 @@ if __name__=="__main__":
 ##***********************************************************##
 ##***********************************************************##
 ## DEFINE PYCORE COMMANDS (FROM PYGFX)
+
+
+from pygfx.kicad_ops import * 
+from pygfx.milling_ops import * 
+
+def loadgcode():
+    gkod = gcode()
+    
+    #gkod.load_gcode('ngc/3D_Chips.ngc')
+    
+    gkod.load_gcode('bridgeport/king.txt')
+
+    gkod.show_data()
+
+    gkod.save_3d_object(PYCORE_OBJ_OUT) 
+
+
+def loadkicad():
+    kicad = pcbfile()
+
+    #kicad.load_gcode('gcode/ngc/3D_Chips.ngc')
+
+    #kicad.load_kicadpcb('gcode/kicad/sample1.kicad_pcb')
+    #kicad.load_kicadpcb('gcode/kicad/zipper.kicad_pcb')
+    #kicad.load_kicadpcb('gcode/kicad/simple.kicad_pcb')
+    
+    kicad.load_kicadpcb('gcode/kicad/cnc1.kicad_pcb')
+    
+    # kicad.show_geom()
+    kicad.save_3d_obj(PYCORE_OBJ_OUT) 
+ 
 
 def triangulate():
     obj = object3d()
@@ -227,7 +258,7 @@ def pt_transform():
 
     obj.points = obj.scale_pts( (1,1,1)      , pts=obj.points )   
     
-    #obj.points = obj.rotate_pts((0,30,0), pts=obj.points ) 
+    obj.points = obj.rotate_pts((0,0,45), pts=obj.points ) 
     
     #obj.points = obj.xform_pts( (0,2,0),  pts=obj.points ) 
 
@@ -308,6 +339,9 @@ def face_extrude():
 
     for i in range(1,len(obj.polygons) ):   
         obj.extrude_face(i, .1)
+    
+    #for i in range(1,100 ):   
+    #    obj.extrude_face(i, .1)
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -319,13 +353,18 @@ def face_extrude():
 ## parse commands coming in and run them
 
 def runcommand():
-    face_extrude()
+    #loadgcode()
+    #loadkicad()
+
+    #gen_normals()
+
+    #face_extrude()
     
     #scratch_obj1()
     
     #scratch_obj2()
     
-    #pt_transform()
+    pt_transform()
     
     #primitive('sphere')
     
@@ -337,7 +376,7 @@ def runcommand():
     
     #triangulate()
     
-    #gen_normals()
+
     
     #matrix_rotate()
     

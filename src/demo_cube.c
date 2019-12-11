@@ -56,7 +56,7 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 extern bool scr_full_toglr;
-extern float gui_zoomz;
+extern float orbit_dist;
 
 extern int scr_size_x;
 extern int scr_size_y;
@@ -256,13 +256,13 @@ static void maya_mouse_button(int button, int state, int x, int y)
            if (state == GLUT_UP) return; 
 
            if (button == 3){
-               if (gui_zoomz < -1){
-                   gui_zoomz++;                
+               if (orbit_dist < -1){
+                   orbit_dist++;                
                }
   
            }
            if (button == 4){
-               gui_zoomz--; 
+               orbit_dist--; 
            }
       }else{  // normal button event
            if (state == GLUT_DOWN){

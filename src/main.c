@@ -47,7 +47,7 @@ GLuint texture[1]; // storage for one texture
 
 /*******************************************************/
 
-float gui_zoomz = -5.0;
+float orbit_dist = -5.0;
 
 // window properties
 int scr_size_x      = 512;

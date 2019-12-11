@@ -4,12 +4,30 @@
 #include "math_op.h"
 
 
-//dynamically set the size of the 3D object 
-//DEBUG TODO - ENSURE OBJECT EXISTS IN HEAP, NOT STACK  
 
+
+//DEBUG TODO - dynamically set the size of the 3D object 
+// get this off the stack and into heap. Not sure how to go about it
+// the problem is you cant easily do a struct of structs 
+// OPTION1 - flatten it into a primitive singular struct
+
+
+//OPTION2 - make a constructor/destructor that mallocs all the constituent structs
+//then returns an array of pointers to thos, then allowing you to free later.... 
+
+// void *ary[10];
+// ary[0] = new int();
+// ary[1] = new float();
+
+// OPTION3 - this is not an option - you only get 1 dynamic type per struct 
+// struct obj_model loader;
+// struct vec2 uvs[50];
+// loader.uvs = uvs;
+
+
+//For now we work on the stack. It will die if you load a large model 
 const int num_vtx   = 12000;
 const int num_faces = 5000;
-
 
 
 typedef struct line{
@@ -49,7 +67,34 @@ typedef struct obj_model{
 };
 
 
-void reset_objfile(struct obj_model* loader);
+typedef struct obj_info{
+    int num_pts;
+    int num_uvs;
+
+    int num_tris;
+    int num_faces;
+    int num_quads;
+
+    float centroid_x;
+    float centroid_y;
+    float centroid_z;
+
+    float bb_min_x;
+    float bb_max_x;
+    
+    float bb_min_y;
+    float bb_max_y;
+
+    float bb_min_z;
+    float bb_max_z;    
+
+};
+
+
+void get_obj_info(struct obj_model* loader, struct obj_info* obinfo);
+
+void reset_objfile(struct obj_model* loader, struct obj_info* obinfo);
+
 void load_objfile( char *filepath, struct obj_model* loader);
 void save_objfile( char *filepath);
 

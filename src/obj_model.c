@@ -29,8 +29,63 @@ int tri_cnt  = 0;  // number of faces loaded
 int quad_cnt = 0;   
 
 
+
+
+
+void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
+{
+    obinfo->bb_min_x = 0;
+    obinfo->bb_max_x = 0;
+    obinfo->bb_min_y = 0;
+    obinfo->bb_max_y = 0;
+    obinfo->bb_min_z = 0;
+    obinfo->bb_max_z = 0; 
+
+    int x = 0;
+    vec3 point;
+
+    for(x=0;x<loader->num_pts;x++)
+    {
+        
+        point = loader->points[x];
+
+        if (point.x < obinfo->bb_min_x){
+            obinfo->bb_min_x = point.x;    
+        }
+        if (point.x > obinfo->bb_max_x){
+            obinfo->bb_max_x = point.x;    
+        }
+
+        if (point.y < obinfo->bb_min_y){
+            obinfo->bb_min_y = point.y;    
+        }
+        if (point.y > obinfo->bb_max_y){
+            obinfo->bb_max_y = point.y;    
+        }
+
+        if (point.z < obinfo->bb_min_z){
+            obinfo->bb_min_z = point.z;    
+        }
+        if (point.z > obinfo->bb_max_z){
+            obinfo->bb_max_z = point.z;    
+        }        
+        
+        // print_vec3(point);
+
+    }
+
+    // printf("minx %f maxx %f miny %f maxy %f minz %f maxz %f \n", obinfo->bb_min_x
+    //                                                            , obinfo->bb_max_x
+    //                                                            , obinfo->bb_min_y
+    //                                                            , obinfo->bb_max_y
+    //                                                            , obinfo->bb_min_z
+    //                                                            , obinfo->bb_max_z );
+
+}
+
+
 /*******************************************************************/
-void reset_objfile(struct obj_model* loader)
+void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
 {
 
     uv_cnt   = 0;  // number of UVs loaded 
@@ -40,10 +95,17 @@ void reset_objfile(struct obj_model* loader)
     quad_cnt = 0;        
 
     loader->num_pts = 0;
-    loader->num_uvs;
-    loader->num_lines;
-    loader->num_tris;
-    loader->num_quads;    
+    loader->num_uvs = 0;
+    loader->num_lines = 0;
+    loader->num_tris = 0;
+    loader->num_quads = 0;    
+
+    obinfo->bb_min_x = 0;
+    obinfo->bb_max_x = 0;
+    obinfo->bb_min_y = 0;
+    obinfo->bb_max_y = 0;
+    obinfo->bb_min_z = 0;
+    obinfo->bb_max_z = 0; 
 
     // loader->uvs[num_vtx];      // UV coords 
     // loader->points[num_vtx];   // 3 floats  
@@ -51,6 +113,17 @@ void reset_objfile(struct obj_model* loader)
     // loader->tris[num_faces];   //3 point polygons 
     // loader->quads[num_faces];  //4 point polygons 
 
+}
+
+/*******************************************************************/
+
+void show_loader(struct obj_model* loader)
+{
+    int i = 0;
+  for (i=0;i<10;i++){
+      print_vec3( loader->points[i]) ;
+        //printf("pt is %s %s %s \n", pt.x, pt.y, pt.z );
+  }
 }
 
 /*******************************************************************/
@@ -66,11 +139,11 @@ void load_objfile( char *filepath, struct obj_model* loader)
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
-    uv_cnt   = 0;  // number of UVs loaded 
-    vtx_cnt  = 0;  // number of verts loaded 
-    line_cnt = 0;  
-    tri_cnt  = 0;  // number of faces loaded 
-    quad_cnt = 0;   
+    // uv_cnt   = 0;  // number of UVs loaded 
+    // vtx_cnt  = 0;  // number of verts loaded 
+    // line_cnt = 0;  
+    // tri_cnt  = 0;  // number of faces loaded 
+    // quad_cnt = 0;   
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
@@ -269,16 +342,7 @@ void test_loader_data(struct obj_model* loader){
 }
 
 
-/*******************************************************************/
 
-void show_loader(struct obj_model* loader)
-{
-    int i = 0;
-  for (i=0;i<10;i++){
-      print_vec3( loader->points[i]) ;
-        //printf("pt is %s %s %s \n", pt.x, pt.y, pt.z );
-  }
-}
 
 
 /*******************************************************************/
