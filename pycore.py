@@ -144,24 +144,24 @@ def circle_cube_pts():
 
     # PYCORE_OBJ_IN not needed 
     obj = object3d()
-    obj.prim_circle(axis='z', pos=(0,0,0), spokes=30) 
+    obj.prim_circle(axis='x', pos=(1,0,0), spokes=10) 
     
     ###obj.scale_pts(5)
     ###obj.rotate_pts((45,45,0))
     
     obj.triangulate(force=True)
 
-    ##for f in range(2,30,1):
-    ##    if f%3==0:
-    ##        obj.extrude_face(f, 1)
+    #for f in range(0,30,2):
+    #    if f%4==0:
+    #        obj.extrude_face(f, 1)
 
     pts = obj.get_face_pts(0) 
     ct = 0
-    for pt in pts:
-        tmp = object3d()
-        tmp.prim_cube(size=.02, pos=pt, rot=(ct,ct,ct), pivot='world')
-        ct += 10
-        obj.insert(tmp)  
+    # for pt in pts:
+    #     tmp = object3d()
+    #     tmp.prim_cube(size=.07, pos=pt, rot=(ct,ct,ct), pivot='world')
+    #     ct += 10
+    #     obj.insert(tmp)  
     obj.save(PYCORE_OBJ_OUT)
 
 ##------------------
@@ -256,7 +256,7 @@ def pt_transform():
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
 
-    obj.points = obj.scale_pts( (1,1,1)      , pts=obj.points )   
+    obj.points = obj.scale_pts( (1,1,1)  , pts=obj.points )   
     
     obj.points = obj.rotate_pts((0,0,45), pts=obj.points ) 
     
@@ -285,13 +285,15 @@ def scratch_obj1():
     #add new geom and auto increment the ids
 
     #3 sided polygons 
-    polys = [(1,2,3),  (4,3,1) ]
     pts = [(1,1,1),(0,1,1),(-1,-1,1),(2,-2,1)]
+    polys = [(1,2,3),  (4,3,1) ]
+
     geom = obj.insert_polygons(polys, pts, geom=geom) 
  
     #4 sided polygons
+    pts = [(4,-4.3,-3),(5.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
     polys = [(1,2,3,4) ]
-    pts = [(4,-4.3,-3),(1.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
+
     geom2 = obj.insert_polygons(polys, pts, geom=geom2) 
 
     # use insert to add geom to object 
@@ -355,22 +357,24 @@ def face_extrude():
 def runcommand():
     #loadgcode()
     #loadkicad()
+    #scratch_obj1()
+    #scratch_obj2()
+
+    circle_cube_pts()
 
     #gen_normals()
 
     #face_extrude()
     
-    #scratch_obj1()
+
     
-    #scratch_obj2()
-    
-    pt_transform()
+    #pt_transform()
     
     #primitive('sphere')
     
     #sphericalcoords()
     
-    #circle_cube_pts()
+
     
     #modify_partial()
     

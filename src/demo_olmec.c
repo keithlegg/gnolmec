@@ -306,8 +306,14 @@ static void graticulate( void )
 
                     glVertex3f( id, grd_height,   (grd_size+pastedge) );
                     glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
+
                     glVertex3f(  (grd_size+pastedge), grd_height, id );
                     glVertex3f( -(grd_size+pastedge), grd_height, id ); 
+                    
+                    glVertex3f( id, (grd_size+pastedge) , id );
+                    glVertex3f( id, id                  , id ); 
+
+
                 }
 
             }else if (draw_grid) {
@@ -323,9 +329,27 @@ static void graticulate( void )
                 glVertex3f( grd_size, grd_height,  id);                 
             }
             
-            glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b); 
+
         }
+
     glEnd();
+
+    if (draw_cntrgrid)
+    {
+        glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
+        glBegin(GL_TRIANGLES);  
+            glVertex3f(grd_size    , 0 , -.1 );
+            glVertex3f(grd_size    , 0 ,  .1 );
+            glVertex3f(grd_size+.3 , 0 ,   0 );
+
+            glVertex3f( -.1, 0, grd_size     );
+            glVertex3f(  .1, 0, grd_size     );
+            glVertex3f(   0, 0, grd_size+.3  );
+
+        glEnd();
+    }
+    
+    glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b); 
 }
 
 /***************************************/
@@ -731,7 +755,8 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 111) //o
     { 
-        // reset_objfile(pt_model_buffer);
+        reset_objfile(pt_model_buffer, pt_obinfo);
+        
         char* file2 = "3d_obj/PYCORE.obj";
         load_objfile(file2, pt_model_buffer );
 
@@ -1030,8 +1055,8 @@ void olmec(int *argc, char** argv){
         }
     */        
 
-    loadImage("textures/generated1.bmp" , imageloaded_bfr);
-    loadImage("textures/generated3.bmp" , imageloaded_bfr2);
+    loadImage("textures/generated2.bmp" , imageloaded_bfr);
+    loadImage("textures/generated2.bmp" , imageloaded_bfr2);
 
 
     //copyBuffer24( imageloaded_bfr, loaded_texture ); //convert "RGBType" to "Image"
