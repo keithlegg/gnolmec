@@ -592,6 +592,10 @@ static void reshape_window(int width, int height)
         height=1;
     glViewport(0, 0, width, height);  // Reset The Current Viewport And Perspective Transformation
 
+    scr_size_x = width;
+    scr_size_y = height;    
+
+
 }//end resize callback
 
 /***************************************/
@@ -600,7 +604,7 @@ static void reshape_window(int width, int height)
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    // printf("scancode key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -765,6 +769,12 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 112) //p
     { 
         init_pycore(); 
+    }
+
+
+    if (key == 8) //backspace
+    { 
+        software_render();
     }
 
     //------
@@ -1105,20 +1115,17 @@ void olmec(int *argc, char** argv){
 /***********/
 
 void software_render(void){
-    //#include <sys/syscall.h>  //experiment to call renderer 
 
-    /* test of a system call to an external program 
-       one day I may attempt to implement a seperate software renderer here  
-    */
+    //char* render_cmd = "runcommand";    
+    char buffer[128];
 
-    // syscall(SYS_write, 1, "hello, world!\n", 14);  //experiment to call render program 
-    // printf("%d\n", SYS_write);
+    //printf("renderthing %d %d %s %d %d %d %s %f %d \n", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp", 100 , 100 );
 
-    int ret = system("ls");
-    // if (WIFSIGNALED(ret) &&
-    //     (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT)){            
-    //     break;
-    // }
+    //                                                    xres yres inputfile X Y Z outputfile renderscale which
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    int ret = system(buffer);
+
+
 
 }
 
