@@ -772,7 +772,7 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
 
-    if (key == 8) //backspace
+    if (key == 8 || key == 127) //backspace /delete on OSX )
     { 
         software_render();
     }
@@ -1124,8 +1124,6 @@ void software_render(void){
     //                                                    xres yres inputfile X Y Z outputfile renderscale which
     snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
     int ret = system(buffer);
-
-
 
 }
 

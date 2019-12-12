@@ -2,10 +2,10 @@
 import sys
 
 
-from pygfx.math_ops import  *
-from pygfx.point_ops import *
-from pygfx.obj3d import  *
-from pygfx.render import *
+from pyrender2.pygfx.math_ops import  *
+from pyrender2.pygfx.point_ops import *
+from pyrender2.pygfx.obj3d import  *
+from pyrender2.pygfx.render import *
 
 mu = math_util() 
 
@@ -36,8 +36,8 @@ if __name__=="__main__":
 ## DEFINE PYCORE COMMANDS (FROM PYGFX)
 
 
-from pygfx.kicad_ops import * 
-from pygfx.milling_ops import * 
+from pyrender2.pygfx.kicad_ops import * 
+from pyrender2.pygfx.milling_ops import * 
 
 def loadgcode():
     gkod = gcode()
@@ -415,7 +415,7 @@ def runcommand():
 
     #gen_normals()
 
-    #face_extrude()
+    face_extrude()
     
 
     
@@ -423,7 +423,7 @@ def runcommand():
     
 
     
-    procedural_1()
+    #procedural_1()
     
 
     
