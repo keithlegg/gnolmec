@@ -1,4 +1,4 @@
-TARGET   = gfxdemo
+TARGET   = gnolmec
 
 
 INCDIR   =inc
@@ -23,7 +23,7 @@ LINKER   = g++
 # linking flags 
 ifeq ($(UNAME), Linux)
     #LINUX
-    #g++ $(OBJ) -o gfxdemo $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
+    #g++ $(OBJ) -o gnolmec $(INC) $(MOAR) -lX11 -lXi -lglut -lGL -lGLU -lm -lz -lpng 
 	LFLAGS   = -Wall -lglut -lGL -lGLU -lX11 -lXi  -lm -lz 
 endif
 

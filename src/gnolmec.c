@@ -49,7 +49,7 @@
 #include "bitmap_io.h" // includes framebuffer.h, colors, etc 
 #include "point_op.h"
 #include "obj_model.h"
-#include "demo_olmec.h"
+#include "gnolmec.h"
 
 
 /***********/

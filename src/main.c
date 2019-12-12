@@ -29,9 +29,9 @@
 //#include "examples_fb.h"     // example raster ops
 //#include "bitmap_cpu.h"  //highly experimental - dont ask 
 
-#include "demo_flat.h" // 2D openGL demo 
-#include "demo_cube.h"       // 3D openGL demo  
-#include "demo_olmec.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
+#include "demo_flat.h"     // 2D openGL demo 
+#include "demo_cube.h"     // 3D openGL demo  
+#include "gnolmec.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
 
 
 /*******************************************************/
