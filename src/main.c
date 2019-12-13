@@ -47,7 +47,7 @@ GLuint texture[1]; // storage for one texture
 
 /*******************************************************/
 
-float orbit_dist = -5.0;
+ 
 
 // window properties
 int scr_size_x      = 512;
@@ -162,27 +162,52 @@ char* obj_filepath; //= "3d_obj/cross_product.obj";
 
 int main(int argc, char **argv) 
 {  
-    
+
+
+    char runmode[10];
+
+
+
+    if( argc == 1 ) {    
+        spinningCubeDemo(&argc, argv);
+    }
+
+    //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
+
+    strcpy(runmode, "-v");
+    if( strcmp(argv[1], runmode) == 0)
+    {
+        glutInit(&argc, argv);
+        glutCreateWindow("GLUT");
+        printf("#OpenGL version %s \n", glGetString(GL_VERSION) ) ;
+        exit(0);
+    }
+
+
+
     if( argc == 2 ) {
         obj_filepath = argv[1] ;
-        olmec(&argc, argv);          
-    }
-    else if( argc > 2 ) {
-    }
-    else {
-       printf("One argument expected.\n");
-    }
-    printf("loading %s \n", obj_filepath );
-  
 
+        if( access( obj_filepath, F_OK ) != -1 ) {
+            olmec(&argc, argv); 
+        } else {
+            printf("# file %s does not exist.\n", obj_filepath);
+            exit(0);
+        }
+
+         
+    }
+ 
     //test_framebuffer_funcs();
     
     // test_math_ops();
 
 
+
     //flatImageDemo(&argc, argv); 
 
-    spinningCubeDemo(&argc, argv);
+
+
 
 
 

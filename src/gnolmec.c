@@ -122,7 +122,7 @@ bool view_ismoving = FALSE;
 
 float orbit_x  = 0;     // 2d click to set 3d view 
 float orbit_y  = 0;   
-extern float orbit_dist; //Z zoom 
+float orbit_dist = -5.0; // Z zoom 
 
 float cam_rotx = 0; // camera rotation
 float cam_roty = 0;
@@ -146,6 +146,20 @@ m33 capsuleObj; //represents a Unity/Maya Transform node
 quaternion orbt_rot_original;
 vec3 orbt_xform_original;
 
+
+void set_screen_square(void){
+    
+    if (scr_size_x>scr_size_y){
+        scr_size_y = scr_size_x;
+        glutReshapeWindow(scr_size_x, scr_size_x);
+    }else{
+        scr_size_x = scr_size_y;
+        glutReshapeWindow(scr_size_y, scr_size_y);
+    }
+    
+
+
+}
 
 /***************************************/
 
@@ -1115,14 +1129,16 @@ void olmec(int *argc, char** argv){
 /***********/
 
 void software_render(void){
+    
+    //set_screen_square();
 
     //char* render_cmd = "runcommand";    
     char buffer[128];
 
-    //printf("renderthing %d %d %s %d %d %d %s %f %d \n", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp", 100 , 100 );
+    printf("./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp\n", (int)abs(orbit_dist*30) , 100);
 
     //                                                    xres yres inputfile X Y Z outputfile renderscale which
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
     int ret = system(buffer);
 
 }

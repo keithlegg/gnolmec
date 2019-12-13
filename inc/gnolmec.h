@@ -5,6 +5,9 @@
 #include "gl_setup.h"
 
 
+
+void set_screen_square(void);
+
 void init_pycore(void);
 
 void software_render(void);

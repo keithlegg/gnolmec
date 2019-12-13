@@ -56,10 +56,12 @@ static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
 static int g_yClick = 0;
 
 extern bool scr_full_toglr;
-extern float orbit_dist;
 
 extern int scr_size_x;
 extern int scr_size_y;
+
+
+static float orbit_dist = -5.0;
 
 
 static void animateTextures3(Image *loaded_texture)
