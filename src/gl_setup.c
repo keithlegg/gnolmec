@@ -12,8 +12,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "obj_model.h"
 #include "framebuffer.h"
 #include "gl_setup.h"
+
+
+extern GLuint texture[3];
 
 
 /*
@@ -118,6 +122,153 @@ void shader_test(void){
     
 }
 
+
+
+/***************************************/
+
+//draw a 3D grid on the "floor" and an indicator to show XYZ axis  
+void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, RGBType *pt_gridcolor2 )
+{
+ 
+    int grd_num       = 10;
+    
+    float pastedge    = .3;
+
+    float grd_height  = 0.0;
+    float grd_size    = 2.5;
+    float gspac = grd_size/(grd_num/2);
+
+    glBindTexture(GL_TEXTURE_2D, texture[0]);    
+
+    float id = 0;
+
+    //"swim bag" tile effect
+    // for(id=0; id<=grd_size; id+=gspac)
+    // {
+    //     glVertex3f(-id, 0,  grd_size);
+    //     glVertex3f(-id, 0, -grd_size);  
+    //     glVertex3f(-id, 0, -id);
+    //     glVertex3f( id, 0, -id);                
+    // }
+
+    glBegin(GL_LINES);
+  
+        for(id=-gspac; id<=grd_size; id+=gspac)
+        {
+            if(id==0)
+            {  
+                if (*draw_cntrgrid == 1)
+                {
+                    glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
+
+                    glVertex3f( id, grd_height,   (grd_size+pastedge) );
+                    glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
+
+                    glVertex3f(  (grd_size+pastedge), grd_height, id );
+                    glVertex3f( -(grd_size+pastedge), grd_height, id ); 
+                    
+                    glVertex3f( id, (grd_size+pastedge) , id );
+                    glVertex3f( id, id                  , id ); 
+
+
+                }
+
+            }else if (*draw_grid == 1) {
+                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+
+                glVertex3f(-id, grd_height,  grd_size);
+                glVertex3f(-id, grd_height, -grd_size);  
+                glVertex3f( id, grd_height,  grd_size);
+                glVertex3f( id, grd_height, -grd_size); 
+                glVertex3f(-grd_size, grd_height, -id);
+                glVertex3f( grd_size, grd_height, -id);                
+                glVertex3f(-grd_size, grd_height,  id);
+                glVertex3f( grd_size, grd_height,  id);                 
+            }
+            
+
+        }
+
+    glEnd();
+
+    if (*draw_cntrgrid==1)
+    {
+        glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
+        glBegin(GL_TRIANGLES);  
+            glVertex3f(grd_size    , 0 , -.1 );
+            glVertex3f(grd_size    , 0 ,  .1 );
+            glVertex3f(grd_size+.3 , 0 ,   0 );
+
+            glVertex3f( -.1, 0, grd_size     );
+            glVertex3f(  .1, 0, grd_size     );
+            glVertex3f(   0, 0, grd_size+.3  );
+
+        glEnd();
+    }
+    
+    glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b); 
+}
+
+
+/***************************************/
+
+
+
+void show_bbox(bool *pt_draw_bbox, struct obj_info* pt_obinfo, RGBType *pt_gridcolor){
+
+   if (*pt_draw_bbox == 1)
+   {
+        glBindTexture(GL_TEXTURE_2D, texture[0]);    
+
+        float id = 0;
+
+        glBegin(GL_LINES);
+            
+            glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
+
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);            
+            
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+              
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);            
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
+
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
+            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
+
+        glEnd();
+
+
+    }
+
+}
 
 /***************************************************************/
 

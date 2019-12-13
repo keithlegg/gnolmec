@@ -23,7 +23,7 @@
 extern int window_id;
 
 extern int use_tex;
-extern GLuint texture[1];  
+extern GLuint texture[3];  
 
 extern unsigned int pong_size;
 extern unsigned int img_usize;

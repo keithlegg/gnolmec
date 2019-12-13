@@ -11,7 +11,7 @@
 #define VIEWING_DISTANCE_MIN  3.0
 
 
-
+#include "framebuffer.h"
 #include "math_op.h"
 
 struct material {
@@ -58,7 +58,9 @@ struct directional_light
 #endif
 */
 
+void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, RGBType *pt_gridcolor2 );
 
+void show_bbox(bool * pt_draw_bbox, struct obj_info* pt_obinfo, RGBType *pt_gridcolor);
 
 void InitGL(int Width, int Height);
 

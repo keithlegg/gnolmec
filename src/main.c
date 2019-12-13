@@ -39,7 +39,7 @@
 
 int window_id; // The number of our GLUT window 
  
-GLuint texture[1]; // storage for one texture  
+GLuint texture[3]; // storage for one texture  
 
 
 // float xrot, yrot, zrot;// floats for x rotation, y rotation, z rotation 

@@ -69,8 +69,10 @@ bool draw_bbox       = FALSE;
 
 /***********/
 // object related 
-extern GLuint texture[1];
+
 extern char* obj_filepath;
+
+extern GLuint texture[3];
 
 
 struct obj_model model_buffer;
@@ -224,147 +226,6 @@ void reset_view(void){
 
 }
 
-/***************************************/
-void show_bbox(){
-
-   if (draw_bbox)
-   {
-        glBindTexture(GL_TEXTURE_2D, texture[0]);    
-
-        float id = 0;
-
-        glBegin(GL_LINES);
-            
-            glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
-
-
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);            
-            
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
-
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
-              
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);            
-
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
-
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
-
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z); 
-
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z); 
-
-            glVertex3f(pt_obinfo->bb_min_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z); 
-
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_max_y,  pt_obinfo->bb_max_z);
-
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_min_z);
-            glVertex3f(pt_obinfo->bb_max_x, pt_obinfo->bb_min_y,  pt_obinfo->bb_max_z);
-
-        glEnd();
-
-
-    }
-
-}
-
-/***************************************/
-
-//draw a 3D grid on the "floor" and an indicator to show XYZ axis  
-static void graticulate( void )
-{
- 
-    int grd_num       = 10;
-    
-    float pastedge    = .3;
-
-    float grd_height  = 0.0;
-    float grd_size    = 2.5;
-    float gspac = grd_size/(grd_num/2);
-
-    glBindTexture(GL_TEXTURE_2D, texture[0]);    
-
-    float id = 0;
-
-    //"swim bag" tile effect
-    // for(id=0; id<=grd_size; id+=gspac)
-    // {
-    //     glVertex3f(-id, 0,  grd_size);
-    //     glVertex3f(-id, 0, -grd_size);  
-    //     glVertex3f(-id, 0, -id);
-    //     glVertex3f( id, 0, -id);                
-    // }
-
-    glBegin(GL_LINES);
-  
-        for(id=-gspac; id<=grd_size; id+=gspac)
-        {
-            if(id==0)
-            {  
-                if (draw_cntrgrid)
-                {
-                    glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
-
-                    glVertex3f( id, grd_height,   (grd_size+pastedge) );
-                    glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
-
-                    glVertex3f(  (grd_size+pastedge), grd_height, id );
-                    glVertex3f( -(grd_size+pastedge), grd_height, id ); 
-                    
-                    glVertex3f( id, (grd_size+pastedge) , id );
-                    glVertex3f( id, id                  , id ); 
-
-
-                }
-
-            }else if (draw_grid) {
-                glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b);  
-
-                glVertex3f(-id, grd_height,  grd_size);
-                glVertex3f(-id, grd_height, -grd_size);  
-                glVertex3f( id, grd_height,  grd_size);
-                glVertex3f( id, grd_height, -grd_size); 
-                glVertex3f(-grd_size, grd_height, -id);
-                glVertex3f( grd_size, grd_height, -id);                
-                glVertex3f(-grd_size, grd_height,  id);
-                glVertex3f( grd_size, grd_height,  id);                 
-            }
-            
-
-        }
-
-    glEnd();
-
-    if (draw_cntrgrid)
-    {
-        glColor3f(pt_gridcolor2->r, pt_gridcolor2->g, pt_gridcolor2->b);  
-        glBegin(GL_TRIANGLES);  
-            glVertex3f(grd_size    , 0 , -.1 );
-            glVertex3f(grd_size    , 0 ,  .1 );
-            glVertex3f(grd_size+.3 , 0 ,   0 );
-
-            glVertex3f( -.1, 0, grd_size     );
-            glVertex3f(  .1, 0, grd_size     );
-            glVertex3f(   0, 0, grd_size+.3  );
-
-        glEnd();
-    }
-    
-    glColor3f(pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b); 
-}
 
 /***************************************/
 /*
@@ -450,9 +311,9 @@ static void render_loop()
                  0.0, 1.0   , 0.0     // positive Y up vector
              ); 
 
-    graticulate();
-    
-    show_bbox();
+    graticulate(&draw_grid, &draw_cntrgrid, pt_gridcolor, pt_gridcolor2);
+
+    show_bbox(&draw_bbox, pt_obinfo, pt_gridcolor);
 
     
     // glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
@@ -769,6 +630,7 @@ static void keyPressed(unsigned char key, int x, int y)
         }else{
             draw_bbox = TRUE;
         }
+
     }
 
     if (key == 111) //o
@@ -801,6 +663,7 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
         // reset_objfile(pt_model_buffer);
         load_objfile(obj_filepath, pt_model_buffer ); 
+        get_obj_info( pt_model_buffer, pt_obinfo);
     }
 
     if (key == 102) //f
