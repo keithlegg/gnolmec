@@ -375,9 +375,6 @@ static void render_loop()
                        cam_posx , cam_posy  , 0.0,   // look at the origin
                        0.0      , 1.0       , 0.0    // positive Y up vector
             );    
-
-            printf("# ortho front %f %f %f \n", cam_posx, cam_posy, cam_posz);
-
         break; 
     
 
@@ -571,18 +568,18 @@ void set_view_ortho(void)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();                   
-    gluOrtho2D(scr_size_x, scr_size_y, .001, orbit_dist ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    gluOrtho2D(scr_size_x, scr_size_y, -1, 1 ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
     glMatrixMode(GL_MODELVIEW);
 
-        // // set viewport to be the entire window
-        // //glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
-        // // set orthographic viewing frustum
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // glOrtho(0, scr_size_x, 0, scr_size_y, -1, 1);
-        // // switch to modelview matrix in order to set scene
-        // glMatrixMode(GL_MODELVIEW);
-        // glLoadIdentity();
+    // // set viewport to be the entire window
+    // glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
+    // // set orthographic viewing frustum
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // glOrtho(0, scr_size_x, 0, scr_size_y, -1, 1);
+    // // switch to modelview matrix in order to set scene
+    // glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
 
 }
 
