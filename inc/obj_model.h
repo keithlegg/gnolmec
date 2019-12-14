@@ -90,17 +90,24 @@ typedef struct obj_info{
 
 };
 
+vec3 get_extents(struct obj_info* obinfo);
+vec3 get_centroid(struct obj_info* obinfo);
+
 void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj);
 
+void show(struct obj_model* objmodel);
+void show(struct obj_info* obinfo);
+void show_obj_geom(struct obj_model* loader);
+
+
 void get_obj_info(struct obj_model* loader, struct obj_info* obinfo);
-
 void reset_objfile(struct obj_model* loader, struct obj_info* obinfo);
-
 void load_objfile( char *filepath, struct obj_model* loader);
-void save_objfile( char *filepath);
+void save_objfile( char *filepath, struct obj_model* loader);
 
 void test_loader_data(struct obj_model* loader);
-void show_loader(struct obj_model* loader);
+
+
 
 
 

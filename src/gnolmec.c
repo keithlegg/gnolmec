@@ -69,7 +69,7 @@ bool draw_lines      = TRUE;
 bool draw_quads      = TRUE;
 bool draw_triangles  = TRUE;
 
-bool draw_grid       = TRUE;
+bool draw_grid       = FALSE;
 bool draw_cntrgrid   = TRUE;
 bool draw_bbox       = FALSE;
 
@@ -137,22 +137,22 @@ float ticker = 0;
 // static int g_yClick = 0;
 // float total_orbitx;
 
+int VIEW_MODE = -1; 
+
+
 bool view_ismoving = FALSE;
 bool mouseLeftDown = FALSE;
 bool mouseRightDown = FALSE;
 float mouseX, mouseY = 0.0;
 
-// float cameraAngleX;
-// float cameraAngleY;
-// float cameraDistance;
 
-float orbit_x;     // 2d click to set 3d view 
+float orbit_x;         // 2d click to set 3d view 
 float orbit_y;   
 float orbit_dist = 5.0; // Z zoom 
 
-float cam_rotx = 0; // camera rotation
-float cam_roty = 0;
-float cam_rotz = 0;
+// float cam_rotx = 0; // camera rotation
+// float cam_roty = 0;
+// float cam_rotz = 0;
 
 float cam_posx = 0; // camera location
 float cam_posy = 0;
@@ -172,7 +172,7 @@ vec3 orbt_xform_original;
 
 
 /***************************************/
-int VIEW_MODE = -1; 
+
 
 
 /***************************************/
@@ -295,13 +295,13 @@ void warnings(void)
 
 void reset_view(void){
  
-    orbit_x    = .125; //2d click to set 3d view 
+    orbit_x    = .125;  
     orbit_y    = -.06;   
-    orbit_dist = 5.0;  
+    orbit_dist =  5.0;  
 
-    cam_rotx = 0; //camera rotation
-    cam_roty = 0;
-    cam_rotz = 0;
+    // cam_rotx = 0; //camera rotation
+    // cam_roty = 0;
+    // cam_rotz = 0;
 
     cam_posx =  0; //camera location
     cam_posy =  0;
@@ -370,9 +370,9 @@ static void render_loop()
 
         default:   
             // cheapo perspective navigation  
-            cam_posx = -sin( orbit_x * moveSpeed )   * orbit_dist;
-            cam_posy =     -orbit_y   * (orbit_dist/2)       ;
-            cam_posz = cos( orbit_x * moveSpeed )   * orbit_dist;
+            cam_posx = -sin( orbit_x * moveSpeed )     * orbit_dist    ;
+            cam_posy =      -orbit_y                   * (orbit_dist/2);
+            cam_posz =  cos( orbit_x * moveSpeed )     * orbit_dist    ;
 
             //for now use gluLookAt for all view modes -  
             gluLookAt( cam_posx, cam_posy , cam_posz,  // look from camera XYZ
@@ -591,13 +591,357 @@ void set_view_persp(void)
 
 }
 
+/********************************************/
+void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
 
-/***************************************/
+    pt_m44->m0  = m44_glfloat[0];
+    pt_m44->m1  = m44_glfloat[1];
+    pt_m44->m2  = m44_glfloat[2];
+    pt_m44->m3  = m44_glfloat[3];
+    pt_m44->m4  = m44_glfloat[4];
+    pt_m44->m5  = m44_glfloat[5];
+    pt_m44->m6  = m44_glfloat[6];
+    pt_m44->m7  = m44_glfloat[7];
+    pt_m44->m8  = m44_glfloat[8];
+    pt_m44->m9  = m44_glfloat[9];
+    pt_m44->m10 = m44_glfloat[10];
+    pt_m44->m11 = m44_glfloat[11];
+    pt_m44->m12 = m44_glfloat[12];
+    pt_m44->m13 = m44_glfloat[13];
+    pt_m44->m14 = m44_glfloat[14];
+    pt_m44->m15 = m44_glfloat[15];
+
+} 
+
+
+
+
+
+/**************************************************/
+/**************************************************/
+
+void olmec(int *argc, char** argv){
+ 
+    glutInit(argc, argv);  
+
+    //shader_test();
+    set_colors();
+
+
+    load_objfile(obj_filepath, pt_model_buffer ); 
+
+
+    warnings();
+
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
+    glutInitWindowSize(scr_size_x, scr_size_y);  //window size
+    glutInitWindowPosition(0, 0);  
+    
+    window_id = glutCreateWindow("Olmec v.000001"); //create an opengl window 
+
+    /***********/
+    //THERE IS A MEMORY LEAK, PROBABLY IN THIS FUNCTION!!
+    //TO TEST RUN AND LEAVE WINDOW FOR A WHILE 
+    //GO LEARN VALGRIND AND FIX IT ?
+
+    reset_view();
+
+    //register GL callbacks       
+    glutDisplayFunc(&render_loop);   
+    glutIdleFunc(&animate);
+    glutReshapeFunc(&reshape_window);  // register window resize callback 
+
+    glutKeyboardFunc(&keyPressed);     // register key pressed callback 
+
+    InitGL(scr_size_x, scr_size_y); // Initialize window. 
+  
+    glutMouseFunc (olmec_mouse_button);
+    glutMotionFunc (olmec_mouse_motion);
+
+
+
+
+    loadImage("textures/generated2.bmp" , imageloaded_bfr);
+    loadImage("textures/generated2.bmp" , imageloaded_bfr2);
+
+
+    //copyBuffer24( imageloaded_bfr, loaded_texture ); //convert "RGBType" to "Image"
+
+    // create and apply 2D texture   
+    glGenTextures(4, &texture[0]);            //create 3 textures
+
+    //grid color
+    glBindTexture(GL_TEXTURE_2D, texture[0]);  
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    //glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
+
+
+    //general line color 
+    glBindTexture(GL_TEXTURE_2D, texture[1]);  
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    //glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr2->sizeX, imageloaded_bfr2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
+
+
+    //polygon color 
+    glBindTexture(GL_TEXTURE_2D, texture[2]);  
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
+
+
+    //polygon color 2
+    glBindTexture(GL_TEXTURE_2D, texture[3]);  
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr->data);
+
+    ///////////
+
+    glutMainLoop();// Start Event Processing Engine   
+
+
+}
+
+
+
+
+
+
+/**************************************************/
+/**************************************************/
+
+
+/**************************************************/
+/**************************************************/
+
+
+    //var wheelie = Input.GetAxis("Mouse ScrollWheel");
+        
+    // if (wheelie < 0) // back
+    // {
+    //     var currentZoomSpeed = 100f;
+    //     transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
+    // }
+    // if (wheelie > 0) // back
+    // {
+    //      var currentZoomSpeed = 100f;
+    //      transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
+    // }
+
+    /*
+    //Input.GetAxis("Mouse ScrollWheel") < 0) // back
+    if( Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.LeftAlt) ){
+
+      // Distance between camera and orbitVector. We'll need this in a few places
+      var distanceToOrbit = Vector3.Distance(transform.position, orbitVector.transform.position);
+    
+        //RMB - ZOOM
+        if (Input.GetMouseButton(1)) {
+            
+            // Refine the rotateSpeed based on distance to orbitVector
+            var currentZoomSpeed = Mathf.Clamp(zoomSpeed * (distanceToOrbit / 50), 0.1f, 2.0f);
+            
+            // Move the camera in/out
+            transform.Translate(Vector3.forward * (x * currentZoomSpeed));
+            
+            // If about to collide with the orbitVector, repulse the orbitVector slightly to keep it in front of us
+            if (Vector3.Distance(transform.position, orbitVector.transform.position) < 3) {
+                orbitVector.transform.Translate(Vector3.forward, transform);
+            }
+
+        
+        //LMB - PIVOT
+        } else if (Input.GetMouseButton(0)) {
+            
+            // Refine the rotateSpeed based on distance to orbitVector
+            var currentRotateSpeed = Mathf.Clamp(rotateSpeed * (distanceToOrbit / 50), 1.0f, rotateSpeed);
+            
+            
+            // Temporarily parent the camera to orbitVector and rotate orbitVector as desired
+            transform.parent = orbitVector.transform;
+            orbitVector.transform.Rotate(Vector3.right * (y * currentRotateSpeed));
+            orbitVector.transform.Rotate(Vector3.up * (x * currentRotateSpeed), Space.World);
+            transform.parent = null;
+                    
+        //MMB - PAN
+        else if (Input.GetMouseButton(2)) {
+            
+            // Calculate move speed
+            var translateX = Vector3.right * (x * moveSpeed) * -1;
+            var translateY = Vector3.up * (y * moveSpeed) * -1;
+            
+            // Move the camera
+            transform.Translate(translateX);
+            transform.Translate(translateY);
+            
+            // Move the orbitVector with the same values, along the camera's axes. In effect causing it to behave as if temporarily parented.
+            orbitVector.transform.Translate(translateX, transform);
+            orbitVector.transform.Translate(translateY, transform);
+        }
+    */        
+
+// Use this for initialization
+void olmecnav_start (void ) {
+    // Create a transform (which will be the lookAt target and global orbit vector)
+    
+    //     capsuleObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+    //     capsuleObj.transform.position = Vector3.zero;
+
+    // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
+   
+    // transform.position = startpos;  
+    // transform.LookAt(capsuleObj.transform.position, Vector3.up);
+    // capsuleObj.renderer.enabled = false; //hide the capsule object     
+
+    //     ///
+    //     orbt_xform_original = capsuleObj.transform.position;
+    //     orbt_rot_original   = capsuleObj.transform.rotation;
+}
+
+
+void olmec_mouse_button(int button, int state, int x, int y)
+{
+
+    mouseX = x;
+    mouseY = y;
+
+    //left click 
+    if (button == GLUT_LEFT_BUTTON)
+      {
+        if(state == GLUT_DOWN)
+        {
+            mouseLeftDown = true;
+        }
+        else if(state == GLUT_UP)
+            mouseLeftDown = false;
+
+      }
+
+      // middle click
+      if ((button == 3) || (button == 4)) // It's a wheel event
+      {
+           // Disregard redundant GLUT_UP events
+           if (state == GLUT_UP) return; 
+
+           if (button == 3){
+               //if (orbit_dist < -1.5){
+               orbit_dist+=.1;  
+               //printf("# orbit dist %f \n", orbit_dist );                                 
+               //}
+  
+           }
+           if (button == 4){
+               //if (orbit_dist>0){ 
+                   orbit_dist-=.1; 
+                   //printf("# orbit dist %f \n", orbit_dist );
+               //}
+           }
+      }else{  // normal button event
+           if (state == GLUT_DOWN){
+               // printf("olmec middle click\n");  
+           }
+      }
+
+
+    //Right click
+    if (button == GLUT_RIGHT_BUTTON)
+      {
+        
+        if(state == GLUT_DOWN)
+        {
+            mouseRightDown = true;
+        }
+        else if(state == GLUT_UP)
+            mouseRightDown = false;
+
+      }
+
+}
+
+/********************************************/
+
+float coefficient = 0.005f;     
+
+void olmec_mouse_motion(int x, int y)
+{
+    // take offset from center of screen to get "X,Y delta"
+    float center_y = (float)scr_size_y/2;
+    float center_x = (float)scr_size_x/2;
+
+
+    switch (VIEW_MODE) 
+    { 
+        // orthographic side  (key 2)
+        case 1: 
+            view_ismoving = TRUE;
+            cam_posz = -(center_x-x) * coefficient; 
+            cam_posy = -(center_y-y) * coefficient; 
+        break; 
+    
+        // orthographic top   (key shift 2)
+        case 2:  
+            view_ismoving = TRUE;
+            cam_posx = (center_x-x) * coefficient; 
+            cam_posz = (center_y-y) * coefficient;  
+        break; 
+    
+        // orthographic front  (key 3)
+        case 3:  
+            view_ismoving = TRUE;
+            cam_posx = (center_x-x)  * coefficient; 
+            cam_posy = -(center_y-y) * coefficient; 
+        break; 
+    
+
+        default:  
+            if(mouseLeftDown)
+            {        
+                view_ismoving = TRUE;
+                
+                orbit_x += (x-mouseX) * coefficient; 
+                orbit_y += (y-mouseY) * coefficient; 
+                mouseX = x;
+                mouseY = y;
+
+                //printf("# mouse motion %d %d %f %f \n", x,y, orbit_x, orbit_y );
+            }
+
+            if(mouseRightDown)
+            {
+                orbit_dist -= (y - mouseY) * 0.02f;
+                mouseY = y;
+            }
+
+        break;
+
+    }
+    
+    /**************/
+
+    
+    // Test to attach geometry to camera (crappy widgets) 
+    
+    /*
+    GLfloat model[16]; 
+    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    m44 my_model_matrix;
+    m44 *pt_mmm = &my_model_matrix;
+    glutm44_to_m44(pt_mmm, model);
+
+    print_matrix(my_model_matrix);
+    */ 
+
+}
+
+
+
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("scancode key %u \n", key );
+    // printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -754,7 +1098,16 @@ static void keyPressed(unsigned char key, int x, int y)
     
 
     //------
-    if (key == 105) //i
+    if (key == 73) //shift i - show obj info 
+    { 
+
+        //get_obj_info( pt_model_buffer, pt_obinfo);
+        //show(pt_model_buffer);
+        show_obj_geom(pt_model_buffer);
+    }
+
+
+    if (key == 105) //i - draw bbox
     { 
         get_obj_info( pt_model_buffer, pt_obinfo);
 
@@ -771,13 +1124,13 @@ static void keyPressed(unsigned char key, int x, int y)
 
         char* file2 = "3d_obj/PYCORE.obj";
         
-        //load_objfile(file2, pt_loader );
-        //get_obj_info( pt_loader, pt_obinfo);
-
-        reset_objfile(pt_loader, pt_loadernfo);
-        load_objfile(file2, pt_loader ); 
-        insert_geom(pt_loader, pt_model_buffer);
+        load_objfile(file2, pt_model_buffer );
         get_obj_info( pt_model_buffer, pt_obinfo);
+
+        // //reset_objfile(pt_loader, pt_loadernfo);
+        //load_objfile(file2, pt_loader ); 
+        //insert_geom(pt_loader, pt_model_buffer);
+        //get_obj_info( pt_model_buffer, pt_obinfo);
 
     }
 
@@ -801,12 +1154,13 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 114) //r
     { 
-        //load_objfile(obj_filepath, pt_model_buffer ); 
-        //get_obj_info( pt_model_buffer, pt_obinfo);
-
-        load_objfile(obj_filepath, pt_loader ); 
-        insert_geom(pt_loader, pt_model_buffer);
+        load_objfile(obj_filepath, pt_model_buffer ); 
         get_obj_info( pt_model_buffer, pt_obinfo);
+
+        //reset_objfile(pt_loader, pt_loadernfo);
+        //load_objfile(obj_filepath, pt_loader ); 
+        //insert_geom(pt_loader, pt_model_buffer);
+        //get_obj_info( pt_model_buffer, pt_obinfo);
 
     }
 
@@ -838,348 +1192,13 @@ static void keyPressed(unsigned char key, int x, int y)
 }
 
 
-/********************************************/
 
-void olmec_mouse_button(int button, int state, int x, int y)
-{
 
-    mouseX = x;
-    mouseY = y;
+/**************************************************/
+/**************************************************/
+/**************************************************/
+/**************************************************/
 
-    //left click 
-    if (button == GLUT_LEFT_BUTTON)
-      {
-        if(state == GLUT_DOWN)
-        {
-            mouseLeftDown = true;
-        }
-        else if(state == GLUT_UP)
-            mouseLeftDown = false;
-
-      }
-
-      // middle click
-      if ((button == 3) || (button == 4)) // It's a wheel event
-      {
-           // Disregard redundant GLUT_UP events
-           if (state == GLUT_UP) return; 
-
-           if (button == 3){
-               //if (orbit_dist < -1.5){
-               orbit_dist+=.1;  
-               //printf("# orbit dist %f \n", orbit_dist );                                 
-               //}
-  
-           }
-           if (button == 4){
-               //if (orbit_dist>0){ 
-                   orbit_dist-=.1; 
-                   //printf("# orbit dist %f \n", orbit_dist );
-               //}
-           }
-      }else{  // normal button event
-           if (state == GLUT_DOWN){
-               // printf("olmec middle click\n");  
-           }
-      }
-
-
-    //Right click
-    if (button == GLUT_RIGHT_BUTTON)
-      {
-        
-        if(state == GLUT_DOWN)
-        {
-            mouseRightDown = true;
-        }
-        else if(state == GLUT_UP)
-            mouseRightDown = false;
-
-      }
-
-}
-
-/********************************************/
-
-float coefficient = 0.005f;     
-
-void olmec_mouse_motion(int x, int y)
-{
-    // take offset from center of screen to get "X,Y delta"
-    float center_y = (float)scr_size_y/2;
-    float center_x = (float)scr_size_x/2;
-
-
-    switch (VIEW_MODE) 
-    { 
-        // orthographic side  (key 2)
-        case 1: 
-            view_ismoving = TRUE;
-            cam_posz = -(center_x-x) * coefficient; 
-            cam_posy = -(center_y-y) * coefficient; 
-        break; 
-    
-        // orthographic top   (key shift 2)
-        case 2:  
-            view_ismoving = TRUE;
-            cam_posx = (center_x-x) * coefficient; 
-            cam_posz = (center_y-y) * coefficient;  
-        break; 
-    
-        // orthographic front  (key 3)
-        case 3:  
-            view_ismoving = TRUE;
-            cam_posx = (center_x-x)  * coefficient; 
-            cam_posy = -(center_y-y) * coefficient; 
-        break; 
-    
-
-        default:  
-            if(mouseLeftDown)
-            {        
-                view_ismoving = TRUE;
-                
-                orbit_x += (x-mouseX) * coefficient; 
-                orbit_y += (y-mouseY) * coefficient; 
-                mouseX = x;
-                mouseY = y;
-
-                //printf("# mouse motion %d %d %f %f \n", x,y, orbit_x, orbit_y );
-            }
-
-            if(mouseRightDown)
-            {
-                orbit_dist -= (y - mouseY) * 0.02f;
-                mouseY = y;
-            }
-
-        break;
-
-    }
-    
-    /**************/
-
-    
-    // Test to attach geometry to camera (crappy widgets) 
-    
-    /*
-    GLfloat model[16]; 
-    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
-    m44 my_model_matrix;
-    m44 *pt_mmm = &my_model_matrix;
-    glutm44_to_m44(pt_mmm, model);
-
-    print_matrix(my_model_matrix);
-    */ 
-
-}
-
-
-/********************************************/
-void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
-
-    pt_m44->m0  = m44_glfloat[0];
-    pt_m44->m1  = m44_glfloat[1];
-    pt_m44->m2  = m44_glfloat[2];
-    pt_m44->m3  = m44_glfloat[3];
-    pt_m44->m4  = m44_glfloat[4];
-    pt_m44->m5  = m44_glfloat[5];
-    pt_m44->m6  = m44_glfloat[6];
-    pt_m44->m7  = m44_glfloat[7];
-    pt_m44->m8  = m44_glfloat[8];
-    pt_m44->m9  = m44_glfloat[9];
-    pt_m44->m10 = m44_glfloat[10];
-    pt_m44->m11 = m44_glfloat[11];
-    pt_m44->m12 = m44_glfloat[12];
-    pt_m44->m13 = m44_glfloat[13];
-    pt_m44->m14 = m44_glfloat[14];
-    pt_m44->m15 = m44_glfloat[15];
-
-} 
-
-
-
-/********************************************/
-/********************************************/
-
-
-
-// Use this for initialization
-void olmecnav_start (void ) {
-    // Create a transform (which will be the lookAt target and global orbit vector)
-    
-    //     capsuleObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-    //     capsuleObj.transform.position = Vector3.zero;
-
-    // Snap the camera to align with the grid in set starting position (otherwise everything gets a bit wonky)
-   
-    // transform.position = startpos;  
-    // transform.LookAt(capsuleObj.transform.position, Vector3.up);
-    // capsuleObj.renderer.enabled = false; //hide the capsule object     
-
-    //     ///
-    //     orbt_xform_original = capsuleObj.transform.position;
-    //     orbt_rot_original   = capsuleObj.transform.rotation;
-}
-
-
-/********************************************/
-/********************************************/
-
-void olmec(int *argc, char** argv){
- 
-    glutInit(argc, argv);  
-
-    //shader_test();
-    set_colors();
-
-
-    //load_objfile(obj_filepath, pt_model_buffer ); 
-
-    load_objfile(obj_filepath, pt_loader ); 
-    insert_geom(pt_loader, pt_model_buffer);
-
-
-    warnings();
-
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
-    glutInitWindowSize(scr_size_x, scr_size_y);  //window size
-    glutInitWindowPosition(0, 0);  
-    
-    window_id = glutCreateWindow("Olmec v.000001"); //create an opengl window 
-
-    /***********/
-    //THERE IS A MEMORY LEAK, PROBABLY IN THIS FUNCTION!!
-    //TO TEST RUN AND LEAVE WINDOW FOR A WHILE 
-    //GO LEARN VALGRIND AND FIX IT ?
-
-    reset_view();
-
-    //register GL callbacks       
-    glutDisplayFunc(&render_loop);   
-    glutIdleFunc(&animate);
-    glutReshapeFunc(&reshape_window);  // register window resize callback 
-
-    glutKeyboardFunc(&keyPressed);     // register key pressed callback 
-
-    InitGL(scr_size_x, scr_size_y); // Initialize window. 
-  
-    glutMouseFunc (olmec_mouse_button);
-    glutMotionFunc (olmec_mouse_motion);
-
-    //var wheelie = Input.GetAxis("Mouse ScrollWheel");
-        
-    // if (wheelie < 0) // back
-    // {
-    //     var currentZoomSpeed = 100f;
-    //     transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
-    // }
-    // if (wheelie > 0) // back
-    // {
-    //      var currentZoomSpeed = 100f;
-    //      transform.Translate(Vector3.forward * (wheelie * currentZoomSpeed));
-    // }
-
-    /*
-    //Input.GetAxis("Mouse ScrollWheel") < 0) // back
-    if( Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.LeftAlt) ){
-
-      // Distance between camera and orbitVector. We'll need this in a few places
-      var distanceToOrbit = Vector3.Distance(transform.position, orbitVector.transform.position);
-    
-        //RMB - ZOOM
-        if (Input.GetMouseButton(1)) {
-            
-            // Refine the rotateSpeed based on distance to orbitVector
-            var currentZoomSpeed = Mathf.Clamp(zoomSpeed * (distanceToOrbit / 50), 0.1f, 2.0f);
-            
-            // Move the camera in/out
-            transform.Translate(Vector3.forward * (x * currentZoomSpeed));
-            
-            // If about to collide with the orbitVector, repulse the orbitVector slightly to keep it in front of us
-            if (Vector3.Distance(transform.position, orbitVector.transform.position) < 3) {
-                orbitVector.transform.Translate(Vector3.forward, transform);
-            }
-
-        
-        //LMB - PIVOT
-        } else if (Input.GetMouseButton(0)) {
-            
-            // Refine the rotateSpeed based on distance to orbitVector
-            var currentRotateSpeed = Mathf.Clamp(rotateSpeed * (distanceToOrbit / 50), 1.0f, rotateSpeed);
-            
-            
-            // Temporarily parent the camera to orbitVector and rotate orbitVector as desired
-            transform.parent = orbitVector.transform;
-            orbitVector.transform.Rotate(Vector3.right * (y * currentRotateSpeed));
-            orbitVector.transform.Rotate(Vector3.up * (x * currentRotateSpeed), Space.World);
-            transform.parent = null;
-                    
-        //MMB - PAN
-        else if (Input.GetMouseButton(2)) {
-            
-            // Calculate move speed
-            var translateX = Vector3.right * (x * moveSpeed) * -1;
-            var translateY = Vector3.up * (y * moveSpeed) * -1;
-            
-            // Move the camera
-            transform.Translate(translateX);
-            transform.Translate(translateY);
-            
-            // Move the orbitVector with the same values, along the camera's axes. In effect causing it to behave as if temporarily parented.
-            orbitVector.transform.Translate(translateX, transform);
-            orbitVector.transform.Translate(translateY, transform);
-        }
-    */        
-
-    loadImage("textures/generated2.bmp" , imageloaded_bfr);
-    loadImage("textures/generated2.bmp" , imageloaded_bfr2);
-
-
-    //copyBuffer24( imageloaded_bfr, loaded_texture ); //convert "RGBType" to "Image"
-
-    // create and apply 2D texture   
-    glGenTextures(4, &texture[0]);            //create 3 textures
-
-    //grid color
-    glBindTexture(GL_TEXTURE_2D, texture[0]);  
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
-    //glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
-
-
-    //general line color 
-    glBindTexture(GL_TEXTURE_2D, texture[1]);  
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
-    //glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr2->sizeX, imageloaded_bfr2->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
-
-
-    //polygon color 
-    glBindTexture(GL_TEXTURE_2D, texture[2]);  
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
-
-
-    //polygon color 2
-    glBindTexture(GL_TEXTURE_2D, texture[3]);  
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr->data);
-
-    ///////////
-
-    glutMainLoop();// Start Event Processing Engine   
-
-
-}
-
-
-
-
-
-/***********/
 
 void software_render(void){
     

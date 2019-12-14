@@ -25,12 +25,16 @@
 int uv_cnt   = 0;  // number of UVs loaded 
  
 
+/*******************************************************************/
 
+/*
 
-
+    Take a pointer to an object and populate an object info sturcture 
+*/
 
 void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
 {
+    // reset the bounding box 
     obinfo->bb_min_x = 0;
     obinfo->bb_max_x = 0;
     obinfo->bb_min_y = 0;
@@ -81,6 +85,92 @@ void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
 }
 
 /*******************************************************************/
+/*
+    Print out info from an object info struct
+*/
+
+
+vec3 get_extents(struct obj_info* obinfo){
+
+    float bb_min_x;
+    float bb_max_x;
+    
+    float bb_min_y;
+    float bb_max_y;
+
+    float bb_min_z;
+    float bb_max_z;
+}
+
+
+/* get the 3D center of an object */
+vec3 get_centroid(struct obj_info* obinfo){}
+
+
+
+void show_obj_geom(struct obj_model* loader)
+{
+    int i = 0;
+    printf("\n");
+
+    printf("\n# points  ------------------- %d \n", loader->num_pts);
+    for (i=0;i<loader->num_pts;i++)
+    {
+        printf("%d    ",i);
+        print_vec3( loader->points[i]) ;
+    }
+
+    printf("\n# triangles ----------------- %d \n", loader->num_tris);
+    for (i=0;i<loader->num_tris;i++)
+    {
+
+        //triangle tri_buffer = from_obj->tris[i]; //start with original indices
+        printf("# %d triangle  %d %d %d \n", i, loader->tris[i].pt1 , loader->tris[i].pt2, loader->tris[i].pt3);        
+    }
+
+
+    printf("\n# quads ------------------   %d \n", loader->num_quads);
+    for (i=0;i<loader->num_quads;i++)
+    {
+
+        quad qbfr = loader->quads[i]; //start with original indices
+        printf("# %d quad  %d %d %d %d \n", i, qbfr.pt1 , qbfr.pt2, qbfr.pt3, qbfr.pt4 );        
+    }
+
+    printf("\n# UVs   --------  \n");
+
+}
+
+
+
+void show(struct obj_model* objmodel)
+{
+    printf("#----------------#\n");
+    printf("# number  points    %d \n", objmodel->num_pts);
+    printf("# number  triangles %d \n", objmodel->num_tris);
+    printf("# number  quads     %d \n", objmodel->num_quads);
+    printf("# number  UVs       %d \n", objmodel->num_uvs);
+
+}
+
+
+
+void show(struct obj_info* obinfo)
+{
+    printf("#----------------#\n");
+
+    //printf("# extents           %d \n", 99);
+    //printf("# centroid          %d \n", 99);
+}
+
+
+/*******************************************************************/
+/*
+    append one object into another 
+     - points, triangles, quads, UVs, Normals
+     - TODO add filter for only transferring some components 
+*/
+
 void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
 {
 
@@ -103,7 +193,19 @@ void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
     //triangles
     for (x=0;x<from_obj->num_tris;x++)
     {
-        to_obj->tris[tri_idx] = from_obj->tris[x];
+        triangle tri_buffer = from_obj->tris[x]; //start with original indices
+
+        printf("\n #tri1 %d %d %d \n", from_obj->tris[x].pt1 , from_obj->tris[x].pt2, from_obj->tris[x].pt3);        
+
+        tri_buffer.pt1 = tri_buffer.pt1 +pt_idx;  //shift index in new geom
+        tri_buffer.pt2 = tri_buffer.pt2 +pt_idx;  //shift index in new geom
+        tri_buffer.pt3 = tri_buffer.pt3 +pt_idx;  //shift index in new geom
+
+        printf("   #tri2 %d %d %d \n", tri_buffer.pt1 , tri_buffer.pt2, tri_buffer.pt3);
+        
+        to_obj->tris[tri_idx] = tri_buffer;
+        
+
         tri_idx++; 
     }
 
@@ -139,6 +241,10 @@ void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
 
 
 /*******************************************************************/
+/*
+    Clear an object to "reset" it
+*/
+
 void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
 {
 
@@ -158,24 +264,8 @@ void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
     obinfo->bb_min_z = 0;
     obinfo->bb_max_z = 0; 
 
-    // loader->uvs[num_vtx];      // UV coords 
-    // loader->points[num_vtx];   // 3 floats  
-    // loader->lines[num_faces];  //2 point lines 
-    // loader->tris[num_faces];   //3 point polygons 
-    // loader->quads[num_faces];  //4 point polygons 
-
 }
 
-/*******************************************************************/
-
-void show_loader(struct obj_model* loader)
-{
-    int i = 0;
-  for (i=0;i<10;i++){
-      print_vec3( loader->points[i]) ;
-        //printf("pt is %s %s %s \n", pt.x, pt.y, pt.z );
-  }
-}
 
 /*******************************************************************/
 
@@ -355,7 +445,18 @@ void load_objfile( char *filepath, struct obj_model* loader)
     printf("%d quads loaded      \n", loader->num_quads  ) ;    
 }
 
+/*******************************************************************/
+void save_objfile( char *filepath, struct obj_model* loader)
+{
 
+   FILE * fp;
+
+   fp = fopen (filepath, "w+");
+   fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
+   
+   fclose(fp);
+      
+}
 
 
 /*******************************************************************/
@@ -383,24 +484,6 @@ void test_loader_data(struct obj_model* loader){
                     
 }
 
-
-
-
-
-/*******************************************************************/
-
-
-void save_objfile( char *filepath)
-{
-
-   FILE * fp;
-
-   fp = fopen (filepath, "w+");
-   fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
-   
-   fclose(fp);
-      
-}
 
 
 

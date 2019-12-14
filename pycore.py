@@ -312,7 +312,7 @@ def pt_transform():
     obj.save(PYCORE_OBJ_OUT)
 
 
-
+##------------------
 def scratch_obj1():
 
     """ build a new polygon object in memory from points 
@@ -349,7 +349,7 @@ def scratch_obj1():
 
     obj.save( PYCORE_OBJ_OUT )
 
-
+##------------------
 def scratch_obj2():
     """ another demo of a model built from coordinates
         when you use asnew_shell , you can append to other models 
@@ -375,7 +375,7 @@ def scratch_obj2():
 
     obj.save(PYCORE_OBJ_OUT)
 
-
+##------------------
 def face_extrude():
     """ brute force test of face extrude 
         extrudes all faces in a polygon object 
@@ -394,16 +394,76 @@ def face_extrude():
 
     obj.save(PYCORE_OBJ_OUT)
 
+
+##------------------
+def m33_to_vectors(m33, transpose=False):
+    outvecs = []
+
+    if transpose:
+        v1 = vec3(m33[0], m33[3], m33[6])
+        v2 = vec3(m33[1], m33[4], m33[7])
+        v3 = vec3(m33[2], m33[5], m33[8])  
+    else:
+        v1 = vec3(m33[0], m33[1], m33[2])
+        v2 = vec3(m33[3], m33[4], m33[5])
+        v3 = vec3(m33[6], m33[7], m33[8])
+
+    outvecs = [v1,v2,v3]
+    return outvecs 
+
+
+##------------------
+def visualize_matrix_rotation():
+    """ 
+        turn a 3X3 matrix into 3 vectors and render them as lines 
+
+        Use numpy to rotate a matrix around a vector 
+        rotate a matrix around a vector with a scalar angle (degrees) 
+        visualize the matrix as a 3D object 
+    """
+
+    obj  = object3d()
+    m33  = matrix33()
+
+    rendervecs = []
+
+    rendervecs.extend( m33_to_vectors(m33) )
+
+    axis = vec3(0,-1,0)
+    tmp = m33_to_vectors(m33.from_vec3( axis , 30 ))
+    
+    rendervecs.append(axis)
+
+    #rendervecs.extend(tmp)
+
+    obj.vectorlist_to_obj( rendervecs )
+    obj.save(PYCORE_OBJ_OUT)  
+
+
+
+
 ##***********************************************************##
 ##***********************************************************##
 ##***********************************************************##
 ##***********************************************************##
+
+
+
+"""
+obj = object3d()
+obj.load('pyrender2/objects/cube.obj')
+#obj.save(PYCORE_OBJ_OUT)
+obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
+"""
+
 
 ## parse commands coming in and run them
-
 def runcommand():
+    visualize_matrix_rotation()
+
     #loadgcode()
     #loadkicad()
+    
     #scratch_obj1()
     #scratch_obj2()
 
@@ -413,25 +473,17 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    gen_normals()
+    #gen_normals()
 
     #face_extrude()
-    
-
-    
+   
     #pt_transform()
     
-
-    
     #procedural_1()
-    
-
-    
+   
     #modify_partial()
     
     #triangulate()
-    
-
     
     #matrix_rotate()
     
