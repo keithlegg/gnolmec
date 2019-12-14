@@ -75,7 +75,7 @@ GLGenVertexArray()
 
 */
 
-
+/*
 
 bool check_shader_compile_status(GLuint obj) {
     GLint status;
@@ -107,6 +107,8 @@ bool check_program_link_status(GLuint obj) {
     }
     return true;
 }
+
+*/
 
 
 
@@ -174,12 +176,10 @@ void InitGL(int Width, int Height)          // We call this right after our Open
     glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
     glShadeModel(GL_SMOOTH);             // Enables Smooth Color Shading
     
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();                    // Reset The Projection Matrix
-
-    //gluOrtho2D(0, 100, 0, 100); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
     
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();                     
+    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
     glMatrixMode(GL_MODELVIEW);
 }
 

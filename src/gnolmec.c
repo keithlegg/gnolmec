@@ -132,8 +132,15 @@ float ticker = 0;
 
 bool view_ismoving = FALSE;
 
-float orbit_x  = 0;     // 2d click to set 3d view 
-float orbit_y  = 0;   
+
+float mouseX, mouseY = 0.0;
+
+// float cameraAngleX;
+// float cameraAngleY;
+// float cameraDistance;
+
+float orbit_x;     // 2d click to set 3d view 
+float orbit_y;   
 float orbit_dist = -5.0; // Z zoom 
 
 float cam_rotx = 0; // camera rotation
@@ -146,7 +153,7 @@ float cam_posz = 0;
 
 
 //attempt to port code from Unity Engine into pure C 
-float moveSpeed    = 1.9f;
+float moveSpeed    = 1.5f;
 /*
 float zoomSpeed    = 1.2f;
 float rotateSpeed  = 4.0f;
@@ -161,14 +168,7 @@ vec3 orbt_xform_original;
 /***************************************/
 int VIEW_MODE = -1; 
 
-/*
-enum view {
-    VIEW_PERSP,
-    VIEW_FRONT,
-    VIEW_SIDE,
-    VEIW_TOP
-};
-*/
+
 
 
 void toggle_polygon_draw(){
@@ -252,40 +252,6 @@ void reset_view(void){
 
 
 /***************************************/
-/*
-void set_camera(void){
-
-    // https://stackoverflow.com/questions/5717654/glulookat-explanation 
-    // https://learnopengl.com/Getting-started/Camera
-
-    // https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glRotate.xml
-    // glGet with argument GL_MATRIX_MODE
-    // glGet with argument GL_COLOR_MATRIX
-    // glGet with argument GL_MODELVIEW_MATRIX
-    // glGet with argument GL_PROJECTION_MATRIX
-    // glGet with argument GL_TEXTURE_MATRIX
-
-    glMatrixMode(GL_PROJECTION); 
-    glLoadIdentity();               // Reset The View
-
-    // view = new_m44();
-    // gluLookAt( cam_x , 0.0, cam_z ,   // look from camera XYZ  
-    //             0.0  , 0.0, 0.0  ,    // look at the origin 
-    //             0.0  , 1.0, 0.0  );   // positive Y up vector    
-
-    // gluLookAt(camera[0], camera[1], camera[2],  // look from camera XYZ  
-    //                   0,         0,         0,  // look at the origin  
-    //                   0,         1,         0); // positive Y up vector  
-    
-    //printf("# orbit %f \n", orbit_x );
-
-    //glRotatef(orbit_x, 0.f, 1.0f, 0.f);             
-    //glCallList(SCENE); // draw the scene 
-
-}
-*/
-
-/***************************************/
 
 /*
 //glewInit();
@@ -313,12 +279,6 @@ glGenBuffers(1, &vbo_triangle_colors);
 */
 
 
-
-
-
-static void render_loop()
-{
-
     // vec3 Intensity = Intensity(ambient) * DiffuseColor + Intensity(diffuse) * DiffuseColor + Intensity(specular) * SpecularColo
     // vec3 I = Ia * Kd + Id * Kd + Is * Ks
     // vec3 I = (Ia + Id) * Kd + Is * Ks
@@ -327,23 +287,16 @@ static void render_loop()
     // vec3 Intensity(specular) = Intensity(incoming_lightray) * SpecularSurfaceColor * cosine(phi) ^ Shininess
 
 
-    // if (view_ismoving){
-    //     //total_orbitx += orbit_x;
-    //     printf("view difference is  %f \n" , orbit_x );
-    //     printf("last difference was %f \n" , total_orbitx );
-    // }
 
+static void render_loop()
+{
+
+    // Clear The Screen And The Depth Buffer
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
-    //if (orbit_dist < obj_len_x){
-    //    orbit_dist = obj_len_x;
-    //}
-    // if (orbit_dist < obj_len_y){
-    //     orbit_dist = obj_len_y;
-    // }
-    // if (orbit_dist < obj_len_z){
-    //     orbit_dist = obj_len_z;
-    // }
-    
+    //glPushMatrix();
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -363,7 +316,7 @@ static void render_loop()
         case 2:  
             gluLookAt( cam_posx , 1.0   , cam_posz,  // look from camera XYZ
                        cam_posx , 0.0   , cam_posz,  // look at the origin
-                       -1.0     , 0.0   , 0.0        // positive X (Y up when looking down)
+                       0.0     , 0.0    , -1.0        // positive X (Y up when looking down)
             );   
 
         break; 
@@ -393,12 +346,17 @@ static void render_loop()
         break;   
     } 
 
+   
 
 
+
+    // // tramsform camera
+    // glTranslatef(0, 0, -orbit_dist);
+    // glRotatef(orbit_x, 1, 0, 0);   // pitch
+    // glRotatef(orbit_y, 0, 1, 0);   // heading
 
     /******************************************/
-    // Clear The Screen And The Depth Buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
+  
 
 
     graticulate(&draw_grid, &draw_cntrgrid, pt_gridcolor, pt_gridcolor2);
@@ -537,6 +495,8 @@ static void render_loop()
         glEnd(); 
     }
 
+    // glPopMatrix();
+
     // swap the other (double) buffer to display what just got drawn.
     glutSwapBuffers();
   
@@ -583,7 +543,20 @@ void set_view_ortho(void)
 
 }
 
+/***************************************/
+void set_view_persp(void)
+{
+    // set perspective viewing frustum
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0f, (float)(scr_size_x)/scr_size_y, 1.0f, 1000.0f); // FOV, AspectRatio, NearClip, FarClip
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();    
 
+}
+
+
+/***************************************/
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
@@ -628,17 +601,18 @@ static void keyPressed(unsigned char key, int x, int y)
       
         VIEW_MODE = -1; 
 
-        // set viewport to be the entire window
-        glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
+        // // set viewport to be the entire window
+        // glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
+        // // set perspective viewing frustum
+        // glMatrixMode(GL_PROJECTION);
+        // glLoadIdentity();
+        // gluPerspective(45.0f, (float)(scr_size_x)/scr_size_y, 1.0f, 1000.0f); // FOV, AspectRatio, NearClip, FarClip
+        // // switch to modelview matrix in order to set scene
+        // glMatrixMode(GL_MODELVIEW);
+        // glLoadIdentity();
+        
+        set_view_persp();
 
-        // set perspective viewing frustum
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(45.0f, (float)(scr_size_x)/scr_size_y, 1.0f, 1000.0f); // FOV, AspectRatio, NearClip, FarClip
-
-        // switch to modelview matrix in order to set scene
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
 
     }
 
@@ -819,10 +793,6 @@ static void keyPressed(unsigned char key, int x, int y)
 
 void olmec_mouse_button(int button, int state, int x, int y)
 {
-    // Respond to mouse button presses.
-    // If button1 pressed, mark this state so we know in motion function.
-
-    // printf("olmec button x %d y %d \n",x , y);
 
     //left click 
     if (button == GLUT_LEFT_BUTTON)
@@ -830,7 +800,7 @@ void olmec_mouse_button(int button, int state, int x, int y)
         //g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         //g_yClick = y - 3 * g_fViewDistance;
         
-        printf("left click \n");
+        // printf("left click \n");
 
       }
 
@@ -868,20 +838,11 @@ void olmec_mouse_button(int button, int state, int x, int y)
 
 /********************************************/
 
-
-        
-    
-
 void olmec_mouse_motion(int x, int y)
 {
-    //take offset from center of screen to get "X,Y delta"
+    // take offset from center of screen to get "X,Y delta"
     float center_y = (float)scr_size_y/2;
     float center_x = (float)scr_size_x/2;
-
-    //2 - orthographic side       VIEW_MODE = 1;
-    //shift 2 - orthographic top  VIEW_MODE = 2; 
-    //3 - orthographic front      VIEW_MODE = 3; 
-    //shift 3                     VIEW_MODE = 4; 
 
     switch (VIEW_MODE) 
     { 
@@ -895,8 +856,8 @@ void olmec_mouse_motion(int x, int y)
         // orthographic top   (key shift 2)
         case 2:  
             view_ismoving = TRUE;
-            cam_posz = -(center_x-x)/scr_size_x; 
-            cam_posx = (center_y-y)/scr_size_y;  
+            cam_posx = (center_x-x)/scr_size_x; 
+            cam_posz = (center_y-y)/scr_size_y;  
         break; 
     
         // orthographic front  (key 3)
@@ -909,8 +870,17 @@ void olmec_mouse_motion(int x, int y)
 
         default:  
             view_ismoving = TRUE;
+            
             orbit_x = (center_x-x)/scr_size_x; 
             orbit_y = (center_y-y)/scr_size_y; 
+            
+            // orbit_x += (x - mouseX);
+            // orbit_y += (y-  mouseY);
+            // mouseX = x;
+            // mouseY = y;
+
+            //printf("# mouse motion %d %d %f %f \n", x,y, mouseX, mouseY );
+
         break;
 
     }
