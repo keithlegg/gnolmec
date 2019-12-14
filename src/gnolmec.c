@@ -53,6 +53,8 @@
 #include "gnolmec.h"
 
 
+
+
 /***********/
 // window related 
 extern int window_id;
@@ -63,7 +65,7 @@ extern bool scr_full_toglr;
 // view prefs 
 bool DRAW_POLYS      = TRUE;
 
-bool draw_points     = FALSE; //not working, test of VBO  
+bool draw_points     = TRUE; //not working, test of VBO  
 bool draw_lines      = TRUE;
 
 bool draw_quads      = TRUE;
@@ -84,16 +86,17 @@ extern char* obj_filepath;
 extern GLuint texture[3];
 
 
+//struct obj_model draw_points_buffer;
+//struct obj_model *pt_draw_points = &draw_points_buffer;
+
 struct obj_model model_buffer;
 struct obj_model *pt_model_buffer = &model_buffer;
-
 struct obj_info obj_info;
 struct obj_info* pt_obinfo = &obj_info;
 
 
 struct obj_model loader;
 struct obj_model *pt_loader = &loader;
-
 struct obj_info loader_info;
 struct obj_info *pt_loadernfo = &loader_info;
 
@@ -412,16 +415,50 @@ static void render_loop()
 
     if (draw_points)
     {
+        //VERY BUGGY! - I think it needs OpenGL4 amd up
+
+        // This is the first place in the code that required OpenGL library (not just Glut)
+
         //http://ogldev.atspace.co.uk/www/tutorial02/tutorial02.html 
-        vec3 vertices[1];
-        vertices[0] = newvec3(0.0f, 0.0f, 0.0f);
-        
+        //https://stackoverflow.com/questions/28849321/how-to-draw-polygon-with-3d-points-in-modern-opengl
+        //This is the first place in the code that required OpenGL library (not just Glut)
+       
+       
+        glPointSize(4);
+ 
+        //dump to GLFloats 
+        int numdr = 50;
+
+        GLfloat vertices[numdr*4];
+        GLfloat* pt_vert = vertices;
+
+        dump_points_GLfloat( pt_vert, pt_model_buffer, numdr );
+
+
         GLuint VBO;
 
-        //glGenBuffers(1, &VBO);
-        //glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         //glEnableVertexAttribArray(0);
+
+
+        // "Enable a port" to the shader pipeline
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        // pass information about how vertex array is composed
+        glVertexAttribPointer(0, // same as in glEnableVertexAttribArray(0)
+                              4, // # of coordinates that build a vertex
+                              GL_FLOAT, // data type
+                              GL_FALSE, // normalized?
+                              0,        // stride
+                              (void*)0);// vbo offset
+
+ 
+        glDrawArrays(GL_POINTS, 0, numdr);
+        //glDrawArrays(GL_LINES, 0, 2);
+        glDisableVertexAttribArray(0);
+
     }
 
     /******************************************/
@@ -532,6 +569,8 @@ static void render_loop()
         glEnd(); 
     }
 
+
+
     // glPopMatrix();
 
     // swap the other (double) buffer to display what just got drawn.
@@ -637,7 +676,7 @@ void olmec(int *argc, char** argv){
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
     glutInitWindowPosition(0, 0);  
     
-    window_id = glutCreateWindow("Olmec v.000001"); //create an opengl window 
+    window_id = glutCreateWindow("Olmec v.00002.51"); //create an opengl window 
 
     /***********/
     //THERE IS A MEMORY LEAK, PROBABLY IN THIS FUNCTION!!
@@ -1102,7 +1141,6 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
 
         //get_obj_info( pt_model_buffer, pt_obinfo);
-        //show(pt_model_buffer);
         show_obj_geom(pt_model_buffer);
     }
 
@@ -1115,7 +1153,10 @@ static void keyPressed(unsigned char key, int x, int y)
             draw_bbox = FALSE;
         }else{
             draw_bbox = TRUE;
+            show(pt_model_buffer);            
         }
+
+
 
     }
 
@@ -1230,4 +1271,44 @@ void init_pycore(void){
     //char* newfilepath = "3d_obj/normals.obj";
     //load_objfile( newfilepath, pt_model_buffer ); 
 }
+
+
+/**************************************************/
+
+/*
+       working - Draw example 
+
+        glPointSize(4);
+        
+        GLfloat vertices[] =
+        {
+            1.0f , 3.0f, 1.0f, 1.0f,
+            2.0f , 2.0f, 1.0f, 1.0f,
+            3.0f , 1.0f, 2.0f, 1.0f
+        };
+
+        GLuint VBO;
+
+        glGenBuffers(1, &VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        //glEnableVertexAttribArray(0);
+
+
+        // "Enable a port" to the shader pipeline
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        // pass information about how vertex array is composed
+        glVertexAttribPointer(0, // same as in glEnableVertexAttribArray(0)
+                              4, // # of coordinates that build a vertex
+                              GL_FLOAT, // data type
+                              GL_FALSE, // normalized?
+                              0,        // stride
+                              (void*)0);// vbo offset
+
+ 
+        glDrawArrays(GL_POINTS, 0, 3);
+        //glDrawArrays(GL_LINES, 0, 2);
+        glDisableVertexAttribArray(0);
+*/
 

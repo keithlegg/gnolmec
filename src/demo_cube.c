@@ -52,7 +52,7 @@ static bool g_bLightingEnabled = TRUE;
 static bool g_bFillPolygons = TRUE;
 static bool g_bTexture = FALSE;
 
-static GLfloat g_fViewDistance = 3 * VIEWING_DISTANCE_MIN;
+
 static int g_yClick = 0;
 
 extern bool scr_full_toglr;
@@ -245,9 +245,6 @@ static void maya_mouse_button(int button, int state, int x, int y)
     if (button == GLUT_LEFT_BUTTON)
       {
         g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        g_yClick = y - 3 * g_fViewDistance;
-        
-        // printf("maya left click \n");
 
       }
 

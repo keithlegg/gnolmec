@@ -203,6 +203,42 @@ glGenBuffers(1, &vbo_triangle_colors);
 /***************************************************************/
 /***************************************************************/
 
+void dump_points_GLfloat( GLfloat* verts, obj_model* pt_object, int numpts)
+{
+    
+    int y = 0;
+    int num_gl_pts = 0;
+    //printf( "# size of %d \n", sizeof(GLfloat ) );
+
+
+    //vec3 point        = pt_object->points[20];
+    //print_vec3( point );
+    
+    /*
+    vec3 point = newvec3(1.0, 1.0, 1.0);
+    verts[0] = (GLfloat)point.x;
+    verts[1] = (GLfloat)point.y;
+    verts[2] = (GLfloat)point.z;
+    verts[3] = (GLfloat)1.0f;
+    */
+    
+    for (y=0;y<numpts;y++){
+        
+        vec3 point = pt_object->points[y];
+        
+        verts[num_gl_pts] =  (GLfloat)point.x; num_gl_pts++;
+        verts[num_gl_pts] =  (GLfloat)point.y; num_gl_pts++;
+        verts[num_gl_pts] =  (GLfloat)point.z; num_gl_pts++;
+        verts[num_gl_pts] =  (GLfloat)1.0f; num_gl_pts++; // dont know what the 4th is ??????  
+          
+
+    }
+    
+
+
+}
+
+
 
 // initialize OpenGL  
 void InitGL(int Width, int Height)          // We call this right after our OpenGL window is created.
