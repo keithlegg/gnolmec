@@ -413,9 +413,9 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    #gen_normals()
+    gen_normals()
 
-    face_extrude()
+    #face_extrude()
     
 
     

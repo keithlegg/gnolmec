@@ -159,6 +159,45 @@ void shader_test(void){
 */
 
 
+
+
+/*
+//glewInit();
+ 
+GLuint vbo_triangle, vbo_triangle_colors;
+GLint attribute_coord2d, attribute_v_color;
+
+GLfloat triangle_colors[] = {
+   1.0, 1.0, 0.0,
+   0.0, 0.0, 1.0,
+   1.0, 0.0, 0.0,
+};
+  
+glGenBuffers(1, &vbo_triangle_colors);
+//glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle_colors);
+//glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_colors), triangle_colors, GL_STATIC_DRAW);
+
+
+//attribute_name = "v_color";
+// attribute_v_color = glGetAttribLocation(program, attribute_name);
+// if (attribute_v_color == -1) {
+//   cerr << "Could not bind attribute " << attribute_name << endl;
+//   return false;
+// }
+*/
+
+
+
+
+// vec3 Intensity = Intensity(ambient) * DiffuseColor + Intensity(diffuse) * DiffuseColor + Intensity(specular) * SpecularColo
+// vec3 I = Ia * Kd + Id * Kd + Is * Ks
+// vec3 I = (Ia + Id) * Kd + Is * Ks
+
+// vec3 Intensity(diffuse) = Intensity(incoming_lightray) * DiffuseSurfaceColor * cosine(phi)
+// vec3 Intensity(specular) = Intensity(incoming_lightray) * SpecularSurfaceColor * cosine(phi) ^ Shininess
+
+
+
 /***************************************************************/
 /***************************************************************/
 /***************************************************************/
@@ -176,7 +215,7 @@ void InitGL(int Width, int Height)          // We call this right after our Open
     glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
     glShadeModel(GL_SMOOTH);             // Enables Smooth Color Shading
     
-    
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();                     
     gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window

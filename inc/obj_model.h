@@ -90,6 +90,7 @@ typedef struct obj_info{
 
 };
 
+void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj);
 
 void get_obj_info(struct obj_model* loader, struct obj_info* obinfo);
 

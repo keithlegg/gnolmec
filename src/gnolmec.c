@@ -87,11 +87,18 @@ extern GLuint texture[3];
 struct obj_model model_buffer;
 struct obj_model *pt_model_buffer = &model_buffer;
 
-// struct obj_model loader;
-// struct obj_model *pt_loader = &loader;
-
 struct obj_info obj_info;
 struct obj_info* pt_obinfo = &obj_info;
+
+
+struct obj_model loader;
+struct obj_model *pt_loader = &loader;
+
+struct obj_info loader_info;
+struct obj_info *pt_loadernfo = &loader_info;
+
+
+
 
 
 float xrot, yrot, zrot; 
@@ -131,8 +138,8 @@ float ticker = 0;
 // float total_orbitx;
 
 bool view_ismoving = FALSE;
-
-
+bool mouseLeftDown = FALSE;
+bool mouseRightDown = FALSE;
 float mouseX, mouseY = 0.0;
 
 // float cameraAngleX;
@@ -141,7 +148,7 @@ float mouseX, mouseY = 0.0;
 
 float orbit_x;     // 2d click to set 3d view 
 float orbit_y;   
-float orbit_dist = -5.0; // Z zoom 
+float orbit_dist = 5.0; // Z zoom 
 
 float cam_rotx = 0; // camera rotation
 float cam_roty = 0;
@@ -152,8 +159,7 @@ float cam_posy = 0;
 float cam_posz = 0;
 
 
-//attempt to port code from Unity Engine into pure C 
-float moveSpeed    = 1.5f;
+float moveSpeed    = 2.1f;
 /*
 float zoomSpeed    = 1.2f;
 float rotateSpeed  = 4.0f;
@@ -169,6 +175,59 @@ vec3 orbt_xform_original;
 int VIEW_MODE = -1; 
 
 
+/***************************************/
+/***************************************/
+
+ 
+// write 2d text using GLUT
+// The projection matrix must be set to orthogonal before call this function.
+ 
+void drawString(const char *str, int x, int y, float color[4], void *font)
+{
+    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT); // lighting and color mask
+    glDisable(GL_LIGHTING);     // need to disable lighting for proper text color
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4fv(color);          // set text color
+    glRasterPos2i(x, y);        // place text position
+
+    // loop all characters in the string
+    while(*str)
+    {
+        glutBitmapCharacter(font, *str);
+        ++str;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glPopAttrib();
+}
+
+
+void drawString3D(const char *str, float pos[3], float color[4], void *font)
+{
+    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT); // lighting and color mask
+    glDisable(GL_LIGHTING);     // need to disable lighting for proper text color
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4fv(color);          // set text color
+    glRasterPos3fv(pos);        // place text position
+
+    // loop all characters in the string
+    while(*str)
+    {
+        glutBitmapCharacter(font, *str);
+        ++str;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glPopAttrib();
+}
+
+
+
+/***************************************/
 
 
 void toggle_polygon_draw(){
@@ -238,53 +297,31 @@ void reset_view(void){
  
     orbit_x    = .125; //2d click to set 3d view 
     orbit_y    = -.06;   
-    orbit_dist = 1.0;  
+    orbit_dist = 5.0;  
 
     cam_rotx = 0; //camera rotation
     cam_roty = 0;
     cam_rotz = 0;
 
-    cam_posx =  .5; //camera location
-    cam_posy = 1.5;
-    cam_posz =  .5;
+    cam_posx =  0; //camera location
+    cam_posy =  0;
+    cam_posz =  0;
 
 }
 
 
 /***************************************/
 
-/*
-//glewInit();
- 
-GLuint vbo_triangle, vbo_triangle_colors;
-GLint attribute_coord2d, attribute_v_color;
+void text_experiment(){
+    const int   TEXT_HEIGHT     = 13;
+    char* mystr = "hello!";
+    float color[4] = {1, 1, 1, 1};
+    void *font = GLUT_BITMAP_8_BY_13;    
+    //drawString( mystr, 1, scr_size_y-TEXT_HEIGHT, color, font);
+    drawString( mystr, -100, -100, color, font);
 
-GLfloat triangle_colors[] = {
-   1.0, 1.0, 0.0,
-   0.0, 0.0, 1.0,
-   1.0, 0.0, 0.0,
-};
-  
-glGenBuffers(1, &vbo_triangle_colors);
-//glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle_colors);
-//glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_colors), triangle_colors, GL_STATIC_DRAW);
+}
 
-
-//attribute_name = "v_color";
-// attribute_v_color = glGetAttribLocation(program, attribute_name);
-// if (attribute_v_color == -1) {
-//   cerr << "Could not bind attribute " << attribute_name << endl;
-//   return false;
-// }
-*/
-
-
-    // vec3 Intensity = Intensity(ambient) * DiffuseColor + Intensity(diffuse) * DiffuseColor + Intensity(specular) * SpecularColo
-    // vec3 I = Ia * Kd + Id * Kd + Is * Ks
-    // vec3 I = (Ia + Id) * Kd + Is * Ks
-
-    // vec3 Intensity(diffuse) = Intensity(incoming_lightray) * DiffuseSurfaceColor * cosine(phi)
-    // vec3 Intensity(specular) = Intensity(incoming_lightray) * SpecularSurfaceColor * cosine(phi) ^ Shininess
 
 
 
@@ -333,9 +370,9 @@ static void render_loop()
 
         default:   
             // cheapo perspective navigation  
-            cam_posx = sin( orbit_x * moveSpeed ) * orbit_dist;
-            cam_posy =     -orbit_y * moveSpeed   * orbit_dist;
-            cam_posz = cos( orbit_x * moveSpeed ) * orbit_dist;
+            cam_posx = -sin( orbit_x * moveSpeed )   * orbit_dist;
+            cam_posy =     -orbit_y   * (orbit_dist/2)       ;
+            cam_posz = cos( orbit_x * moveSpeed )   * orbit_dist;
 
             //for now use gluLookAt for all view modes -  
             gluLookAt( cam_posx, cam_posy , cam_posz,  // look from camera XYZ
@@ -537,7 +574,6 @@ void set_view_ortho(void)
     // glMatrixMode(GL_PROJECTION);
     // glLoadIdentity();
     // glOrtho(0, scr_size_x, 0, scr_size_y, -1, 1);
-    // // switch to modelview matrix in order to set scene
     // glMatrixMode(GL_MODELVIEW);
     // glLoadIdentity();
 
@@ -627,7 +663,9 @@ static void keyPressed(unsigned char key, int x, int y)
     {
         reset_view();
         VIEW_MODE = 2; 
-        set_view_ortho();        
+        set_view_ortho();    
+        text_experiment();
+
     }
 
 
@@ -690,12 +728,12 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 45) //minus
     { 
-        orbit_dist--;  
+        orbit_dist-=.1;  
     }
     
     if (key == 61) //plus
     { 
-        orbit_dist++;  
+        orbit_dist+=.1;  
     }
 
      //------
@@ -730,11 +768,17 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 111) //o
     { 
-        reset_objfile(pt_model_buffer, pt_obinfo);
-        
+
         char* file2 = "3d_obj/PYCORE.obj";
-        load_objfile(file2, pt_model_buffer );
+        
+        //load_objfile(file2, pt_loader );
+        //get_obj_info( pt_loader, pt_obinfo);
+
+        reset_objfile(pt_loader, pt_loadernfo);
+        load_objfile(file2, pt_loader ); 
+        insert_geom(pt_loader, pt_model_buffer);
         get_obj_info( pt_model_buffer, pt_obinfo);
+
     }
 
     if (key == 112) //p
@@ -751,14 +795,19 @@ static void keyPressed(unsigned char key, int x, int y)
     //------
     if (key == 82) //shift r
     { 
+        reset_objfile(pt_loader      , pt_obinfo);
         reset_objfile(pt_model_buffer, pt_obinfo);
     }
 
     if (key == 114) //r
     { 
-        // reset_objfile(pt_model_buffer);
-        load_objfile(obj_filepath, pt_model_buffer ); 
+        //load_objfile(obj_filepath, pt_model_buffer ); 
+        //get_obj_info( pt_model_buffer, pt_obinfo);
+
+        load_objfile(obj_filepath, pt_loader ); 
+        insert_geom(pt_loader, pt_model_buffer);
         get_obj_info( pt_model_buffer, pt_obinfo);
+
     }
 
     if (key == 102) //f
@@ -794,13 +843,18 @@ static void keyPressed(unsigned char key, int x, int y)
 void olmec_mouse_button(int button, int state, int x, int y)
 {
 
+    mouseX = x;
+    mouseY = y;
+
     //left click 
     if (button == GLUT_LEFT_BUTTON)
       {
-        //g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
-        //g_yClick = y - 3 * g_fViewDistance;
-        
-        // printf("left click \n");
+        if(state == GLUT_DOWN)
+        {
+            mouseLeftDown = true;
+        }
+        else if(state == GLUT_UP)
+            mouseLeftDown = false;
 
       }
 
@@ -811,13 +865,17 @@ void olmec_mouse_button(int button, int state, int x, int y)
            if (state == GLUT_UP) return; 
 
            if (button == 3){
-               if (orbit_dist < -1.5){
-                   orbit_dist+=1;                
-               }
+               //if (orbit_dist < -1.5){
+               orbit_dist+=.1;  
+               //printf("# orbit dist %f \n", orbit_dist );                                 
+               //}
   
            }
            if (button == 4){
-               orbit_dist--; 
+               //if (orbit_dist>0){ 
+                   orbit_dist-=.1; 
+                   //printf("# orbit dist %f \n", orbit_dist );
+               //}
            }
       }else{  // normal button event
            if (state == GLUT_DOWN){
@@ -830,7 +888,12 @@ void olmec_mouse_button(int button, int state, int x, int y)
     if (button == GLUT_RIGHT_BUTTON)
       {
         
-        printf("right click \n");
+        if(state == GLUT_DOWN)
+        {
+            mouseRightDown = true;
+        }
+        else if(state == GLUT_UP)
+            mouseRightDown = false;
 
       }
 
@@ -838,48 +901,57 @@ void olmec_mouse_button(int button, int state, int x, int y)
 
 /********************************************/
 
+float coefficient = 0.005f;     
+
 void olmec_mouse_motion(int x, int y)
 {
     // take offset from center of screen to get "X,Y delta"
     float center_y = (float)scr_size_y/2;
     float center_x = (float)scr_size_x/2;
 
+
     switch (VIEW_MODE) 
     { 
         // orthographic side  (key 2)
         case 1: 
             view_ismoving = TRUE;
-            cam_posz = -(center_x-x)/scr_size_x; 
-            cam_posy = -(center_y-y)/scr_size_y; 
+            cam_posz = -(center_x-x) * coefficient; 
+            cam_posy = -(center_y-y) * coefficient; 
         break; 
     
         // orthographic top   (key shift 2)
         case 2:  
             view_ismoving = TRUE;
-            cam_posx = (center_x-x)/scr_size_x; 
-            cam_posz = (center_y-y)/scr_size_y;  
+            cam_posx = (center_x-x) * coefficient; 
+            cam_posz = (center_y-y) * coefficient;  
         break; 
     
         // orthographic front  (key 3)
         case 3:  
             view_ismoving = TRUE;
-            cam_posx = (center_x-x)/scr_size_x; 
-            cam_posy = -(center_y-y)/scr_size_y; 
+            cam_posx = (center_x-x)  * coefficient; 
+            cam_posy = -(center_y-y) * coefficient; 
         break; 
     
 
         default:  
-            view_ismoving = TRUE;
-            
-            orbit_x = (center_x-x)/scr_size_x; 
-            orbit_y = (center_y-y)/scr_size_y; 
-            
-            // orbit_x += (x - mouseX);
-            // orbit_y += (y-  mouseY);
-            // mouseX = x;
-            // mouseY = y;
+            if(mouseLeftDown)
+            {        
+                view_ismoving = TRUE;
+                
+                orbit_x += (x-mouseX) * coefficient; 
+                orbit_y += (y-mouseY) * coefficient; 
+                mouseX = x;
+                mouseY = y;
 
-            //printf("# mouse motion %d %d %f %f \n", x,y, mouseX, mouseY );
+                //printf("# mouse motion %d %d %f %f \n", x,y, orbit_x, orbit_y );
+            }
+
+            if(mouseRightDown)
+            {
+                orbit_dist -= (y - mouseY) * 0.02f;
+                mouseY = y;
+            }
 
         break;
 
@@ -962,7 +1034,11 @@ void olmec(int *argc, char** argv){
     set_colors();
 
 
-    load_objfile(obj_filepath, pt_model_buffer ); 
+    //load_objfile(obj_filepath, pt_model_buffer ); 
+
+    load_objfile(obj_filepath, pt_loader ); 
+    insert_geom(pt_loader, pt_model_buffer);
+
 
     warnings();
 

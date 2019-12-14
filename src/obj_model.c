@@ -23,10 +23,7 @@
 
 
 int uv_cnt   = 0;  // number of UVs loaded 
-int vtx_cnt  = 0;  // number of verts loaded 
-int line_cnt = 0;  
-int tri_cnt  = 0;  // number of faces loaded 
-int quad_cnt = 0;   
+ 
 
 
 
@@ -83,16 +80,70 @@ void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
 
 }
 
+/*******************************************************************/
+void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
+{
+
+    int x = 0;
+
+    int pt_idx    = 0;
+    int tri_idx   = 0;
+    int quad_idx  = 0;
+    int line_idx  = 0;
+
+    //printf("## ##  %d %d \n", from_obj->num_pts, from_obj->num_tris);
+
+    //points
+    for (x=0;x<from_obj->num_pts;x++)
+    {
+        to_obj->points[pt_idx] = from_obj->points[x];
+        pt_idx++; 
+    }
+
+    //triangles
+    for (x=0;x<from_obj->num_tris;x++)
+    {
+        to_obj->tris[tri_idx] = from_obj->tris[x];
+        tri_idx++; 
+    }
+
+    //quads 
+    for (x=0;x<from_obj->num_quads;x++)
+    {
+        to_obj->quads[quad_idx] = from_obj->quads[x];
+        quad_idx++; 
+    }
+
+    //lines
+    for (x=0;x<from_obj->num_lines;x++)
+    {
+        to_obj->lines[line_idx] = from_obj->lines[x];
+        line_idx++; 
+    }
+
+    //normals 
+
+    //UVs 
+
+
+    to_obj->num_pts = pt_idx;
+    //to_obj->num_uvs = 0;
+    to_obj->num_lines = line_idx;
+    to_obj->num_tris = tri_idx;
+    to_obj->num_quads = quad_idx;  
+   
+
+    //printf("# %d %d \n", to_obj->num_pts, to_obj->num_tris);
+
+}
+
 
 /*******************************************************************/
 void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
 {
 
-    uv_cnt   = 0;  // number of UVs loaded 
-    vtx_cnt  = 0;  // number of verts loaded 
-    line_cnt = 0;  
-    tri_cnt  = 0;  // number of faces loaded 
-    quad_cnt = 0;        
+    // uv_cnt   = 0;  // number UVs loaded 
+    
 
     loader->num_pts = 0;
     loader->num_uvs = 0;
@@ -138,12 +189,6 @@ void load_objfile( char *filepath, struct obj_model* loader)
     fp = fopen(filepath, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
-
-    // uv_cnt   = 0;  // number of UVs loaded 
-    // vtx_cnt  = 0;  // number of verts loaded 
-    // line_cnt = 0;  
-    // tri_cnt  = 0;  // number of faces loaded 
-    // quad_cnt = 0;   
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
@@ -197,8 +242,8 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 //if three points its a proper vertex 
                 if (vidx==3){
                     vec3 vpt = newvec3( xc, yc, zc  );
-                    loader->points[vtx_cnt] = vpt;
-                    vtx_cnt++;
+                    loader->points[loader->num_pts] = vpt;
+                    loader->num_pts++;
                     // print_vec3(vpt); //to view output 
                 }                
 
@@ -249,9 +294,9 @@ void load_objfile( char *filepath, struct obj_model* loader)
                 /***********/                    
                 //if two face indices - its a line  
                 if (fidx==2){
-                    loader->lines[line_cnt].pt1 = pt1;
-                    loader->lines[line_cnt].pt2 = pt2;                          
-                    line_cnt++;                    
+                    loader->lines[loader->num_lines].pt1 = pt1;
+                    loader->lines[loader->num_lines].pt2 = pt2;                          
+                    loader->num_lines++;                    
                 }
 
                 if (fidx==3){
@@ -260,20 +305,20 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     // print_vec3(loader->points[pt1]);
 
                     //or just store the indices
-                    loader->tris[tri_cnt].pt1 = pt1;
-                    loader->tris[tri_cnt].pt2 = pt2;                          
-                    loader->tris[tri_cnt].pt3 = pt3;
+                    loader->tris[loader->num_tris].pt1 = pt1;
+                    loader->tris[loader->num_tris].pt2 = pt2;                          
+                    loader->tris[loader->num_tris].pt3 = pt3;
 
-                    tri_cnt++;
+                    loader->num_tris++;
 
                 }
 
                 if (fidx==4){
-                    loader->quads[quad_cnt].pt1 = pt1;
-                    loader->quads[quad_cnt].pt2 = pt2;                          
-                    loader->quads[quad_cnt].pt3 = pt3;
-                    loader->quads[quad_cnt].pt4 = pt4;
-                    quad_cnt++;
+                    loader->quads[loader->num_quads].pt1 = pt1;
+                    loader->quads[loader->num_quads].pt2 = pt2;                          
+                    loader->quads[loader->num_quads].pt3 = pt3;
+                    loader->quads[loader->num_quads].pt4 = pt4;
+                    loader->num_quads++;
                 }
 
             }//end face loader
@@ -298,14 +343,11 @@ void load_objfile( char *filepath, struct obj_model* loader)
     if (line)
         free(line);
 
-    loader->num_pts   = vtx_cnt;
-    loader->num_lines = line_cnt;
-    loader->num_tris  = tri_cnt;
-    loader->num_quads = quad_cnt;
-
+    // ---------------------------------------------
     loader->num_uvs = 0;
 
-    printf("\n\n---------------------------\n", vtx_cnt ) ;
+
+    printf("\n\n---------------------------\n"  ) ;
     printf("%d vertices loaded   \n", loader->num_pts    ) ;
     printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
     printf("%d lines loaded      \n", loader->num_lines  ) ;
