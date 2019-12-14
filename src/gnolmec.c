@@ -1,11 +1,10 @@
 
 /*************************************************************/
 /*
-   demo_olmec.c 
-     
-      Named Olmec - because its not Maya :) 
-      
-      make a 3D environment to view models and play in that is navigatable in the way Maya does it
+   gnolmec.c 
+
+       make a 3D environment to view models and play in that is navigatable in the way Maya does it
+       Named Olmec - because its not Maya :) 
 
 
        -------------------------------------------------------------------------------------
@@ -18,23 +17,23 @@
        -------------------------------------------------------------------------------------
 
  
+    
 
     TODO:
+        - textures, line color, lighting 
         - obj model_buffer - get object info 
         - obj model_buffer - calc bbox /bsphere 
+        - load multiple objects in scene ( layers )  
+        - object save 
+        - think about a scenegraph   
 
-        - TEXTURES, LINE COLORS
-        - LIGHTING 
-        - LOAD MULTIPLE OBJECTS IN SCENE 
-        - OBJ SAVE 
         - WIDGETS, BUTTONS
-
+        - ON SCREEN TEXT 
         - HANDLE PYCORE ERRORS 
         - PREFS FORMAT 
         - SCENE FORMAT ? (load/save?)
-        - ON SCREEN TEXT 
         - TCP socket ? 
-
+        - (its a cheap, gay-menjun)
 
       Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
@@ -45,7 +44,9 @@
 #include <stdio.h>
 #include <unistd.h>      
 #include <cmath>
+
 #include "gl_setup.h"
+
 #include "bitmap_io.h" // includes framebuffer.h, colors, etc 
 #include "point_op.h"
 #include "obj_model.h"
@@ -60,14 +61,22 @@ extern int scr_size_y;
 extern bool scr_full_toglr;
 
 // view prefs 
+bool DRAW_POLYS      = TRUE;
+
+bool draw_points     = FALSE; //not working, test of VBO  
 bool draw_lines      = TRUE;
+
 bool draw_quads      = TRUE;
 bool draw_triangles  = TRUE;
+
 bool draw_grid       = TRUE;
 bool draw_cntrgrid   = TRUE;
 bool draw_bbox       = FALSE;
 
-/***********/
+
+
+
+/***************************************/
 // object related 
 
 extern char* obj_filepath;
@@ -89,12 +98,13 @@ float xrot, yrot, zrot;
 
 float obj_len_x, obj_len_y, obj_len_z = 0;
 
-/***********/
+/***************************************/
 // data containers 
 
 extern Image* main_bg_bfr      ; 
 extern Image* imageloaded_bfr2 ; 
 extern Image* imageloaded_bfr  ; 
+
 
 RGBType line_color;
 RGBType *pt_linecolor = &line_color;
@@ -135,32 +145,46 @@ float cam_posy = 0;
 float cam_posz = 0;
 
 
-
-
 //attempt to port code from Unity Engine into pure C 
-
-float zoomSpeed    = 1.2f;
 float moveSpeed    = 1.9f;
+/*
+float zoomSpeed    = 1.2f;
 float rotateSpeed  = 4.0f;
 vec3 startpos = newvec3(0.0, 130.0, 60.0);
 
 m33 capsuleObj; //represents a Unity/Maya Transform node 
 quaternion orbt_rot_original;
 vec3 orbt_xform_original;
+*/
 
 
-void set_screen_square(void){
-    
-    if (scr_size_x>scr_size_y){
-        scr_size_y = scr_size_x;
-        glutReshapeWindow(scr_size_x, scr_size_x);
+/***************************************/
+int VIEW_MODE = -1; 
+
+/*
+enum view {
+    VIEW_PERSP,
+    VIEW_FRONT,
+    VIEW_SIDE,
+    VEIW_TOP
+};
+*/
+
+
+void toggle_polygon_draw(){
+    if (DRAW_POLYS == TRUE){
+        DRAW_POLYS = FALSE;
+        
+        draw_quads      = FALSE;
+        draw_triangles  = FALSE;
+
     }else{
-        scr_size_x = scr_size_y;
-        glutReshapeWindow(scr_size_y, scr_size_y);
+        DRAW_POLYS = TRUE;
+        
+        draw_quads      = TRUE;
+        draw_triangles  = TRUE;
+
     }
-    
-
-
 }
 
 /***************************************/
@@ -261,6 +285,35 @@ void set_camera(void){
 }
 */
 
+/***************************************/
+
+/*
+//glewInit();
+ 
+GLuint vbo_triangle, vbo_triangle_colors;
+GLint attribute_coord2d, attribute_v_color;
+
+GLfloat triangle_colors[] = {
+   1.0, 1.0, 0.0,
+   0.0, 0.0, 1.0,
+   1.0, 0.0, 0.0,
+};
+  
+glGenBuffers(1, &vbo_triangle_colors);
+//glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle_colors);
+//glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_colors), triangle_colors, GL_STATIC_DRAW);
+
+
+//attribute_name = "v_color";
+// attribute_v_color = glGetAttribLocation(program, attribute_name);
+// if (attribute_v_color == -1) {
+//   cerr << "Could not bind attribute " << attribute_name << endl;
+//   return false;
+// }
+*/
+
+
+
 
 
 static void render_loop()
@@ -290,26 +343,63 @@ static void render_loop()
     // if (orbit_dist < obj_len_z){
     //     orbit_dist = obj_len_z;
     // }
-            
-    cam_posx = sin( orbit_x * moveSpeed ) * orbit_dist;
-    cam_posy =     -orbit_y * moveSpeed   * orbit_dist;
-    cam_posz = cos( orbit_x * moveSpeed ) * orbit_dist;
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+
+    switch (VIEW_MODE) 
+    { 
+        // orthographic side 
+        case 1: 
+            //I dont like doing it this way - have the target follow camera 
+            gluLookAt( 1.0   , cam_posy , cam_posz,  // look from camera XYZ
+                       0.0   , cam_posy , cam_posz,  // look at the origin
+                       0.0   , 1.0      , 0.0        // positive Y up vector
+            );        
+        break; 
+    
+        // orthographic top   
+        case 2:  
+            gluLookAt( cam_posx , 1.0   , cam_posz,  // look from camera XYZ
+                       cam_posx , 0.0   , cam_posz,  // look at the origin
+                       1.0      , 0.0   , 0.0        // positive X (Y up when looking down)
+            );   
+
+        break; 
+    
+        // orthographic front  
+        case 3:  
+
+            gluLookAt( cam_posx , cam_posy  , 1.0,   // look from camera XYZ
+                       cam_posx , cam_posy  , 0.0,   // look at the origin
+                       0.0      , 1.0       , 0.0    // positive Y up vector
+            );         
+        break; 
+    
+
+        default:   
+            // cheapo perspective navigation  
+            cam_posx = sin( orbit_x * moveSpeed ) * orbit_dist;
+            cam_posy =     -orbit_y * moveSpeed   * orbit_dist;
+            cam_posz = cos( orbit_x * moveSpeed ) * orbit_dist;
+
+            //for now use gluLookAt for all view modes -  
+            gluLookAt( cam_posx, cam_posy , cam_posz,  // look from camera XYZ
+                       0.0     , 0.0      , 0.0,       // look at the origin
+                       0.0     , 1.0      , 0.0        // positive Y up vector
+            ); 
+
+        break;   
+    } 
+
+
 
 
     /******************************************/
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
 
-    /******************************************/
-    //process geometry GL_PROJECTION
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();           
-    
-    gluLookAt( cam_posx, cam_posy , cam_posz,  // look from camera XYZ
-                 0.0, 0.0   , 0.0,    // look at the origin
-                 0.0, 1.0   , 0.0     // positive Y up vector
-             ); 
 
     graticulate(&draw_grid, &draw_cntrgrid, pt_gridcolor, pt_gridcolor2);
 
@@ -323,7 +413,7 @@ static void render_loop()
     int q_i, p_i, f_i = 0;
  
     /******************************************/
-    bool draw_points = TRUE;
+
 
     if (draw_points)
     {
@@ -455,7 +545,7 @@ static void render_loop()
 
 /***************************************/
 void animate(){
-    ticker += .01;
+    //ticker += .01;
     render_loop();
 }
 /***************************************/
@@ -474,6 +564,25 @@ static void reshape_window(int width, int height)
 }//end resize callback
 
 /***************************************/
+void set_view_ortho(void)
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();                   
+    gluOrtho2D(scr_size_x, scr_size_y, .001, 10.0 ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    glMatrixMode(GL_MODELVIEW);
+
+        // // set viewport to be the entire window
+        // //glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
+        // // set orthographic viewing frustum
+        // glMatrixMode(GL_PROJECTION);
+        // glLoadIdentity();
+        // glOrtho(0, scr_size_x, 0, scr_size_y, -1, 1);
+        // // switch to modelview matrix in order to set scene
+        // glMatrixMode(GL_MODELVIEW);
+        // glLoadIdentity();
+
+}
+
 
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
@@ -493,63 +602,74 @@ static void keyPressed(unsigned char key, int x, int y)
 
     /*
 
-        // 1 - persp 
-        // 2 - ortho front (pos Z)
-        // 3 - ortho side  
+  
+        //       2 - ortho side (pos x)
+        // shift 2 - ortho side (neg x) 
+        //       3 - ortho front  
+        // shift 3 - ortho top  
 
-        //MAYA keys 
-        // 4 wireframe 
-        // 5 shaded 
-        // 6 shaded textured 
-        // 7 use all lights 
-        // q - select tool 
+
         // a - frame all objects 
+        // q - select tool         
         // w - move 
         // e - rotate 
         // r - scale 
+
         // f - frame selected 
         // t - show manipulator 
         // p - parent 
         // shft p - unparent 
-
-
-
-
     */
-    
+   
 
 
-
-
-    if (key == 49) //1
+    if (key == 49) //1 - perspective mode
     { 
+      
+        VIEW_MODE = -1; 
 
+        // set viewport to be the entire window
+        glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
+
+        // set perspective viewing frustum
         glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();                  
+        glLoadIdentity();
+        gluPerspective(45.0f, (float)(scr_size_x)/scr_size_y, 1.0f, 1000.0f); // FOV, AspectRatio, NearClip, FarClip
 
-        gluPerspective(45.0f,(GLfloat)scr_size_x/(GLfloat)scr_size_y,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
-       
+        // switch to modelview matrix in order to set scene
         glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
     }
 
-    if (key == 50) //2
+    if (key == 50) //2 - orthographic side 
     { 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();                   
+        VIEW_MODE = 1; 
+        set_view_ortho();
+    }
 
-        gluOrtho2D(scr_size_x/2, scr_size_y/2, 500, 500); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-
-        glMatrixMode(GL_MODELVIEW);
+    if (key == 64) //shift 2 - orthographic top  
+    {
+        VIEW_MODE = 2; 
+        set_view_ortho();        
     }
 
 
-    if (key == 51) //3
+    if (key == 51) //3 - orthographic front 
     { 
 
+        VIEW_MODE = 3; 
+        set_view_ortho();
     }
 
-    if (key == 36) //Shift 4
+    if (key == 35) //shift 3
+    {
+        VIEW_MODE = 4; 
+        set_view_ortho();        
+    }
+
+
+    if (key == 36) //Shift 4 - display as points 
     { 
         // to draw points  
         glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
@@ -557,7 +677,7 @@ static void keyPressed(unsigned char key, int x, int y)
     
     }
 
-    if (key == 52) //4
+    if (key == 52) //4 - display as wire 
     { 
         glDisable(GL_TEXTURE_2D);        
         glDisable(GL_LIGHTING);
@@ -565,9 +685,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
-
-
-    if (key == 53) //5
+    if (key == 53) //5 - display as solid, no texture  
     { 
         // glShadeModel(GL_SMOOTH);              
 
@@ -576,7 +694,7 @@ static void keyPressed(unsigned char key, int x, int y)
         glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     }
     
-    if (key == 54) //6
+    if (key == 54) //6 - display as solid, with texture 
     { 
 
         glEnable(GL_TEXTURE_2D);
@@ -639,7 +757,7 @@ static void keyPressed(unsigned char key, int x, int y)
         
         char* file2 = "3d_obj/PYCORE.obj";
         load_objfile(file2, pt_model_buffer );
-
+        get_obj_info( pt_model_buffer, pt_obinfo);
     }
 
     if (key == 112) //p
@@ -709,7 +827,7 @@ void olmec_mouse_button(int button, int state, int x, int y)
         //g_bButton1Down = (state == GLUT_DOWN) ? TRUE : FALSE;
         //g_yClick = y - 3 * g_fViewDistance;
         
-        // printf("olmec left click \n");
+        printf("left click \n");
 
       }
 
@@ -739,12 +857,77 @@ void olmec_mouse_button(int button, int state, int x, int y)
     if (button == GLUT_RIGHT_BUTTON)
       {
         
-        // printf("olmec right click \n");
+        printf("right click \n");
 
       }
 
 }
 
+/********************************************/
+
+
+        
+    
+
+void olmec_mouse_motion(int x, int y)
+{
+    //take offset from center of screen to get "X,Y delta"
+    float center_y = (float)scr_size_y/2;
+    float center_x = (float)scr_size_x/2;
+
+    //2 - orthographic side       VIEW_MODE = 1;
+    //shift 2 - orthographic top  VIEW_MODE = 2; 
+    //3 - orthographic front      VIEW_MODE = 3; 
+    //shift 3                     VIEW_MODE = 4; 
+
+    switch (VIEW_MODE) 
+    { 
+        // orthographic side  (key 2)
+        case 1: 
+            view_ismoving = TRUE;
+            cam_posz = -(center_x-x)/scr_size_x; 
+            cam_posy = -(center_y-y)/scr_size_y; 
+        break; 
+    
+        // orthographic top   (key shift 2)
+        case 2:  
+            view_ismoving = TRUE;
+            cam_posz = (center_x-x)/scr_size_x; 
+            cam_posx = -(center_y-y)/scr_size_y;  
+        break; 
+    
+        // orthographic front  (key 3)
+        case 3:  
+            view_ismoving = TRUE;
+            cam_posx = (center_x-x)/scr_size_x; 
+            cam_posz = (center_y-y)/scr_size_y; 
+        break; 
+    
+
+        default:  
+            view_ismoving = TRUE;
+            orbit_x = (center_x-x)/scr_size_x; 
+            orbit_y = (center_y-y)/scr_size_y; 
+        break;
+
+    }
+    
+    /**************/
+
+    
+    // Test to attach geometry to camera (crappy widgets) 
+    
+    /*
+    GLfloat model[16]; 
+    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    m44 my_model_matrix;
+    m44 *pt_mmm = &my_model_matrix;
+    glutm44_to_m44(pt_mmm, model);
+
+    print_matrix(my_model_matrix);
+    */ 
+
+}
 
 
 /********************************************/
@@ -769,48 +952,6 @@ void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
 
 } 
 
-/********************************************/
-
-void olmec_mouse_motion(int x, int y)
-{
-    // If button1 pressed, zoom in/out if mouse is moved up/down.
-    view_ismoving = TRUE;
-
-    //take offset from center of screen to get "X,Y delta"
-    float center_x = (float)scr_size_x/2;
-    orbit_x = (center_x-x)/scr_size_x; 
-
-    float center_y = (float)scr_size_y/2;
-    orbit_y = (center_y-y)/scr_size_y; 
-
-    // printf("# orbit %f \n", orbit_y);
-
-    // if (g_bButton1Down)
-    // {
-    //     // printf("MOVE! %f %d \n", cube_x, y);
-    //     
-    //     // g_fViewDistance = (y - g_yClick) / 3.0;
-    //     // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-    //     //    g_fViewDistance = VIEWING_DISTANCE_MIN;
-    //     // glutPostRedisplay();
-    // }
-    
-    /**************/
-
-    
-    // Test to attach geometry to camera (crappy widgets) 
-    
-    /*
-    GLfloat model[16]; 
-    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
-    m44 my_model_matrix;
-    m44 *pt_mmm = &my_model_matrix;
-    glutm44_to_m44(pt_mmm, model);
-
-    print_matrix(my_model_matrix);
-    */ 
-
-}
 
 
 /********************************************/
@@ -993,7 +1134,7 @@ void olmec(int *argc, char** argv){
 
 void software_render(void){
     
-    //set_screen_square();
+    set_screen_square(&scr_size_x, &scr_size_y);
 
     //char* render_cmd = "runcommand";    
     char buffer[128];

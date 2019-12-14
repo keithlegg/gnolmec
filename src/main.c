@@ -152,6 +152,8 @@ void test_math_ops(void){
 }
 
 
+ 
+
 /***************************************/
 
 //char* obj_filepath = "3d_obj/cone.obj";
@@ -163,6 +165,7 @@ char* obj_filepath; //= "3d_obj/cross_product.obj";
 int main(int argc, char **argv) 
 {  
 
+ 
 
     char runmode[10];
 

@@ -76,10 +76,43 @@ GLGenVertexArray()
 */
 
 
+
+bool check_shader_compile_status(GLuint obj) {
+    GLint status;
+    glGetShaderiv(obj, GL_COMPILE_STATUS, &status);
+    if(status == GL_FALSE) {
+        GLint length;
+        glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &length);
+        //vector<char> log(length);
+        //glGetShaderInfoLog(obj, length, &length, &log[0]);
+        //cout << &log[0];
+        return false;
+    }
+    return true;
+}
+
+
+
+// helper to check and display for shader linker error
+bool check_program_link_status(GLuint obj) {
+    GLint status;
+    glGetProgramiv(obj, GL_LINK_STATUS, &status);
+    if(status == GL_FALSE) {
+        GLint length;
+        glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &length);
+        //vector<char> log(length);
+        //glGetProgramInfoLog(obj, length, &length, &log[0]);
+        //cout << &log[0];
+        return false;
+    }
+    return true;
+}
+
+
+
+/*
 //static GLfloat g_nearPlane = 1;
 //static GLfloat g_farPlane = 1000;
-
-
 
     // GLfloat mycolour[3] = {0,0,1}; // blue
     // glColor3fv( mycolour );        // blue using vector of floats
@@ -121,7 +154,49 @@ void shader_test(void){
 
     
 }
+*/
 
+
+/***************************************************************/
+/***************************************************************/
+/***************************************************************/
+/***************************************************************/
+
+
+// initialize OpenGL  
+void InitGL(int Width, int Height)          // We call this right after our OpenGL window is created.
+{
+        
+    glEnable(GL_TEXTURE_2D);             // Enable Texture Mapping
+    glClearColor(0.15f, 0.15f, 0.25f, 0.0f); // Clear The Background Color To Blue 
+    glClearDepth(1.0);                   // Enables Clearing Of The Depth Buffer
+    glDepthFunc(GL_LESS);                // The Type Of Depth Test To Do
+    glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
+    glShadeModel(GL_SMOOTH);             // Enables Smooth Color Shading
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();                    // Reset The Projection Matrix
+
+    //gluOrtho2D(0, 100, 0, 100); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
+    
+    glMatrixMode(GL_MODELVIEW);
+}
+
+
+
+/***************************************/
+void set_screen_square(int* sx, int* sy){
+    
+    if (*sx>*sy){
+        *sy = *sx;
+        glutReshapeWindow(*sx, *sx);
+    }else{
+        *sx = *sy;
+        glutReshapeWindow(*sy, *sy);
+    }
+
+}
 
 
 /***************************************/
@@ -270,28 +345,6 @@ void show_bbox(bool *pt_draw_bbox, struct obj_info* pt_obinfo, RGBType *pt_gridc
 
 }
 
-/***************************************************************/
-
-
-// initialize OpenGL  
-void InitGL(int Width, int Height)          // We call this right after our OpenGL window is created.
-{
-        
-    glEnable(GL_TEXTURE_2D);             // Enable Texture Mapping
-    glClearColor(0.15f, 0.15f, 0.25f, 0.0f); // Clear The Background Color To Blue 
-    glClearDepth(1.0);                   // Enables Clearing Of The Depth Buffer
-    glDepthFunc(GL_LESS);                // The Type Of Depth Test To Do
-    glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
-    glShadeModel(GL_SMOOTH);             // Enables Smooth Color Shading
-    
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();                    // Reset The Projection Matrix
-
-    //gluOrtho2D(0, 100, 0, 100); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-    gluPerspective(45.0f,(GLfloat)Width/(GLfloat)Height,0.1f,100.0f);   // Calculate The Aspect Ratio Of The Window
-    
-    glMatrixMode(GL_MODELVIEW);
-}
 
 
 

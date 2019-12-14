@@ -261,16 +261,7 @@ void MouseButton(int button, int state, int x, int y)
 /*****************************************/
 void MouseMotion(int x, int y)
 {
-    // If button1 pressed, zoom in/out if mouse is moved up/down.
-
-    if (g_bButton1Down)
-    {
-        
-        // g_fViewDistance = (y - g_yClick) / 3.0;
-        // if (g_fViewDistance < VIEWING_DISTANCE_MIN)
-        //    g_fViewDistance = VIEWING_DISTANCE_MIN;
-        // glutPostRedisplay();
-    }
+    if (g_bButton1Down){}
 }
 
 /*****************************************/
@@ -291,6 +282,8 @@ static void ReSizeGLScene(int Width, int Height)
     
     glMatrixMode(GL_MODELVIEW);
 }//end resize callback
+
+
 
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
