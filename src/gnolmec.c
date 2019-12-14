@@ -236,17 +236,17 @@ void warnings(void)
 
 void reset_view(void){
  
-    orbit_x   = .125; //2d click to set 3d view 
-    orbit_y   = -.06;   
+    orbit_x    = .125; //2d click to set 3d view 
+    orbit_y    = -.06;   
     orbit_dist = 1.0;  
 
     cam_rotx = 0; //camera rotation
     cam_roty = 0;
     cam_rotz = 0;
 
-    cam_posx = .5; //camera location
+    cam_posx =  .5; //camera location
     cam_posy = 1.5;
-    cam_posz = .5;
+    cam_posz =  .5;
 
 }
 
@@ -363,7 +363,7 @@ static void render_loop()
         case 2:  
             gluLookAt( cam_posx , 1.0   , cam_posz,  // look from camera XYZ
                        cam_posx , 0.0   , cam_posz,  // look at the origin
-                       1.0      , 0.0   , 0.0        // positive X (Y up when looking down)
+                       -1.0     , 0.0   , 0.0        // positive X (Y up when looking down)
             );   
 
         break; 
@@ -374,7 +374,10 @@ static void render_loop()
             gluLookAt( cam_posx , cam_posy  , 1.0,   // look from camera XYZ
                        cam_posx , cam_posy  , 0.0,   // look at the origin
                        0.0      , 1.0       , 0.0    // positive Y up vector
-            );         
+            );    
+
+            printf("# ortho front %f %f %f \n", cam_posx, cam_posy, cam_posz);
+
         break; 
     
 
@@ -568,7 +571,7 @@ void set_view_ortho(void)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();                   
-    gluOrtho2D(scr_size_x, scr_size_y, .001, 10.0 ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    gluOrtho2D(scr_size_x, scr_size_y, .001, orbit_dist ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
     glMatrixMode(GL_MODELVIEW);
 
         // // set viewport to be the entire window
@@ -644,12 +647,14 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 50) //2 - orthographic side 
     { 
+        reset_view();
         VIEW_MODE = 1; 
         set_view_ortho();
     }
 
     if (key == 64) //shift 2 - orthographic top  
     {
+        reset_view();
         VIEW_MODE = 2; 
         set_view_ortho();        
     }
@@ -657,13 +662,14 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 51) //3 - orthographic front 
     { 
-
+        reset_view();
         VIEW_MODE = 3; 
         set_view_ortho();
     }
 
-    if (key == 35) //shift 3
+    if (key == 35) //shift 3 - ???
     {
+        reset_view();        
         VIEW_MODE = 4; 
         set_view_ortho();        
     }
@@ -892,15 +898,15 @@ void olmec_mouse_motion(int x, int y)
         // orthographic top   (key shift 2)
         case 2:  
             view_ismoving = TRUE;
-            cam_posz = (center_x-x)/scr_size_x; 
-            cam_posx = -(center_y-y)/scr_size_y;  
+            cam_posz = -(center_x-x)/scr_size_x; 
+            cam_posx = (center_y-y)/scr_size_y;  
         break; 
     
         // orthographic front  (key 3)
         case 3:  
             view_ismoving = TRUE;
             cam_posx = (center_x-x)/scr_size_x; 
-            cam_posz = (center_y-y)/scr_size_y; 
+            cam_posy = -(center_y-y)/scr_size_y; 
         break; 
     
 
