@@ -1,0 +1,25 @@
+# Created by Magic Mirror render toy.
+# Keith Legg - December 2015.
+# version2   - November 2018.
+
+
+# Define the vertices
+v 1.0 -1.0 -1.0
+v 1.0 -1.0 1.0
+v -1.0 -1.0 1.0
+v -1.0 -1.0 -1.0
+v 1.0 1.0 -0.999999
+v 0.999999 1.0 1.000001
+v -1.0 1.0 1.0
+v -1.0 1.0 -1.0
+
+# Define the polygon geometry
+# No UV or normals at this time
+f  1 2 3 4
+f  5 8 7 6
+f  1 5 6 2
+f  2 6 7 3
+f  3 7 8 4
+f  5 1 4 8
+
+

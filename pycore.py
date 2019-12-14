@@ -459,7 +459,7 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 
 ## parse commands coming in and run them
 def runcommand():
-    visualize_matrix_rotation()
+    #visualize_matrix_rotation()
 
     #loadgcode()
     #loadkicad()
@@ -473,7 +473,7 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    #gen_normals()
+    gen_normals()
 
     #face_extrude()
    
@@ -515,9 +515,6 @@ if __name__=="__main__":
 
 
 def build_orthogonal_vector():
-    """ treats the "line" as an infinite vector 
-
-    """
 
     obj = object3d()
     com = vec3() #container for commands

@@ -113,31 +113,42 @@ void show_obj_geom(struct obj_model* loader)
     int i = 0;
     printf("\n");
 
-    printf("\n# points  ------------------- %d \n", loader->num_pts);
+    printf("\n# point indices  ---------------- %d \n", loader->num_pts);
     for (i=0;i<loader->num_pts;i++)
     {
-        printf("%d    ",i);
+        printf("%d pt    ",i);
         print_vec3( loader->points[i]) ;
     }
 
-    printf("\n# triangles ----------------- %d \n", loader->num_tris);
+    printf("\n# line indices  ------------------- %d \n", loader->num_lines);
+    for (i=0;i<loader->num_lines;i++)
+    {
+        printf(" %d line   %d %d  \n",i ,  loader->lines[i].pt1 , loader->lines[i].pt2 );
+        //print_vec3( loader->lines[i]) ;
+    }
+
+    printf("\n# triangle indices ----------------- %d \n", loader->num_tris);
     for (i=0;i<loader->num_tris;i++)
     {
 
         //triangle tri_buffer = from_obj->tris[i]; //start with original indices
-        printf("# %d triangle  %d %d %d \n", i, loader->tris[i].pt1 , loader->tris[i].pt2, loader->tris[i].pt3);        
+        printf(" %d triangle   %d %d %d \n", i, loader->tris[i].pt1 , loader->tris[i].pt2, loader->tris[i].pt3);        
     }
 
 
-    printf("\n# quads ------------------   %d \n", loader->num_quads);
+    printf("\n# quad indices ------------------   %d \n", loader->num_quads);
     for (i=0;i<loader->num_quads;i++)
     {
 
         quad qbfr = loader->quads[i]; //start with original indices
-        printf("# %d quad  %d %d %d %d \n", i, qbfr.pt1 , qbfr.pt2, qbfr.pt3, qbfr.pt4 );        
+        printf(" %d quad   %d %d %d %d \n", i, qbfr.pt1 , qbfr.pt2, qbfr.pt3, qbfr.pt4 );        
     }
 
-    printf("\n# UVs   --------  \n");
+    //printf("\n# Normals   --------  \n");
+
+    //printf("\n# UVs   --------  \n");
+
+    //printf("\n# Colors   --------  \n");
 
 }
 
@@ -276,9 +287,17 @@ void load_objfile( char *filepath, struct obj_model* loader)
     size_t len = 0;
     ssize_t read;
 
+    int pofst = 0; //pointoffset indices to points if geom exists already 
+
     fp = fopen(filepath, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+
+    if (loader->num_pts>0){
+        printf("GEOM EXISTS !! \n");
+        pofst = loader->num_pts;
+
+    }
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
@@ -361,15 +380,19 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     //only supports 2,3,4 sided polygons  
                     if(fidx==0){
                         pt1 = atoi( tok_line);
+                        if (pofst>0){ pt1 = pt1+pofst;};
                     }
                     if(fidx==1){
-                        pt2 = atoi( tok_line);                       
+                        pt2 = atoi( tok_line);
+                        if (pofst>0){ pt2 = pt2+pofst;};                                               
                     }  
                     if(fidx==2){
                         pt3 = atoi( tok_line);
+                        if (pofst>0){ pt3 = pt3+pofst;};                         
                     }   
                     if(fidx==3){
-                        pt4 = atoi( tok_line);                       
+                        pt4 = atoi( tok_line);
+                        if (pofst>0){ pt4 = pt4+pofst;};                                               
                     }  
                     /***********/
 
@@ -437,12 +460,12 @@ void load_objfile( char *filepath, struct obj_model* loader)
     loader->num_uvs = 0;
 
 
-    printf("\n\n---------------------------\n"  ) ;
-    printf("%d vertices loaded   \n", loader->num_pts    ) ;
-    printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
-    printf("%d lines loaded      \n", loader->num_lines  ) ;
-    printf("%d triangles loaded  \n", loader->num_tris   ) ;
-    printf("%d quads loaded      \n", loader->num_quads  ) ;    
+    // printf("\n\n---------------------------\n"  ) ;
+    // printf("%d vertices loaded   \n", loader->num_pts    ) ;
+    // printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
+    // printf("%d lines loaded      \n", loader->num_lines  ) ;
+    // printf("%d triangles loaded  \n", loader->num_tris   ) ;
+    // printf("%d quads loaded      \n", loader->num_quads  ) ;    
 }
 
 /*******************************************************************/

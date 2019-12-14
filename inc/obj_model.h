@@ -30,17 +30,20 @@ const int num_vtx   = 12000;
 const int num_faces = 5000;
 
 
+// index/indices for a line object 
 typedef struct line{
     int pt1;
     int pt2;
 };
 
+// index/indices for a triangle polygon
 typedef struct triangle{
     int pt1;
     int pt2;
     int pt3;    
 };
 
+// index/indices for a quad polygon 
 typedef struct quad{
     int pt1;
     int pt2;
@@ -48,6 +51,7 @@ typedef struct quad{
     int pt4;
 };
 
+// 3D object in its full glory 
 typedef struct obj_model{
     int num_pts;
     int num_uvs;
@@ -67,6 +71,7 @@ typedef struct obj_model{
 };
 
 
+// store info about an object , bbox, etc 
 typedef struct obj_info{
     int num_pts;
     int num_uvs;
@@ -89,6 +94,8 @@ typedef struct obj_info{
     float bb_max_z;    
 
 };
+
+
 
 vec3 get_extents(struct obj_info* obinfo);
 vec3 get_centroid(struct obj_info* obinfo);
