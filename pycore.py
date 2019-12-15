@@ -465,7 +465,7 @@ def visualize_perspective_matrix():
     
     #create a perspective matrix 
                                        # fov, aspect, znear, zfar):
-    persp_m44 = persp_m44.buildPerspProjMat( 30, 1, .1, 3)
+    persp_m44 = persp_m44.buildPerspProjMat( 95, 1, .1, 10)
     obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
     
     #visualize the matrix in the object 

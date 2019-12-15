@@ -39,9 +39,9 @@
 
 */
 /*************************************************************/
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>      
 #include <cmath>
 
@@ -301,7 +301,14 @@ static void render_loop()
         glPushMatrix();
         glLoadIdentity();
         void *font = GLUT_BITMAP_8_BY_13;     
-        renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font,"Gnolmec V00002.51 - Keith Legg 2019");
+        
+        //renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font,"Gnolmec -Keith Legg 2019");
+
+        sprintf(s, "%f %f %f", cam_posx, cam_posy, cam_posz);
+        renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
+
+        
+
         //renderBitmapString(110, scr_size_y-20  , (void*)font, s);
         //renderBitmapString(210, scr_size_y-10  ,(void *)font,"Esc - Quit");
         glPopMatrix();
