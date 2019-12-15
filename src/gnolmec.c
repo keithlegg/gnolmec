@@ -263,9 +263,9 @@ void warnings(void)
 
 void reset_view(void){
  
-    orbit_x    = .125;  
-    orbit_y    = -.06;   
-    orbit_dist =  5.0;  
+    orbit_x    = 0; //.125;  
+    orbit_y    = 0; //-.06;   
+    orbit_dist = 1; // 5.0;  
 
     // cam_rotx = 0; //camera rotation
     // cam_roty = 0;
@@ -1133,14 +1133,11 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
 
         char* file2 = "3d_obj/PYCORE.obj";
-        
+
+        reset_objfile(pt_model_buffer, pt_obinfo);
+
         load_objfile(file2, pt_model_buffer );
         get_obj_info( pt_model_buffer, pt_obinfo);
-
-        // //reset_objfile(pt_loader, pt_loadernfo);
-        //load_objfile(file2, pt_loader ); 
-        //insert_geom(pt_loader, pt_model_buffer);
-        //get_obj_info( pt_model_buffer, pt_obinfo);
 
     }
 
@@ -1166,11 +1163,6 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
         load_objfile(obj_filepath, pt_model_buffer ); 
         get_obj_info( pt_model_buffer, pt_obinfo);
-
-        //reset_objfile(pt_loader, pt_loadernfo);
-        //load_objfile(obj_filepath, pt_loader ); 
-        //insert_geom(pt_loader, pt_model_buffer);
-        //get_obj_info( pt_model_buffer, pt_obinfo);
 
     }
 

@@ -411,6 +411,22 @@ def m33_to_vectors(m33, transpose=False):
     outvecs = [v1,v2,v3]
     return outvecs 
 
+def m44_to_vectors(m44, transpose=False):
+
+    outvecs = []
+
+    if transpose:
+        v1 = vec3(m44[0], m44[4], m44[8])
+        v2 = vec3(m44[1], m44[5], m44[9])
+        v3 = vec3(m44[2], m44[6], m44[10])  
+    else:
+        v1 = vec3(m44[0], m44[1], m44[2])
+        v2 = vec3(m44[4], m44[5], m44[6])
+        v3 = vec3(m44[8], m44[9], m44[10])
+
+    outvecs = [v1,v2,v3]
+    return outvecs 
+
 
 ##------------------
 def visualize_matrix_rotation():
@@ -440,7 +456,23 @@ def visualize_matrix_rotation():
     obj.save(PYCORE_OBJ_OUT)  
 
 
+##------------------
+def visualize_perspective_matrix():
+    obj = object3d()
+    obj.load(PYCORE_OBJ_IN)    
+    persp_m44 = matrix44() 
 
+    
+    #create a perspective matrix 
+                                       # fov, aspect, znear, zfar):
+    persp_m44 = persp_m44.buildPerspProjMat( 30, 1, .1, 3)
+    obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
+    
+    #visualize the matrix in the object 
+    rendervecs = m44_to_vectors( persp_m44 )
+    obj.vectorlist_to_obj( rendervecs )    
+
+    obj.save(PYCORE_OBJ_OUT) 
 
 ##***********************************************************##
 ##***********************************************************##
@@ -459,6 +491,8 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 
 ## parse commands coming in and run them
 def runcommand():
+    visualize_perspective_matrix()
+
     #visualize_matrix_rotation()
 
     #loadgcode()
@@ -467,7 +501,7 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    circle_cube_pts()
+    #circle_cube_pts()
     #primitive('sphere')
     
     #procedural_1()

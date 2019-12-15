@@ -24,6 +24,10 @@ extern GLuint texture[3];
 
 // quaternion frank = quaternion_identity();
 
+
+/*************************************************************/
+
+
 void render_m33(m33 *t33)
 {
     // if transpose:
