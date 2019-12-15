@@ -175,7 +175,23 @@ vec3 orbt_xform_original;
 
 
 /***************************************/
+/*
+   TODO - attempt to pass this matrix to renderthing to use for view 
+*/
+void grab_camera_matrix(void)
+{
+    GLfloat model[16]; 
+    m44 my_model_matrix;
+    m44 *pt_mmm = &my_model_matrix;
 
+    // Test to attach geometry to camera (crappy widgets) 
+    //glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    //glutm44_to_m44(pt_mmm, model);
+
+    // view or print it 
+    //render_m44(pt_mmm);
+    //print_matrix(my_model_matrix);
+}
 
 /***************************************/
 /***************************************/
@@ -262,8 +278,11 @@ void reset_view(void){
 }
 
 
+
+
 /***************************************/
 
+int q_i, p_i, f_i = 0;
 
 static void render_loop()
 {
@@ -294,6 +313,7 @@ static void render_loop()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
 
 
     switch (VIEW_MODE) 
@@ -341,32 +361,18 @@ static void render_loop()
         break;   
     } 
 
-   
-
-
-
-    // // tramsform camera
-    // glTranslatef(0, 0, -orbit_dist);
-    // glRotatef(orbit_x, 1, 0, 0);   // pitch
-    // glRotatef(orbit_y, 0, 1, 0);   // heading
-
+    
     /******************************************/
-  
+    /******************************************/
+
+
 
 
     graticulate(&draw_grid, &draw_cntrgrid, pt_gridcolor, pt_gridcolor2);
 
     show_bbox(&draw_bbox, pt_obinfo, pt_gridcolor);
-
-    
-    // glRotatef( xrot , 1.0f, 0.0f, 0.0f);     // Rotate On The X Axis
-    // glRotatef( yrot , 0.0f, 1.0f, 0.0f);     // Rotate On The Y Axis
-    // glRotatef( zrot , 0.0f, 0.0f, 1.0f);     // Rotate On The Z Axis
-
-    int q_i, p_i, f_i = 0;
  
     /******************************************/
-
 
     if (draw_points)
     {
@@ -526,7 +532,6 @@ static void render_loop()
     }
 
 
-
     // glPopMatrix();
 
     // swap the other (double) buffer to display what just got drawn.
@@ -534,6 +539,10 @@ static void render_loop()
   
     view_ismoving = FALSE;
 }
+
+
+
+
 
 /***************************************/
 void animate(){
@@ -617,31 +626,6 @@ void set_view_persp(void)
 
 }
 
-/********************************************/
-void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
-
-    pt_m44->m0  = m44_glfloat[0];
-    pt_m44->m1  = m44_glfloat[1];
-    pt_m44->m2  = m44_glfloat[2];
-    pt_m44->m3  = m44_glfloat[3];
-    pt_m44->m4  = m44_glfloat[4];
-    pt_m44->m5  = m44_glfloat[5];
-    pt_m44->m6  = m44_glfloat[6];
-    pt_m44->m7  = m44_glfloat[7];
-    pt_m44->m8  = m44_glfloat[8];
-    pt_m44->m9  = m44_glfloat[9];
-    pt_m44->m10 = m44_glfloat[10];
-    pt_m44->m11 = m44_glfloat[11];
-    pt_m44->m12 = m44_glfloat[12];
-    pt_m44->m13 = m44_glfloat[13];
-    pt_m44->m14 = m44_glfloat[14];
-    pt_m44->m15 = m44_glfloat[15];
-
-} 
-
-
-
-
 
 /**************************************************/
 /**************************************************/
@@ -666,15 +650,13 @@ void olmec(int *argc, char** argv){
     window_id = glutCreateWindow("Olmec v.00002.51"); //create an opengl window 
 
     /***********/
-    //THERE IS A MEMORY LEAK, PROBABLY IN THIS FUNCTION!!
-    //TO TEST RUN AND LEAVE WINDOW FOR A WHILE 
-    //GO LEARN VALGRIND AND FIX IT ?
-
     reset_view();
 
     //register GL callbacks       
-    glutDisplayFunc(&render_loop);   
+
+    glutDisplayFunc(&render_loop); 
     glutIdleFunc(&animate);
+
     glutReshapeFunc(&reshape_window);  // register window resize callback 
 
     glutKeyboardFunc(&keyPressed);     // register key pressed callback 
@@ -945,39 +927,20 @@ void olmec_mouse_motion(int x, int y)
     }
     
     /**************/
+   
 
-    
-    // Test to attach geometry to camera (crappy widgets) 
-    
-    /*
-    GLfloat model[16]; 
-    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
-    m44 my_model_matrix;
-    m44 *pt_mmm = &my_model_matrix;
-    glutm44_to_m44(pt_mmm, model);
-
-    print_matrix(my_model_matrix);
-    */ 
+     
 
 }
 
 
 
 /*
-
-
-    //       2 - ortho side (pos x)
-    // shift 2 - ortho side (neg x) 
-    //       3 - ortho front  
-    // shift 3 - ortho top  
-
-
     // a - frame all objects 
     // q - select tool         
     // w - move 
     // e - rotate 
     // r - scale 
-
     // f - frame selected 
     // t - show manipulator 
     // p - parent 
@@ -989,7 +952,7 @@ void olmec_mouse_motion(int x, int y)
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    printf("scancode key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -1000,15 +963,16 @@ static void keyPressed(unsigned char key, int x, int y)
         exit(0);                   
     }
     
-    if (key == 116)
+
+    if (key == 116) // t key 
     { 
-        if (render_text == TRUE){
 
-            render_text = FALSE;
-        }else{
 
-            render_text = TRUE;
-        }
+        // if (render_text == TRUE){
+        //     render_text = FALSE;
+        // }else{
+        //     render_text = TRUE;
+        // }
 
     }
   
@@ -1146,14 +1110,13 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 73) //shift i - show obj info 
     { 
 
-        //get_obj_info( pt_model_buffer, pt_obinfo);
-        show_obj_geom(pt_model_buffer);
+        get_obj_info( pt_model_buffer, pt_obinfo);
+        //show_obj_geom(pt_model_buffer);
     }
 
 
     if (key == 105) //i - draw bbox
     { 
-        get_obj_info( pt_model_buffer, pt_obinfo);
 
         if (draw_bbox == TRUE){
             draw_bbox = FALSE;

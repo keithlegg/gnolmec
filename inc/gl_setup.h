@@ -5,15 +5,9 @@
 #define TRUE 1
 #define FALSE 0
 
-
-
-#include "framebuffer.h"
 #include "math_op.h"
-
+#include "framebuffer.h"
 #include "obj_model.h"
-
-
-
 
 
 struct material {
@@ -53,6 +47,18 @@ struct directional_light
 	//#include <GL/glew.h>    // not in use 
 #endif
 
+void swimbag_tile(void);
+
+void render_m33(m33 *t33);
+void render_m44(m44 *t44);
+
+void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] );
+
+void drawTriangle (GLfloat x1, GLfloat y1, GLfloat x2, 
+    GLfloat y2, GLfloat x3, GLfloat y3, GLfloat z);
+
+void drawViewVolume (GLfloat x1, GLfloat x2, GLfloat y1, 
+                     GLfloat y2, GLfloat z1, GLfloat z2);
 
 void InitGL(int Width, int Height);
 

@@ -294,9 +294,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
         exit(EXIT_FAILURE);
 
     if (loader->num_pts>0){
-        printf("GEOM EXISTS !! \n");
         pofst = loader->num_pts;
-
     }
 
     // walk the file line by line

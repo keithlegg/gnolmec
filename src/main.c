@@ -1,3 +1,11 @@
+/*****************************************************************/
+    /*
+
+        Gnolmec - GNOlmec. Its not Maya and I built it myself.
+        Keith Legg, 2019 
+
+    */
+/*****************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,18 +13,15 @@
 #include <stdarg.h>
 #include <unistd.h>      
 
-
 /********************************************/
 //OSX related 
 #include <string.h>      //for memset 
 
- 
-
- 
 
 //to get on OSX 'ls /dev/tty.*'  
 //#define SERIAL_PORT_ID "/dev/tty.usbserial-FTWWRSIBA" // "/dev/tty.usbserial-A400gnmx" // "/dev/ttyUSB0"
 //#define OUTPUT_BINARY "/Users/klegg/image.bin"
+
 
 #include "gl_setup.h"        // common to all - moved to reduce size 
 #include "math_op.h"         // general math operations
@@ -41,13 +46,6 @@ int window_id; // The number of our GLUT window
  
 GLuint texture[3]; // storage for one texture  
 
-
-// float xrot, yrot, zrot;// floats for x rotation, y rotation, z rotation 
-
-
-/*******************************************************/
-
- 
 
 // window properties
 int scr_size_x      = 512;
@@ -82,27 +80,8 @@ enum {
     MENU_EXIT
 };
 
-
-// // camera properties ( https://learnopengl.com/Getting-started/Camera )
-// vec3 camera_pos        = newvec3(0.0, 0.0, 3.0 );
-// vec3 camera_target     = newvec3(0.0, 0.0, 0.0 );
-// vec3 camera_direction  = normalize(sub( camera_pos, camera_target));
-// vec3 up                = newvec3(0.0f, 1.0f, 0.0f); 
-// vec3 camera_right      = normalize(cross (up, camera_direction));
-// vec3 camera_up         = cross(camera_direction, camera_right);
-
-
-// // float radius = 10.0f;
-// // float camX = sin(glfwGetTime()) * radius;
-// // float camZ = cos(glfwGetTime()) * radius;
-// // m44 view = new_m44();
-// // //view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0);
-
-
 /*******************************************************/
 
-
-/*******************************************************/
 
 
 void test_math_ops(void){
@@ -150,26 +129,16 @@ void test_math_ops(void){
 
 
 }
-
-
  
 
 /***************************************/
 
-//char* obj_filepath = "3d_obj/cone.obj";
-// char* obj_filepath = "3d_obj/monkey.obj";
-// char* obj_filepath = "3d_obj/teapot.obj";
-
-char* obj_filepath; //= "3d_obj/cross_product.obj";
+char* obj_filepath;  
 
 int main(int argc, char **argv) 
 {  
 
- 
-
     char runmode[10];
-
-
 
     if( argc == 1 ) {    
         spinningCubeDemo(&argc, argv);
@@ -186,6 +155,17 @@ int main(int argc, char **argv)
         exit(0);
     }
 
+    strcpy(runmode, "flat");
+    if( strcmp(argv[1], runmode) == 0)
+    {
+        flatImageDemo(&argc, argv); 
+    }
+
+    strcpy(runmode, "vectorize");
+    if( strcmp(argv[1], runmode) == 0)
+    {
+        // flatImageDemo(&argc, argv); 
+    }
 
 
     if( argc == 2 ) {
@@ -205,16 +185,6 @@ int main(int argc, char **argv)
     
     // test_math_ops();
 
-
-
-    //flatImageDemo(&argc, argv); 
-
-
-
-
-
-
-    //test_fill();
     //show_object();
 
     return 1;
