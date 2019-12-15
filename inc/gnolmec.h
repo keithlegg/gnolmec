@@ -10,6 +10,13 @@ void set_screen_square(void);
 
 void init_pycore(void);
 
+void set_view_ortho(void);
+void setOrthographicProjection();
+void resetPerspectiveProjection();
+void renderBitmapString(float x, float y, void *font,const char *string);
+
+
+
 void software_render(void);
 
 static void display_loop();

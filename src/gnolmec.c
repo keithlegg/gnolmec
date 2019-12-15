@@ -75,7 +75,7 @@ bool draw_grid       = FALSE;
 bool draw_cntrgrid   = TRUE;
 bool draw_bbox       = FALSE;
 
-
+bool render_text     = TRUE;
 
 
 /***************************************/
@@ -177,60 +177,9 @@ vec3 orbt_xform_original;
 /***************************************/
 
 
-
 /***************************************/
 /***************************************/
 
- 
-// write 2d text using GLUT
-// The projection matrix must be set to orthogonal before call this function.
- 
-void drawString(const char *str, int x, int y, float color[4], void *font)
-{
-    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT); // lighting and color mask
-    glDisable(GL_LIGHTING);     // need to disable lighting for proper text color
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(color);          // set text color
-    glRasterPos2i(x, y);        // place text position
-
-    // loop all characters in the string
-    while(*str)
-    {
-        glutBitmapCharacter(font, *str);
-        ++str;
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glPopAttrib();
-}
-
-
-void drawString3D(const char *str, float pos[3], float color[4], void *font)
-{
-    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT); // lighting and color mask
-    glDisable(GL_LIGHTING);     // need to disable lighting for proper text color
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(color);          // set text color
-    glRasterPos3fv(pos);        // place text position
-
-    // loop all characters in the string
-    while(*str)
-    {
-        glutBitmapCharacter(font, *str);
-        ++str;
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glPopAttrib();
-}
-
-
-
-/***************************************/
 
 
 void toggle_polygon_draw(){
@@ -315,26 +264,32 @@ void reset_view(void){
 
 /***************************************/
 
-void text_experiment(){
-    const int   TEXT_HEIGHT     = 13;
-    char* mystr = "hello!";
-    float color[4] = {1, 1, 1, 1};
-    void *font = GLUT_BITMAP_8_BY_13;    
-    //drawString( mystr, 1, scr_size_y-TEXT_HEIGHT, color, font);
-    drawString( mystr, -100, -100, color, font);
-
-}
-
-
-
 
 static void render_loop()
 {
 
+
     // Clear The Screen And The Depth Buffer
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    
+
+
+    if (render_text)
+    {
+        char s[30];
+        glColor3d(1.0, 1.0, 1.0);
+        setOrthographicProjection();
+        glPushMatrix();
+        glLoadIdentity();
+        void *font = GLUT_BITMAP_8_BY_13;     
+        renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font,"Gnolmec V00002.51 - Keith Legg 2019");
+        //renderBitmapString(110, scr_size_y-20  , (void*)font, s);
+        //renderBitmapString(210, scr_size_y-10  ,(void *)font,"Esc - Quit");
+        glPopMatrix();
+        resetPerspectiveProjection();
+    }
+
+
     //glPushMatrix();
 
     glMatrixMode(GL_MODELVIEW);
@@ -415,9 +370,10 @@ static void render_loop()
 
     if (draw_points)
     {
-        //VERY BUGGY! - I think it needs OpenGL4 amd up
+        // persistant point buffer   
+        // Not tested well! - I think it needs OpenGL4 amd up
 
-        // This is the first place in the code that required OpenGL library (not just Glut)
+        // This is the first place in Gnolmec that required OpenGL library (not just Glut)
 
         //http://ogldev.atspace.co.uk/www/tutorial02/tutorial02.html 
         //https://stackoverflow.com/questions/28849321/how-to-draw-polygon-with-3d-points-in-modern-opengl
@@ -427,7 +383,7 @@ static void render_loop()
         glPointSize(4);
  
         //dump to GLFloats 
-        int numdr = 50;
+        int numdr = pt_model_buffer->num_pts;
 
         GLfloat vertices[numdr*4];
         GLfloat* pt_vert = vertices;
@@ -456,7 +412,7 @@ static void render_loop()
 
  
         glDrawArrays(GL_POINTS, 0, numdr);
-        //glDrawArrays(GL_LINES, 0, 2);
+        //glDrawArrays(GL_LINES, 0, numdr);
         glDisableVertexAttribArray(0);
 
     }
@@ -600,6 +556,7 @@ static void reshape_window(int width, int height)
 }//end resize callback
 
 /***************************************/
+
 void set_view_ortho(void)
 {
     glMatrixMode(GL_PROJECTION);
@@ -617,6 +574,36 @@ void set_view_ortho(void)
     // glLoadIdentity();
 
 }
+
+//text demo 
+void setOrthographicProjection() {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+       gluOrtho2D(0, scr_size_x, 0, scr_size_y);
+    glScalef(1, -1, 1);
+    glTranslatef(0, -scr_size_y, 0);
+    glMatrixMode(GL_MODELVIEW);
+} 
+
+//text demo 
+void resetPerspectiveProjection() {
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+} 
+
+//text demo 
+void renderBitmapString(float x, float y, void *font,const char *string){
+    const char *c;
+    glRasterPos2f(x, y);
+    for (c=string; *c != '\0'; c++) {
+        glutBitmapCharacter(font, *c);
+    }
+} 
+
+
+
 
 /***************************************/
 void set_view_persp(void)
@@ -976,11 +963,33 @@ void olmec_mouse_motion(int x, int y)
 
 
 
+/*
+
+
+    //       2 - ortho side (pos x)
+    // shift 2 - ortho side (neg x) 
+    //       3 - ortho front  
+    // shift 3 - ortho top  
+
+
+    // a - frame all objects 
+    // q - select tool         
+    // w - move 
+    // e - rotate 
+    // r - scale 
+
+    // f - frame selected 
+    // t - show manipulator 
+    // p - parent 
+    // shft p - unparent 
+*/
+
+
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    // printf("scancode key %u \n", key );
+    printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -991,28 +1000,18 @@ static void keyPressed(unsigned char key, int x, int y)
         exit(0);                   
     }
     
+    if (key == 116)
+    { 
+        if (render_text == TRUE){
 
-    /*
+            render_text = FALSE;
+        }else{
 
+            render_text = TRUE;
+        }
+
+    }
   
-        //       2 - ortho side (pos x)
-        // shift 2 - ortho side (neg x) 
-        //       3 - ortho front  
-        // shift 3 - ortho top  
-
-
-        // a - frame all objects 
-        // q - select tool         
-        // w - move 
-        // e - rotate 
-        // r - scale 
-
-        // f - frame selected 
-        // t - show manipulator 
-        // p - parent 
-        // shft p - unparent 
-    */
-   
 
 
     if (key == 49) //1 - perspective mode
@@ -1047,8 +1046,6 @@ static void keyPressed(unsigned char key, int x, int y)
         reset_view();
         VIEW_MODE = 2; 
         set_view_ortho();    
-        text_experiment();
-
     }
 
 
@@ -1070,9 +1067,18 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 36) //Shift 4 - display as points 
     { 
         // to draw points  
-        glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
-        glPointSize(4);
+        //glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
+        //glPointSize(4);
     
+    
+        if (draw_points == TRUE){
+
+            draw_points = FALSE;
+        }else{
+
+            draw_points = TRUE;
+        }
+
     }
 
     if (key == 52) //4 - display as wire 

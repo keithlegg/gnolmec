@@ -467,13 +467,13 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    #circle_cube_pts()
+    circle_cube_pts()
     #primitive('sphere')
     
     #procedural_1()
     #primitive('sphere')
 
-    gen_normals()
+    #gen_normals()
 
     #face_extrude()
    
