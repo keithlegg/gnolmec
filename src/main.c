@@ -41,6 +41,20 @@
 
 /*******************************************************/
 
+#include <sys/time.h>
+
+void timer_test(){
+    //Test of timer 
+    timeval startCount;
+    float foo = gettimeofday(&startCount, NULL);
+    printf("%ld.%06ld\n", startCount.tv_sec, startCount.tv_usec);
+
+};
+
+
+
+/*******************************************************/
+
 
 int window_id; // The number of our GLUT window 
  
@@ -137,6 +151,8 @@ char* obj_filepath;
 
 int main(int argc, char **argv) 
 {  
+
+    timer_test();
 
     char runmode[10];
 

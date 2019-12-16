@@ -278,8 +278,6 @@ void reset_view(void){
 }
 
 
-
-
 /***************************************/
 
 int q_i, p_i, f_i = 0;
@@ -382,6 +380,10 @@ static void render_loop()
     show_bbox(&draw_bbox, pt_obinfo, pt_gridcolor);
  
     /******************************************/
+
+    m33 foobar = m33_from_euler(45,45,45);
+    render_m33(&foobar);
+
 
     if (draw_points)
     {
