@@ -51,7 +51,7 @@
 #include "point_op.h"
 #include "obj_model.h"
 #include "gnolmec.h"
-
+#include "sceneloader.h"
 
 
 
@@ -178,15 +178,15 @@ vec3 orbt_xform_original;
 /*
    TODO - attempt to pass this matrix to renderthing to use for view 
 */
-void grab_camera_matrix(void)
+void grab_camera_matrix( m44 *pt_mmm )
 {
     GLfloat model[16]; 
-    m44 my_model_matrix;
-    m44 *pt_mmm = &my_model_matrix;
+    //m44 my_model_matrix;
+    //m44 *pt_mmm = &my_model_matrix;
 
     // Test to attach geometry to camera (crappy widgets) 
-    //glGetFloatv(GL_MODELVIEW_MATRIX, model); 
-    //glutm44_to_m44(pt_mmm, model);
+    glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    glutm44_to_m44(pt_mmm, model);
 
     // view or print it 
     //render_m44(pt_mmm);
@@ -295,7 +295,9 @@ static void render_loop()
 
     if (render_text)
     {
-        char s[30];
+        glBindTexture(GL_TEXTURE_2D, texture[1]); 
+
+        char s[100];
         glColor3d(1.0, 1.0, 1.0);
         setOrthographicProjection();
         glPushMatrix();
@@ -304,7 +306,7 @@ static void render_loop()
         
         //renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font,"Gnolmec -Keith Legg 2019");
 
-        sprintf(s, "%f %f %f", cam_posx, cam_posy, cam_posz);
+        sprintf(s, "camera position : %f %f %f", cam_posx, cam_posy, cam_posz);
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
 
         
@@ -973,7 +975,10 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 116) // t key 
     { 
-
+        m44 foo = identity44();
+        grab_camera_matrix(&foo);
+        transpose(&foo);
+        save_matrix44("camera_matrix.olm", &foo );
 
         // if (render_text == TRUE){
         //     render_text = FALSE;

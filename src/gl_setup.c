@@ -28,6 +28,10 @@ extern GLuint texture[3];
 /*************************************************************/
 
 
+// m33_from_euler
+// m44_from_euler
+
+
 void render_m33(m33 *t33)
 {
     // if transpose:

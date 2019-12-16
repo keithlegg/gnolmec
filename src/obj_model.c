@@ -177,7 +177,9 @@ void show(struct obj_info* obinfo)
 
 /*******************************************************************/
 /*
-    append one object into another 
+    NOT WORKING YET 
+
+       append one object into another 
      - points, triangles, quads, UVs, Normals
      - TODO add filter for only transferring some components 
 */

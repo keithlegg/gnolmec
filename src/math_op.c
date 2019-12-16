@@ -111,6 +111,19 @@ double angle_between( vec2 v_one, vec2 v_two )
 
 /************************************************/
 
+/*
+    vec2 copy(vec2)
+    vec3 copy(vec2)
+    quaternion copy(quaternion)
+    m33 copy(m33)
+    m44 copy(m44)
+    
+
+*/
+
+
+/************************************************/
+
 
 vec2 newvec2( int x, int y ){
     vec2 output;
@@ -767,49 +780,70 @@ double determinant(m44 input){
 // 4  5  6            |   2 5 8
 // 7  8  9            |   3 6 9  
 
-m33 transpose(m33 input){
-    m33 output;  
+void transpose(m33 *input){
+
+    m33 tmp;  
     
-    output.m0 = input.m0;
-    output.m1 = input.m3;
-    output.m2 = input.m6;
+    tmp.m0 = input->m0;
+    tmp.m1 = input->m3;
+    tmp.m2 = input->m6;
+    tmp.m3 = input->m1;
+    tmp.m4 = input->m4;
+    tmp.m5 = input->m7;
+    tmp.m6 = input->m2;
+    tmp.m7 = input->m5;
+    tmp.m8 = input->m8;    
 
-    output.m3 = input.m1;
-    output.m4 = input.m4;
-    output.m5 = input.m7;
-
-    output.m6 = input.m2;
-    output.m7 = input.m5;
-    output.m8 = input.m8;    
-
-    return output;     
+    input->m0 = tmp.m0;
+    input->m1 = tmp.m1;
+    input->m2 = tmp.m2;
+    input->m3 = tmp.m3;
+    input->m4 = tmp.m4;
+    input->m5 = tmp.m5;
+    input->m6 = tmp.m6;
+    input->m7 = tmp.m7;
+    input->m8 = tmp.m8;  
+    
 }
 
 /************************************************/
-m44 transpose(m44 input){
-    m44 output; 
+void transpose(m44 *input){
+    m44 tmp; 
 
-    output.m0 = input.m0;
-    output.m1 = input.m4;
-    output.m2 = input.m8;
-    output.m3 = input.m12;
+    tmp.m0  = input->m0;
+    tmp.m1  = input->m4;
+    tmp.m2  = input->m8;
+    tmp.m3  = input->m12;
+    tmp.m4  = input->m1;
+    tmp.m5  = input->m5;
+    tmp.m6  = input->m9;
+    tmp.m7  = input->m13;
+    tmp.m8  = input->m2;
+    tmp.m9  = input->m6;
+    tmp.m10 = input->m10;
+    tmp.m11 = input->m14;
+    tmp.m12 = input->m3;
+    tmp.m13 = input->m7;
+    tmp.m14 = input->m11;
+    tmp.m15 = input->m15;
 
-    output.m4 = input.m1;
-    output.m5 = input.m5;
-    output.m6 = input.m9;
-    output.m7 = input.m13;
+    input->m0  = tmp.m0;
+    input->m1  = tmp.m1;
+    input->m2  = tmp.m2;
+    input->m3  = tmp.m3;
+    input->m4  = tmp.m4;
+    input->m5  = tmp.m5;
+    input->m6  = tmp.m6;
+    input->m7  = tmp.m7;
+    input->m8  = tmp.m8;
+    input->m9  = tmp.m9;
+    input->m10 = tmp.m10;
+    input->m11 = tmp.m11;
+    input->m12 = tmp.m12;
+    input->m13 = tmp.m13;
+    input->m14 = tmp.m14;
+    input->m15 = tmp.m15;
 
-    output.m8  = input.m2;
-    output.m9  = input.m6;
-    output.m10 = input.m10;
-    output.m11 = input.m14;
-
-    output.m12 = input.m3;
-    output.m13 = input.m7;
-    output.m14 = input.m11;
-    output.m15 = input.m15;
-
-    return output;  
 }
 
 /************************************************/

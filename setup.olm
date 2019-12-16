@@ -1,0 +1,49 @@
+
+global filepath 
+
+
+grid_disp true 
+line_disp true 
+tri_disp true 
+point_disp true 
+
+###################
+material 
+ 
+
+
+###################
+
+bg color 
+grid color 
+
+###################
+
+
+
+###################
+
+object
+matrix
+filepath
+pos 
+rot
+
+
+###################
+
+
+
+#this is a comment 
+
+###################
+
+camera
+matrix
+pos 
+rot
+
+
+
+
+

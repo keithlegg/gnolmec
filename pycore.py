@@ -24,7 +24,12 @@ if __name__=="__main__":
     PYCORE_GEOMPATH = "3d_obj"
     PYCORE_OBJ_OUT  = "%s/%s"%(PYCORE_GEOMPATH, "PYCORE.obj")
 
+    PYCORE_BMP_OUT  = "pycore.bmp"
+
     # print("# PYCORE %s --> %s "% (PYCORE_OBJ_IN, PYCORE_OBJ_OUT) )
+
+
+
 
 
 
@@ -95,7 +100,7 @@ def gen_normals():
 
 ##------------------
 
-def matrix_rotate():
+def object_rotate():
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
     #pts = [(2,2,2), (4,4,4), (8,8,8)]
@@ -437,23 +442,25 @@ def visualize_matrix_rotation():
         rotate a matrix around a vector with a scalar angle (degrees) 
         visualize the matrix as a 3D object 
     """
+    if NUMPY_IS_LOADED:
+        obj  = object3d()
+        m33  = matrix33()
 
-    obj  = object3d()
-    m33  = matrix33()
+        rendervecs = []
 
-    rendervecs = []
+        rendervecs.extend( m33_to_vectors(m33) )
 
-    rendervecs.extend( m33_to_vectors(m33) )
+        axis = vec3(0,-1,0)
+        tmp = m33_to_vectors(m33.from_vec3( axis , 30 ))
+        
+        rendervecs.append(axis)
 
-    axis = vec3(0,-1,0)
-    tmp = m33_to_vectors(m33.from_vec3( axis , 30 ))
-    
-    rendervecs.append(axis)
+        #rendervecs.extend(tmp)
 
-    #rendervecs.extend(tmp)
-
-    obj.vectorlist_to_obj( rendervecs )
-    obj.save(PYCORE_OBJ_OUT)  
+        obj.vectorlist_to_obj( rendervecs )
+        obj.save(PYCORE_OBJ_OUT)  
+    else:
+        print("ERROR NUMPY IS DISABLED ")
 
 
 ##------------------
@@ -465,7 +472,7 @@ def visualize_perspective_matrix():
     
     #create a perspective matrix 
                                        # fov, aspect, znear, zfar):
-    persp_m44 = persp_m44.buildPerspProjMat( 95, 1, .1, 10)
+    persp_m44 = persp_m44.buildPerspProjMat( 95, 1, 1, 2)
     obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
     
     #visualize the matrix in the object 
@@ -474,12 +481,30 @@ def visualize_perspective_matrix():
 
     obj.save(PYCORE_OBJ_OUT) 
 
-##***********************************************************##
-##***********************************************************##
-##***********************************************************##
-##***********************************************************##
+
+##------------------
+
+#def visualize_matrices_multiplied():
+
+##------------------
+#def visualize_matrices_multiplied():
 
 
+##------------------
+
+#def lathe_profile(axis, pts, numturns ):
+
+
+#def loft_two_profiles(pts1, pts2 ):
+
+##------------------
+
+
+
+##***********************************************************##
+##***********************************************************##
+##***********************************************************##
+##***********************************************************##
 
 """
 obj = object3d()
@@ -489,15 +514,18 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 """
 
 
+
+
 ## parse commands coming in and run them
 def runcommand():
-    visualize_perspective_matrix()
-
+    #visualize_perspective_matrix()
+    
     #visualize_matrix_rotation()
-
+ 
     #loadgcode()
     #loadkicad()
-    
+    pass
+
     #scratch_obj1()
     #scratch_obj2()
 
@@ -519,7 +547,7 @@ def runcommand():
     
     #triangulate()
     
-    #matrix_rotate()
+    #object_rotate()
     
     #copy_sop()
 

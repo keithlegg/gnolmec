@@ -6,6 +6,9 @@
 
 
 
+
+void grab_camera_matrix( m44 *pt_mmm );
+
 void set_screen_square(void);
 
 void init_pycore(void);

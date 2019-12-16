@@ -109,6 +109,9 @@ vec3 rtd_vec3(vec3 invec);
 
 void print_vec2(vec2 input);
 void print_vec3(vec3 input);
+void print_matrix(m33 input);
+void print_matrix(m44 input);
+
 
 m33 new_m33( double m0 , double m1 , double m2,  
              double m3 , double m4 , double m5, 
@@ -144,11 +147,9 @@ m44 test_indices44(void);
 double determinant(m33 input);
 double determinant(m44 input);
 
-m33 transpose(m33 input);
-m44 transpose(m44 input);
+void transpose(m33 *input);
+void transpose(m44 *input);
 
-void print_matrix(m33 input);
-void print_matrix(m44 input);
 
 m33 m33_from_euler(double xrot, double yrot, double zrot);
 m44 m44_from_euler(double xrot, double yrot, double zrot);
