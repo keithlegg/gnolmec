@@ -3,7 +3,7 @@
 /*
    sceneloader.c 
 
-    
+   Read setup.olm for a proto-dream scene format  
 
    Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 

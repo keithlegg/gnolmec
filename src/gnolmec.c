@@ -963,7 +963,7 @@ void olmec_mouse_motion(int x, int y)
 
 
 void negate_y_axis(m44 *input){
-   // this is a hack! 
+   // this is a hack!  (invert Y is option on renderer! debug )
    // for some reason python 3D renderer wants y inverted  
 
     float a,b,c;
@@ -1177,6 +1177,14 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 112) //p
     { 
+
+        //go ahead and dump camera matrix automatically 
+        m44 foo = identity44();
+        grab_camera_matrix(&foo);
+        negate_y_axis(&foo);
+        save_matrix44("camera_matrix.olm", &foo );
+
+        //launch python3 
         init_pycore(); 
     }
 

@@ -405,7 +405,7 @@ def pyrender_ogl():
     persp_m44.load_file( M44_DISK_FILE )
 
     #attemp to correlate the scale with the z axis cam position 
-    render_scale = abs(persp_m44.m[14])*10
+    render_scale = 1000/abs(persp_m44.m[14])
 
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
