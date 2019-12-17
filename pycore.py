@@ -7,6 +7,9 @@ from pyrender2.pygfx.point_ops import *
 from pyrender2.pygfx.obj3d import  *
 from pyrender2.pygfx.render import *
 
+from pyrender2.pygfx.kicad_ops import * 
+from pyrender2.pygfx.milling_ops import * 
+
 mu = math_util() 
 
 
@@ -25,10 +28,8 @@ if __name__=="__main__":
     PYCORE_OBJ_OUT  = "%s/%s"%(PYCORE_GEOMPATH, "PYCORE.obj")
 
     PYCORE_BMP_OUT  = "pycore.bmp"
-
+    M44_DISK_FILE = "camera_matrix.olm"
     # print("# PYCORE %s --> %s "% (PYCORE_OBJ_IN, PYCORE_OBJ_OUT) )
-
-
 
 
 
@@ -41,8 +42,7 @@ if __name__=="__main__":
 ## DEFINE PYCORE COMMANDS (FROM PYGFX)
 
 
-from pyrender2.pygfx.kicad_ops import * 
-from pyrender2.pygfx.milling_ops import * 
+
 
 def loadgcode():
     gkod = gcode()
@@ -207,9 +207,6 @@ def procedural_1():
 
     for i in range(1,len(obj.polygons) ):   
         obj.extrude_face(i, 5)
-
-
-
 
     for theta in range(-180,180,20):
         print('## theta ', theta )
@@ -401,6 +398,34 @@ def face_extrude():
 
 
 ##------------------
+def pyrender_ogl():
+    ropr = simple_render()
+    ropr.SHOW_VTXS = False
+    persp_m44 = matrix44()    
+    persp_m44.load_file( M44_DISK_FILE )
+
+    #attemp to correlate the scale with the z axis cam position 
+    render_scale = abs(persp_m44.m[14])*10
+
+    obj = object3d()
+    obj.load(PYCORE_OBJ_IN)
+
+    use_perpective = True 
+
+    if use_perpective:
+        #                          # fov, aspect, znear, zfar):    
+        m44_2 = persp_m44.buildPerspProjMat( 100, 1, .1, 5)
+        persp_m44 =  persp_m44 * m44_2
+    
+    obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
+
+    # render single object 
+
+    ropr.render_obj((100,0,255), 1, 1, 1, 1, render_scale, object3d=obj)
+    ropr.save_image( PYCORE_BMP_OUT )
+    
+
+##------------------
 def m33_to_vectors(m33, transpose=False):
     outvecs = []
 
@@ -524,7 +549,9 @@ def runcommand():
  
     #loadgcode()
     #loadkicad()
-    pass
+    
+    pyrender_ogl()
+
 
     #scratch_obj1()
     #scratch_obj2()

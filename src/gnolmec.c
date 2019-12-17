@@ -581,8 +581,13 @@ void set_view_ortho(void)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();                   
-    gluOrtho2D(scr_size_x, scr_size_y, -1, 1 ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    
+    //gluOrtho2D(scr_size_x, scr_size_y, -1, 1 ); //(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+    float orthzoom = 200; // orbit_dist*200;
+    glOrtho( -scr_size_x/orthzoom, scr_size_x/orthzoom, -scr_size_y/orthzoom, scr_size_y/orthzoom, -1, 1 );
+
     glMatrixMode(GL_MODELVIEW);
+
 
     // // set viewport to be the entire window
     // glViewport(0, 0, (GLsizei)scr_size_x, (GLsizei)scr_size_y);
@@ -854,7 +859,6 @@ void olmec_mouse_button(int button, int state, int x, int y)
            if (button == 4){
                //if (orbit_dist>0){ 
                    orbit_dist-=.1; 
-                   //printf("# orbit dist %f \n", orbit_dist );
                //}
            }
       }else{  // normal button event
@@ -890,53 +894,52 @@ void olmec_mouse_motion(int x, int y)
     float center_x = (float)scr_size_x/2;
 
 
-    switch (VIEW_MODE) 
+    if(mouseLeftDown)
     { 
-        // orthographic side  (key 2)
-        case 1: 
-            view_ismoving = TRUE;
-            cam_posz = -(center_x-x) * coefficient; 
-            cam_posy = -(center_y-y) * coefficient; 
-        break; 
-    
-        // orthographic top   (key shift 2)
-        case 2:  
-            view_ismoving = TRUE;
-            cam_posx = (center_x-x) * coefficient; 
-            cam_posz = (center_y-y) * coefficient;  
-        break; 
-    
-        // orthographic front  (key 3)
-        case 3:  
-            view_ismoving = TRUE;
-            cam_posx = (center_x-x)  * coefficient; 
-            cam_posy = -(center_y-y) * coefficient; 
-        break; 
-    
 
-        default:  
-            if(mouseLeftDown)
-            {        
+        switch (VIEW_MODE) 
+        { 
+
+            // orthographic side  (key 2)
+            case 1: 
                 view_ismoving = TRUE;
-                
-                orbit_x += (x-mouseX) * coefficient; 
-                orbit_y += (y-mouseY) * coefficient; 
-                mouseX = x;
-                mouseY = y;
+                cam_posz = -(center_x-x) * coefficient; 
+                cam_posy = -(center_y-y) * coefficient; 
+            break; 
+        
+            // orthographic top   (key shift 2)
+            case 2:  
+                view_ismoving = TRUE;
+                cam_posx = (center_x-x) * coefficient; 
+                cam_posz = (center_y-y) * coefficient;  
+            break; 
+        
+            // orthographic front  (key 3)
+            case 3:  
+                view_ismoving = TRUE;
+                cam_posx = (center_x-x)  * coefficient; 
+                cam_posy = -(center_y-y) * coefficient; 
+            break; 
+        
 
-                //printf("# mouse motion %d %d %f %f \n", x,y, orbit_x, orbit_y );
-            }
-
-            if(mouseRightDown)
-            {
-                orbit_dist -= (y - mouseY) * 0.02f;
-                mouseY = y;
-            }
-
-        break;
-
+            default:  
+                    view_ismoving = TRUE;
+                    
+                    orbit_x += (x-mouseX) * coefficient; 
+                    orbit_y += (y-mouseY) * coefficient; 
+                    mouseX = x;
+                    mouseY = y;
+                    //printf("# mouse motion %d %d %f %f \n", x,y, orbit_x, orbit_y );
+            break;
+        }
     }
-    
+
+    if(mouseRightDown)
+    {
+        orbit_dist -= (y - mouseY) * 0.02f;
+        mouseY = y;
+    }
+
     /**************/
    
 
@@ -959,6 +962,22 @@ void olmec_mouse_motion(int x, int y)
 */
 
 
+void negate_y_axis(m44 *input){
+   // this is a hack! 
+   // for some reason python 3D renderer wants y inverted  
+
+    float a,b,c;
+
+    a = -input->m1;
+    b = -input->m5;
+    c = -input->m9;
+   
+    input->m1 = a;
+    input->m5 = b;
+    input->m9 = c;
+    
+}
+
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
@@ -979,7 +998,8 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
         m44 foo = identity44();
         grab_camera_matrix(&foo);
-        transpose(&foo);
+        //transpose(&foo);
+        negate_y_axis(&foo);
         save_matrix44("camera_matrix.olm", &foo );
 
         // if (render_text == TRUE){

@@ -97,14 +97,17 @@ void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
     pt_m44->m1  = m44_glfloat[1];
     pt_m44->m2  = m44_glfloat[2];
     pt_m44->m3  = m44_glfloat[3];
+
     pt_m44->m4  = m44_glfloat[4];
     pt_m44->m5  = m44_glfloat[5];
     pt_m44->m6  = m44_glfloat[6];
     pt_m44->m7  = m44_glfloat[7];
+    
     pt_m44->m8  = m44_glfloat[8];
     pt_m44->m9  = m44_glfloat[9];
     pt_m44->m10 = m44_glfloat[10];
     pt_m44->m11 = m44_glfloat[11];
+    
     pt_m44->m12 = m44_glfloat[12];
     pt_m44->m13 = m44_glfloat[13];
     pt_m44->m14 = m44_glfloat[14];
