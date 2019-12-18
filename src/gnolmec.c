@@ -173,6 +173,18 @@ quaternion orbt_rot_original;
 vec3 orbt_xform_original;
 */
 
+/***************************************/
+int num_pts_drw = 0;
+GLfloat vertices[100];
+
+
+
+
+
+/***************************************/
+int mouseClickCount = 0;
+int rectPlotted;
+
 
 /***************************************/
 /*
@@ -381,8 +393,10 @@ static void render_loop()
  
     /******************************************/
 
-    m33 foobar = m33_from_euler(45,45,45);
-    render_m33(&foobar);
+    //m33 foobar = m33_from_euler(45,45,45);
+    //render_m33(&foobar);
+    
+    /******************************************/
 
 
     if (draw_points)
@@ -399,13 +413,22 @@ static void render_loop()
        
         glPointSize(4);
  
-        //dump to GLFloats 
-        int numdr = pt_model_buffer->num_pts;
+        //-------------------------
+        // KEEP THIS CODE - 
+        // dump to GLFloats 
+        // num_pts_drw = pt_model_buffer->num_pts;
+        // GLfloat vertices[num_pts_drw*4];
+        // GLfloat* pt_vert = vertices;
+        // dump_points_GLfloat( pt_vert, pt_model_buffer, num_pts_drw );
+        
+        //-------------------------
+        
+        // experimental draw points 
 
-        GLfloat vertices[numdr*4];
-        GLfloat* pt_vert = vertices;
+        
 
-        dump_points_GLfloat( pt_vert, pt_model_buffer, numdr );
+
+        //-------------------------
 
 
         GLuint VBO;
@@ -428,8 +451,8 @@ static void render_loop()
                               (void*)0);// vbo offset
 
  
-        glDrawArrays(GL_POINTS, 0, numdr);
-        //glDrawArrays(GL_LINES, 0, numdr);
+        glDrawArrays(GL_POINTS, 0, num_pts_drw);
+        //glDrawArrays(GL_LINES, 0, num_pts_drw);
         glDisableVertexAttribArray(0);
 
     }
@@ -643,11 +666,16 @@ void set_view_persp(void)
 }
 
 
+
+
+/**************************************************/
 /**************************************************/
 /**************************************************/
 
 void olmec(int *argc, char** argv){
  
+
+
     glutInit(argc, argv);  
 
     //shader_test();
@@ -679,6 +707,10 @@ void olmec(int *argc, char** argv){
 
     InitGL(scr_size_x, scr_size_y); // Initialize window. 
   
+
+    // experimental draw polygon 
+    //glutMouseFunc (draw_poly_mousevent);
+
     glutMouseFunc (olmec_mouse_button);
     glutMotionFunc (olmec_mouse_motion);
 
@@ -825,6 +857,79 @@ void olmecnav_start (void ) {
 }
 
 
+/**************************************************/
+/**************************************************/
+
+/*
+void add_draw_pt(float xx, float yy){
+    vertices[num_pts_drw] = GLfloat(xx);
+    num_pts_drw++;
+    vertices[num_pts_drw] = GLfloat(yy);
+    num_pts_drw++;
+    vertices[num_pts_drw] = GLfloat(0);
+    num_pts_drw++;
+    vertices[num_pts_drw] = GLfloat(1.0);
+    num_pts_drw++;
+}
+
+  void on_vertex_selected(int x, int y){
+
+     if(mouseClickCount == 0){
+       
+        printf("## X %d Y %d \n", x, y );
+
+        // glVertex2i(dr_x1, dr_y1);
+        // glVertex3f (v1.x, v1.y, v1.z);
+       
+
+       add_draw_pt(2.0, 1.7);
+
+     }
+     else{
+        vertices[num_pts_drw] = GLfloat(x);
+        num_pts_drw++;
+        vertices[num_pts_drw] = GLfloat(y);
+        num_pts_drw++;
+        vertices[num_pts_drw] = GLfloat(1.0);
+        num_pts_drw++;
+        vertices[num_pts_drw] = GLfloat(1.0);
+        num_pts_drw++;
+
+        // glVertex2i(dr_x1, dr_y1);
+        // glVertex2i(dr_x1, dr_y2);
+        // glVertex2i(dr_x2, dr_y2);
+        // glVertex2i(dr_x2, dr_y1);
+
+     }
+}
+
+
+void draw_poly_mousevent(int button, int state, int x, int y){
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_DOWN && mouseClickCount == 0){
+      //y = y+20; //adjusts for VM mouse tracking error
+
+      on_vertex_selected(x, scr_size_y - y);
+      rectPlotted = 0;
+   }
+
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_UP && mouseClickCount == 0){
+      if(rectPlotted == 1){
+       return;
+      }
+      else{
+       mouseClickCount++;
+      }
+   }
+
+   if(button==GLUT_LEFT_BUTTON && state ==GLUT_DOWN && mouseClickCount == 1){
+       //y = y+20; //adjusts for VM mouse tracking error
+       on_vertex_selected(x, scr_size_y - y);
+       mouseClickCount = 0;
+       rectPlotted = 1;
+   }
+}
+*/
+
 void olmec_mouse_button(int button, int state, int x, int y)
 {
 
@@ -882,6 +987,8 @@ void olmec_mouse_button(int button, int state, int x, int y)
       }
 
 }
+
+
 
 /********************************************/
 
@@ -1175,6 +1282,11 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
+    if (key == 80) //p
+    { 
+        python_render();
+    }
+
     if (key == 112) //p
     { 
 
@@ -1244,17 +1356,26 @@ static void keyPressed(unsigned char key, int x, int y)
 /**************************************************/
 
 
+
+
 void software_render(void){
-    
+
+    // RUN THE CPP RENDERER    
     set_screen_square(&scr_size_x, &scr_size_y);
-
-    //char* render_cmd = "runcommand";    
     char buffer[128];
-
     printf("./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp\n", (int)abs(orbit_dist*30) , 100);
-
     //                                                    xres yres inputfile X Y Z outputfile renderscale which
     snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    int ret = system(buffer);
+
+}
+
+
+void python_render(void){
+
+    char* pycore_cmd = "scanline";    
+    char buffer[128];
+    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", obj_filepath, pycore_cmd);
     int ret = system(buffer);
 
 }

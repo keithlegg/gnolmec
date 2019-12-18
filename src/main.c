@@ -41,6 +41,7 @@
 
 /*******************************************************/
 
+/*
 #include <sys/time.h>
 
 void timer_test(){
@@ -50,6 +51,7 @@ void timer_test(){
     printf("%ld.%06ld\n", startCount.tv_sec, startCount.tv_usec);
 
 };
+*/
 
 
 
@@ -152,15 +154,13 @@ char* obj_filepath;
 int main(int argc, char **argv) 
 {  
 
-    timer_test();
 
     char runmode[10];
 
+    //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
     if( argc == 1 ) {    
         spinningCubeDemo(&argc, argv);
     }
-
-    //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
 
     strcpy(runmode, "-v");
     if( strcmp(argv[1], runmode) == 0)
@@ -170,12 +170,23 @@ int main(int argc, char **argv)
         printf("#OpenGL version %s \n", glGetString(GL_VERSION) ) ;
         exit(0);
     }
+    
+    /********************/
 
+    strcpy(runmode, "cube");
+    if( strcmp(argv[1], runmode) == 0)
+    {
+        spinningCubeDemo(&argc, argv); 
+    }    
+
+    /********************/
     strcpy(runmode, "flat");
     if( strcmp(argv[1], runmode) == 0)
     {
         flatImageDemo(&argc, argv); 
     }
+
+    /********************/
 
     strcpy(runmode, "vectorize");
     if( strcmp(argv[1], runmode) == 0)
@@ -183,7 +194,8 @@ int main(int argc, char **argv)
         // flatImageDemo(&argc, argv); 
     }
 
-
+    /********************/
+    
     if( argc == 2 ) {
         obj_filepath = argv[1] ;
 

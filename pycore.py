@@ -395,34 +395,6 @@ def face_extrude():
     #    obj.extrude_face(i, .1)
 
     obj.save(PYCORE_OBJ_OUT)
-
-
-##------------------
-def pyrender_ogl():
-    ropr = simple_render()
-    ropr.SHOW_VTXS = False
-    persp_m44 = matrix44()    
-    persp_m44.load_file( M44_DISK_FILE )
-
-    #attemp to correlate the scale with the z axis cam position 
-    render_scale = 1000/abs(persp_m44.m[14])
-
-    obj = object3d()
-    obj.load(PYCORE_OBJ_IN)
-
-    use_perpective = True 
-
-    if use_perpective:
-        #                          # fov, aspect, znear, zfar):    
-        m44_2 = persp_m44.buildPerspProjMat( 100, 1, .1, 5)
-        persp_m44 =  persp_m44 * m44_2
-    
-    obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
-
-    # render single object 
-
-    ropr.render_obj((100,0,255), 1, 1, 1, 1, render_scale, object3d=obj)
-    ropr.save_image( PYCORE_BMP_OUT )
     
 
 ##------------------
@@ -470,18 +442,22 @@ def visualize_matrix_rotation():
     if NUMPY_IS_LOADED:
         obj  = object3d()
         m33  = matrix33()
-
-        rendervecs = []
-
-        rendervecs.extend( m33_to_vectors(m33) )
-
-        axis = vec3(0,-1,0)
-        tmp = m33_to_vectors(m33.from_vec3( axis , 30 ))
         
+        def render_multi_matrices(lom):   
+            outvecs = []
+            for m in lom:      
+                tmp = m33_to_vectors( m )
+                outvecs.extend( tmp )
+            return outvecs
+ 
+        axis = vec3(3,3,0)
+       
+        m1 = m33.from_vec3( axis , 45 )
+              
+        rendervecs = render_multi_matrices( [m1,m33] )
+
+        # viz the axis
         rendervecs.append(axis)
-
-        #rendervecs.extend(tmp)
-
         obj.vectorlist_to_obj( rendervecs )
         obj.save(PYCORE_OBJ_OUT)  
     else:
@@ -497,7 +473,7 @@ def visualize_perspective_matrix():
     
     #create a perspective matrix 
                                        # fov, aspect, znear, zfar):
-    persp_m44 = persp_m44.buildPerspProjMat( 95, 1, 1, 2)
+    persp_m44 = persp_m44.buildPerspProjMat( 15, 1, 1, 2)
     obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
     
     #visualize the matrix in the object 
@@ -531,6 +507,37 @@ def visualize_perspective_matrix():
 ##***********************************************************##
 ##***********************************************************##
 
+def pyrender_ogl():
+    ropr = simple_render()
+    ropr.SHOW_VTXS = False
+    persp_m44 = matrix44()    
+    persp_m44.load_file( M44_DISK_FILE )
+
+    obj = object3d()
+    obj.load(PYCORE_OBJ_IN)
+
+    use_perpective = True 
+    if use_perpective:
+        #                          # fov, aspect, znear, zfar):    
+        m44_2 = persp_m44.buildPerspProjMat( 100, 1, .1, 5)
+        persp_m44 =  persp_m44 * m44_2
+    
+    obj.points = obj.apply_matrix_pts(obj.points, m44=persp_m44)
+
+    # ropr.render_obj((100,0,255), 1, 1, 1, 1, 1000/abs(persp_m44.m[14]), object3d=obj)
+
+    img_op = PixelOp()   
+    img_op.load('textures/generated2.bmp') 
+    lightpos = (0, 2 ,-1)
+    ropr = simple_render()
+    ropr.COLOR_MODE = 'lighted'
+    #ropr.COLOR_MODE = 'lightedshaded'
+    ropr.SHOW_FACE_CENTER = False
+    ropr.SHOW_EDGES       = False     
+    ropr.USE_PERSPECTIVE  = False 
+    ropr.scanline(obj, 1000/abs(persp_m44.m[14]), lightpos=lightpos, texmap=img_op.fb ) 
+    ropr.save_image( PYCORE_BMP_OUT )
+
 """
 obj = object3d()
 obj.load('pyrender2/objects/cube.obj')
@@ -543,20 +550,17 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 
 ## parse commands coming in and run them
 def runcommand():
-    #visualize_perspective_matrix()
-    
     #visualize_matrix_rotation()
- 
+
+    #visualize_perspective_matrix()
+
     #loadgcode()
     #loadkicad()
-    
-    pyrender_ogl()
-
 
     #scratch_obj1()
     #scratch_obj2()
 
-    #circle_cube_pts()
+    circle_cube_pts()
     #primitive('sphere')
     
     #procedural_1()
@@ -586,7 +590,10 @@ if __name__=="__main__":
 
     if sys.argv[2] == 'runcommand':
         runcommand()
-    
+
+    if sys.argv[2] == 'scanline':
+        pyrender_ogl()    
+
     #if sys.argv[2] == 'normals':
     #    gen_normals()
 
