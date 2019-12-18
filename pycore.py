@@ -543,9 +543,9 @@ def pyrender_ogl():
     ropr.COLOR_MODE = 'lightedshaded'
 
 
-    #ropr.SHOW_VTXS        = True
-    #ropr.SHOW_FACE_CENTER = True
-    #ropr.SHOW_EDGES       = True    
+    ropr.SHOW_VTXS        = False
+    ropr.SHOW_FACE_CENTER = False
+    ropr.SHOW_EDGES       = False    
 
     ##----------
 
