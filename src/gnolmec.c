@@ -86,6 +86,10 @@ extern char* obj_filepath;
 extern GLuint texture[3];
 
 
+
+char active_filepath[300];
+
+
 //struct obj_model draw_points_buffer;
 //struct obj_model *pt_draw_points = &draw_points_buffer;
 
@@ -681,8 +685,9 @@ void olmec(int *argc, char** argv){
     //shader_test();
     set_colors();
 
-
-    load_objfile(obj_filepath, pt_model_buffer ); 
+     
+    strcpy(active_filepath, obj_filepath);
+    load_objfile(active_filepath, pt_model_buffer ); 
 
 
     warnings();
@@ -1273,17 +1278,27 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 111) //o
     { 
 
-        char* file2 = "3d_obj/PYCORE.obj";
+        //char* file2 = "3d_obj/PYCORE.obj";
+
+        strcpy(active_filepath, "3d_obj/PYCORE.obj");
 
         reset_objfile(pt_model_buffer, pt_obinfo);
 
-        load_objfile(file2, pt_model_buffer );
+        load_objfile(active_filepath, pt_model_buffer );
         get_obj_info( pt_model_buffer, pt_obinfo);
+
 
     }
 
     if (key == 80) //p
     { 
+
+        //go ahead and dump camera matrix automatically 
+        m44 foo = identity44();
+        grab_camera_matrix(&foo);
+        negate_y_axis(&foo);
+        save_matrix44("camera_matrix.olm", &foo );
+
         python_render();
     }
 
@@ -1315,9 +1330,11 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 114) //r
     { 
-        load_objfile(obj_filepath, pt_model_buffer ); 
-        get_obj_info( pt_model_buffer, pt_obinfo);
+        strcpy(active_filepath, obj_filepath );
 
+        load_objfile(active_filepath, pt_model_buffer ); 
+        get_obj_info( pt_model_buffer, pt_obinfo);
+      
     }
 
     if (key == 102) //f
@@ -1363,9 +1380,9 @@ void software_render(void){
     // RUN THE CPP RENDERER    
     set_screen_square(&scr_size_x, &scr_size_y);
     char buffer[128];
-    printf("./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, obj_filepath, 0, 0, 0 ,"foo.bmp\n", (int)abs(orbit_dist*30) , 100);
+    printf("./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, active_filepath, 0, 0, 0 ,"foo.bmp\n", (int)abs(orbit_dist*30) , 100);
     //                                                    xres yres inputfile X Y Z outputfile renderscale which
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, obj_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, active_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
     int ret = system(buffer);
 
 }
@@ -1375,7 +1392,7 @@ void python_render(void){
 
     char* pycore_cmd = "scanline";    
     char buffer[128];
-    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", obj_filepath, pycore_cmd);
+    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", active_filepath, pycore_cmd);
     int ret = system(buffer);
 
 }
@@ -1388,7 +1405,7 @@ void init_pycore(void){
     char* pycore_cmd = "runcommand";    
     char buffer[128];
 
-    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", obj_filepath, pycore_cmd);
+    snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", active_filepath, pycore_cmd);
     int ret = system(buffer);
 
     //load the result in !!

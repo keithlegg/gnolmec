@@ -153,7 +153,7 @@ def circle_cube_pts():
     
     #obj.scale_pts((1,5,1))
     
-    obj.rotate_pts((0,45,0))
+    obj.rotate_pts((0,90,0))
     
     obj.triangulate(force=True)
 
@@ -167,13 +167,14 @@ def circle_cube_pts():
 
     #obj.extrude_face(len(obj.polygons)-2, -2)
 
-    pts = obj.get_face_pts(15) 
+    pts = obj.get_face_pts(3) 
     ct = 0
     for pt in pts:
         tmp = object3d()
         tmp.prim_cube(size=.06, pos=pt, rot=(ct,ct,ct), pivot='world')
         ct += 10
         obj.insert(tmp)  
+
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -388,8 +389,11 @@ def face_extrude():
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
 
-    for i in range(1,len(obj.polygons) ):   
-        obj.extrude_face(i, .1)
+    #end = len(obj.polygons)
+    end = 20
+
+    for i in range(1, end ):   
+        obj.extrude_face(i, 1)
     
     #for i in range(1,100 ):   
     #    obj.extrude_face(i, .1)
@@ -509,12 +513,12 @@ def visualize_perspective_matrix():
 
 def pyrender_ogl():
     ropr = simple_render()
-    ropr.SHOW_VTXS = False
     persp_m44 = matrix44()    
     persp_m44.load_file( M44_DISK_FILE )
 
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
+    #obj.triangulate(force=True)  
 
     use_perpective = True 
     if use_perpective:
@@ -528,14 +532,24 @@ def pyrender_ogl():
 
     img_op = PixelOp()   
     img_op.load('textures/generated2.bmp') 
+    #img_op.save("foobar.bmp")
+
     lightpos = (0, 2 ,-1)
     ropr = simple_render()
-    ropr.COLOR_MODE = 'lighted'
-    #ropr.COLOR_MODE = 'lightedshaded'
-    ropr.SHOW_FACE_CENTER = False
-    ropr.SHOW_EDGES       = False     
-    ropr.USE_PERSPECTIVE  = False 
-    ropr.scanline(obj, 1000/abs(persp_m44.m[14]), lightpos=lightpos, texmap=img_op.fb ) 
+
+    ##----------
+    #ropr.COLOR_MODE = 'flat'
+    #ropr.COLOR_MODE = 'lighted'
+    ropr.COLOR_MODE = 'lightedshaded'
+
+
+    #ropr.SHOW_VTXS        = True
+    #ropr.SHOW_FACE_CENTER = True
+    #ropr.SHOW_EDGES       = True    
+
+    ##----------
+
+    ropr.scanline(obj, 1000/abs(persp_m44.m[14]), lightpos=lightpos, texmap=img_op ) 
     ropr.save_image( PYCORE_BMP_OUT )
 
 """
@@ -560,7 +574,7 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    circle_cube_pts()
+    #circle_cube_pts()
     #primitive('sphere')
     
     #procedural_1()
@@ -568,7 +582,7 @@ def runcommand():
 
     #gen_normals()
 
-    #face_extrude()
+    face_extrude()
    
     #pt_transform()
     
