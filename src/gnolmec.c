@@ -83,6 +83,9 @@ bool render_text     = TRUE;
 
 extern char* obj_filepath;
 
+char *matrix_filepath = "camera_matrix.olm";
+
+
 extern GLuint texture[3];
 
 
@@ -1111,8 +1114,10 @@ static void keyPressed(unsigned char key, int x, int y)
         m44 foo = identity44();
         grab_camera_matrix(&foo);
         //transpose(&foo);
-        negate_y_axis(&foo);
-        save_matrix44("camera_matrix.olm", &foo );
+        //negate_y_axis(&foo); //PIL want this (origin is TL, Framebuffer and CPP origin is BL)
+        save_matrix44( matrix_filepath, &foo );
+
+        printf(  matrix_filepath );
 
         // if (render_text == TRUE){
         //     render_text = FALSE;
@@ -1318,6 +1323,11 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 8 || key == 127) //backspace /delete on OSX )
     { 
+        m44 foo = identity44();
+        grab_camera_matrix(&foo);
+        //negate_y_axis(&foo); - PIL, CPP and framebuffer use different origins!
+        save_matrix44("camera_matrix.olm", &foo );
+
         software_render();
     }
 
@@ -1379,10 +1389,17 @@ void software_render(void){
 
     // RUN THE CPP RENDERER    
     set_screen_square(&scr_size_x, &scr_size_y);
-    char buffer[128];
-    printf("./renderthing %d %d %s %d %d %d %s %d %d", scr_size_x, scr_size_y, active_filepath, 0, 0, 0 ,"foo.bmp\n", (int)abs(orbit_dist*30) , 100);
-    //                                                    xres yres inputfile X Y Z outputfile renderscale which
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, active_filepath, 0, 0, 0 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    char buffer[512];
+
+    //./renderthing 512 512 3d_obj/monkey.obj ../camera_matrix.olm 0 0 0 render.bmp 100
+
+    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "foo.bmp");
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "foo.bmp"); 
+
+    // printf("./renderthing %d %d %s %d %d %s %d %d\n", scr_size_x, scr_size_y, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+    // //                                                    xres yres inputfile X Y Z outputfile renderscale which
+    // snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
+   
     int ret = system(buffer);
 
 }
@@ -1391,7 +1408,7 @@ void software_render(void){
 void python_render(void){
 
     char* pycore_cmd = "scanline";    
-    char buffer[128];
+    char buffer[256];
     snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", active_filepath, pycore_cmd);
     int ret = system(buffer);
 
@@ -1403,7 +1420,7 @@ void init_pycore(void){
     //call python from here!!
 
     char* pycore_cmd = "runcommand";    
-    char buffer[128];
+    char buffer[256];
 
     snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", active_filepath, pycore_cmd);
     int ret = system(buffer);

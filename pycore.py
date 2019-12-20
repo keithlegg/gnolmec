@@ -539,8 +539,8 @@ def pyrender_ogl():
 
     ##----------
     #ropr.COLOR_MODE = 'flat'
-    #ropr.COLOR_MODE = 'lighted'
-    ropr.COLOR_MODE = 'lightedshaded'
+    ropr.COLOR_MODE = 'lighted'
+    #ropr.COLOR_MODE = 'lightedshaded'
 
 
     ropr.SHOW_VTXS        = False

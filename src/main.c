@@ -147,13 +147,69 @@ void test_math_ops(void){
 }
  
 
+
+void makeTestImage()
+{
+    char image_name[] = "diagnostic.bmp"; 
+
+    RGBType bgcolor;
+    bgcolor.r=45;
+    bgcolor.g=45;
+    bgcolor.b=30;
+
+    RGBType linecol;
+    linecol.r=255;
+    linecol.g=0;
+    linecol.b=0;
+
+    int locwidth  = 512;
+    int locheight = 512;
+
+    //24 bit
+    RGBType *pixels  = createBuffer24(locwidth, locheight);
+    if (pixels==NULL)
+    {
+        printf("Error creating test image framebuffer\n");
+        return;
+    }
+
+    fillbuffer24( pixels, locwidth, locheight, &bgcolor);
+
+    //  draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBType *color  );
+    //  draw_point ( RGBAType *fb_image, int imagewidth, int pt[2], int color[3] );//untested 
+    //  draw_point ( RGBAType *fb_image, int imagewidth, int xcoord, int ycoord, int color[3]  );
+    //  draw_point ( RGBAType *fb_image, int imagewidth, int xcoord, int ycoord, RGBType *color  );
+
+    //  draw_point ( RGBType *fb_image , int imagewidth, int xcoord, int ycoord, int color[3]  );
+    //  draw_point ( RGBType *fb_image , int imagewidth, int xcoord, int ycoord, RGBType *color  );
+    //  draw_point ( RGBType *fb_image , int imagewidth, int xcoord, int ycoord, int dia, RGBType *color  );
+
+    draw_point ( pixels , locwidth, 1, 1, &linecol  );
+    draw_point ( pixels , locwidth, 5, 5, &linecol  );
+
+    saveBMP_24bit(pixels, image_name, locwidth, locheight );
+
+    //32 bit 
+    //RGBAType *pixels = createBuffer32(locwidth, locheight);        
+    //fillbuffer32( pixels, locwidth, locheight, &bgcolor);
+    //saveBMP_24bit(copyBuffer24(pixels, locwidth, locheight), image_name, locwidth, locheight );
+
+    char title[] = "scanfidstest";
+    //writePng32(pixels, image_name, locwidth, locheight, title);
+
+
+    //cleanup_heap(row_pointers, h);   
+    free(pixels); 
+
+}
+
+
 /***************************************/
 
 char* obj_filepath;  
 
 int main(int argc, char **argv) 
 {  
-
 
     char runmode[10];
 
