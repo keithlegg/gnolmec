@@ -423,10 +423,10 @@ static void render_loop()
         //-------------------------
         // KEEP THIS CODE - 
         // dump to GLFloats 
-        // num_pts_drw = pt_model_buffer->num_pts;
-        // GLfloat vertices[num_pts_drw*4];
-        // GLfloat* pt_vert = vertices;
-        // dump_points_GLfloat( pt_vert, pt_model_buffer, num_pts_drw );
+        num_pts_drw = pt_model_buffer->num_pts;
+        GLfloat vertices[num_pts_drw*4];
+        GLfloat* pt_vert = vertices;
+        dump_points_GLfloat( pt_vert, pt_model_buffer, num_pts_drw );
         
         //-------------------------
         
@@ -1393,8 +1393,8 @@ void software_render(void){
 
     //./renderthing 512 512 3d_obj/monkey.obj ../camera_matrix.olm 0 0 0 render.bmp 100
 
-    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "foo.bmp");
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "foo.bmp"); 
+    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "cpp_render.bmp");
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
 
     // printf("./renderthing %d %d %s %d %d %s %d %d\n", scr_size_x, scr_size_y, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
     // //                                                    xres yres inputfile X Y Z outputfile renderscale which

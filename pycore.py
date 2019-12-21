@@ -27,7 +27,7 @@ if __name__=="__main__":
     PYCORE_GEOMPATH = "3d_obj"
     PYCORE_OBJ_OUT  = "%s/%s"%(PYCORE_GEOMPATH, "PYCORE.obj")
 
-    PYCORE_BMP_OUT  = "pycore.bmp"
+    PYCORE_BMP_OUT  = "py_render.bmp"
     M44_DISK_FILE = "camera_matrix.olm"
     # print("# PYCORE %s --> %s "% (PYCORE_OBJ_IN, PYCORE_OBJ_OUT) )
 
@@ -242,7 +242,7 @@ def primitive(primtype):
     position = (0,0,0)
     rotation = (0,0,0)
     size = 1 
-    axis = 'y'
+    axis = 'z'
 
     do_flush = True
 
@@ -531,7 +531,9 @@ def pyrender_ogl():
     # ropr.render_obj((100,0,255), 1, 1, 1, 1, 1000/abs(persp_m44.m[14]), object3d=obj)
 
     img_op = PixelOp()   
-    img_op.load('textures/generated2.bmp') 
+    #img_op.load('textures/generated3.bmp') 
+    img_op.load('render_thing/images/uvmap.bmp') 
+
     #img_op.save("foobar.bmp")
 
     lightpos = (0, 2 ,-1)
@@ -539,8 +541,8 @@ def pyrender_ogl():
 
     ##----------
     #ropr.COLOR_MODE = 'flat'
-    ropr.COLOR_MODE = 'lighted'
-    #ropr.COLOR_MODE = 'lightedshaded'
+    #ropr.COLOR_MODE = 'lighted'
+    ropr.COLOR_MODE = 'lightedshaded'
 
 
     ropr.SHOW_VTXS        = False
@@ -566,7 +568,7 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 def runcommand():
     #visualize_matrix_rotation()
 
-    #visualize_perspective_matrix()
+    visualize_perspective_matrix()
 
     #loadgcode()
     #loadkicad()
@@ -575,14 +577,15 @@ def runcommand():
     #scratch_obj2()
 
     #circle_cube_pts()
-    #primitive('sphere')
+    
+    #primitive('triangle')
     
     #procedural_1()
     #primitive('sphere')
 
     #gen_normals()
 
-    face_extrude()
+    #face_extrude()
    
     #pt_transform()
     
