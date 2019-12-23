@@ -41,7 +41,7 @@ void save_matrix44(char* filepath, m44 *input ){
    fprintf(fp, "%f %f %f %f\n", input->m0  , input->m1  , input->m2  , input->m3  );
    fprintf(fp, "%f %f %f %f\n", input->m4  , input->m5  , input->m6  , input->m7  );
    fprintf(fp, "%f %f %f %f\n", input->m8  , input->m9  , input->m10 , input->m11 );
-   fprintf(fp, "%f %f %f %f\n", input->m12 , input->m12 , input->m14 , input->m15 );      
+   fprintf(fp, "%f %f %f %f\n", input->m12 , input->m13 , input->m14 , input->m15 );      
    
    //----------------------
    fclose(fp);

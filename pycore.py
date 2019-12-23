@@ -152,18 +152,17 @@ def circle_cube_pts():
     obj.prim_circle(axis='z', pos=(0,0,0), spokes=10, dia=.5) 
     
     #obj.scale_pts((1,5,1))
-    
-    obj.rotate_pts((0,90,0))
-    
+        
     obj.triangulate(force=True)
 
-    for f in range(1,len(obj.polygons)-1,1):
-        if f%2==0:
-            obj.extrude_face(f, 1)
+
+    # for f in range(1,len(obj.polygons)-1,1):
+    #     if f%7==0:
+    #         obj.extrude_face(f, 1)
     
     #obj.scale_pts((1,5,1))
     
-    #obj.extrude_face(len(obj.polygons)-1, 2)
+   # obj.rotate_pts((35,35,0))
 
     #obj.extrude_face(len(obj.polygons)-2, -2)
 
@@ -171,11 +170,15 @@ def circle_cube_pts():
     ct = 0
     for pt in pts:
         tmp = object3d()
-        tmp.prim_cube(size=.06, pos=pt, rot=(ct,ct,ct), pivot='world')
+        
+        #broken # tmp.prim_sphere(pos=pt, rot=(0,0,0), size=.05 )
+        #tmp.prim_locator_xyz(pos=pt, rot=(0,0,0), size=1)
+        #tmp.prim_cone('y', pos=pt, rot=(0,0,0), dia=.06, spokes=8)
+        tmp.prim_cube(size=.01, pos=pt, rot=(ct,ct,ct), pivot='world')
         ct += 10
         obj.insert(tmp)  
 
-
+    #obj.triangulate(force=True)
     obj.save(PYCORE_OBJ_OUT)
 
 ##------------------
@@ -392,7 +395,7 @@ def face_extrude():
     #end = len(obj.polygons)
     end = 20
 
-    for i in range(1, end ):   
+    for i in range(1, 30 ):   
         obj.extrude_face(i, 1)
     
     #for i in range(1,100 ):   
@@ -531,8 +534,8 @@ def pyrender_ogl():
     # ropr.render_obj((100,0,255), 1, 1, 1, 1, 1000/abs(persp_m44.m[14]), object3d=obj)
 
     img_op = PixelOp()   
-    #img_op.load('textures/generated3.bmp') 
-    img_op.load('render_thing/images/uvmap.bmp') 
+    img_op.load('textures/generated2.bmp') 
+    #img_op.load('render_thing/images/uvmap.bmp') 
 
     #img_op.save("foobar.bmp")
 
@@ -568,7 +571,7 @@ obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 def runcommand():
     #visualize_matrix_rotation()
 
-    visualize_perspective_matrix()
+    #visualize_perspective_matrix()
 
     #loadgcode()
     #loadkicad()
@@ -576,7 +579,7 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    #circle_cube_pts()
+    circle_cube_pts()
     
     #primitive('triangle')
     

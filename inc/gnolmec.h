@@ -6,8 +6,10 @@
 
 
 
+void tweak_matrix( void );
 
 void grab_camera_matrix( m44 *pt_mmm );
+void grab_projection_matrix(m44 *pt_mpm );
 
 void set_screen_square(void);
 

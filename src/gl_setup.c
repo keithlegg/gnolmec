@@ -91,6 +91,8 @@ void render_m44(m44 *t44)
 
 
 /*************************************************************/
+//void m44_to_glm44( m44* pt_m44, GLfloat m44_glfloat[16] ){}
+
 void glutm44_to_m44( m44* pt_m44, GLfloat m44_glfloat[16] ){
 
     pt_m44->m0  = m44_glfloat[0];

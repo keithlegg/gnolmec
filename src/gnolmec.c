@@ -83,7 +83,8 @@ bool render_text     = TRUE;
 
 extern char* obj_filepath;
 
-char *matrix_filepath = "camera_matrix.olm";
+char *cam_matrix_filepath = "camera_matrix.olm";
+char *proj_matrix_filepath = "projection_matrix.olm";
 
 
 extern GLuint texture[3];
@@ -194,22 +195,69 @@ int rectPlotted;
 
 
 /***************************************/
-/*
-   TODO - attempt to pass this matrix to renderthing to use for view 
-*/
-void grab_camera_matrix( m44 *pt_mmm )
+//DEBUG - GL_MODELVIEW_MATRIX and GL_PROJECTION_MATRIX seem to be the same 
+void grab_camera_matrix( m44 *pt_mmm)
 {
     GLfloat model[16]; 
-    //m44 my_model_matrix;
-    //m44 *pt_mmm = &my_model_matrix;
 
-    // Test to attach geometry to camera (crappy widgets) 
+    glMatrixMode(GL_MODELVIEW);
+    //glPushMatrix();
     glGetFloatv(GL_MODELVIEW_MATRIX, model); 
+    //glPopMatrix();
+
     glutm44_to_m44(pt_mmm, model);
 
-    // view or print it 
+}
+
+//DEBUG - GL_MODELVIEW_MATRIX and GL_PROJECTION_MATRIX seem to be the same 
+void grab_projection_matrix(m44 *pt_mpm )
+{
+    GLfloat model[16]; 
+
+    glMatrixMode(GL_PROJECTION);
+    // glPushMatrix();
+    //gluOrtho(...);
+
+    glGetFloatv(GL_PROJECTION_MATRIX, model); 
+    
+    //glPopMatrix();
+
+    glutm44_to_m44(pt_mpm, model);
+
+    // https://www.khronos.org/opengl/wiki/Viewing_and_Transformations
+    //manipulate matrix example
+    // glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
+    // glScalef(1., 1., -1.);
+
     //render_m44(pt_mmm);
     //print_matrix(my_model_matrix);
+}
+
+
+//DEBUG - for testing 
+void tweak_matrix( void )
+{
+ 
+    GLdouble translate[16] = {1,0,0,0,
+                              0,1,0,0,
+                              0,0,1,0,
+                              1,1,1,1};    
+
+
+    //glPushMatrix();
+    glMatrixMode(GL_PROJECTION);
+    
+    //glMatrixMode(GL_MODELVIEW);
+                              
+
+    glMultMatrixd(translate);
+    //glGetFloatv(GL_PROJECTION_MATRIX, model); 
+    
+    //glPopMatrix();
+
+    //glutm44_to_m44(pt_mpm, model);
+
 }
 
 /***************************************/
@@ -602,6 +650,19 @@ static void reshape_window(int width, int height)
     scr_size_x = width;
     scr_size_y = height;    
 
+
+    
+    // // https://www.khronos.org/opengl/wiki/Viewing_and_Transformations
+    // int fov = 1;
+    // int zNear = .1;
+    // int zFar = 10;
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // float aspectYScale = 1.0;
+    // if ( aspect < conditionalaspect ) {
+    //     aspectYScale *= (float)scr_size_x / (float)scr_size_y / conditionalaspect;
+    // }
+    // gluPerspective(atan(tan(fov * 3.14159 / 360.0) / aspectYScale) * 360.0 / 3.14159, (float)scr_size_x/(float)scr_size_y, zNear, zFar);
 
 }//end resize callback
 
@@ -1107,26 +1168,6 @@ static void keyPressed(unsigned char key, int x, int y)
         glutDestroyWindow(window_id); 
         exit(0);                   
     }
-    
-
-    if (key == 116) // t key 
-    { 
-        m44 foo = identity44();
-        grab_camera_matrix(&foo);
-        //transpose(&foo);
-        //negate_y_axis(&foo); //PIL want this (origin is TL, Framebuffer and CPP origin is BL)
-        save_matrix44( matrix_filepath, &foo );
-
-        printf(  matrix_filepath );
-
-        // if (render_text == TRUE){
-        //     render_text = FALSE;
-        // }else{
-        //     render_text = TRUE;
-        // }
-
-    }
-  
 
 
     if (key == 49) //1 - perspective mode
@@ -1295,6 +1336,38 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
+
+    if (key == 84) // shift t key 
+    { 
+        tweak_matrix();
+    }
+
+
+    if (key == 116) // t key 
+    { 
+        m44 cam_matrix = identity44();
+        grab_camera_matrix(&cam_matrix);
+        //transpose(&foo);
+        //negate_y_axis(&foo); //PIL want this (origin is TL, Framebuffer and CPP origin is BL)
+
+        // // probably a terrible idea 
+        // cam_matrix.m12=cam_posx;
+        // cam_matrix.m13=cam_posy;
+        // cam_matrix.m14=cam_posz;
+        
+        print_matrix(cam_matrix);
+
+        save_matrix44( cam_matrix_filepath, &cam_matrix );
+
+
+        //hmm, this returns the same matrix .. investigate 
+        m44 proj_matrix = identity44();
+        grab_projection_matrix(&proj_matrix );
+        save_matrix44( proj_matrix_filepath, &cam_matrix );
+
+    }
+  
+
     if (key == 80) //p
     { 
 
@@ -1302,7 +1375,7 @@ static void keyPressed(unsigned char key, int x, int y)
         m44 foo = identity44();
         grab_camera_matrix(&foo);
         negate_y_axis(&foo);
-        save_matrix44("camera_matrix.olm", &foo );
+        save_matrix44(cam_matrix_filepath, &foo );
 
         python_render();
     }
@@ -1314,7 +1387,7 @@ static void keyPressed(unsigned char key, int x, int y)
         m44 foo = identity44();
         grab_camera_matrix(&foo);
         negate_y_axis(&foo);
-        save_matrix44("camera_matrix.olm", &foo );
+        save_matrix44(cam_matrix_filepath, &foo );
 
         //launch python3 
         init_pycore(); 
@@ -1323,10 +1396,20 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 8 || key == 127) //backspace /delete on OSX )
     { 
-        m44 foo = identity44();
-        grab_camera_matrix(&foo);
+        m44 cam_matrix = identity44();
+        grab_camera_matrix(&cam_matrix);
         //negate_y_axis(&foo); - PIL, CPP and framebuffer use different origins!
-        save_matrix44("camera_matrix.olm", &foo );
+
+        // // probably a terrible idea 
+        // cam_matrix.m12=cam_posx;
+        // cam_matrix.m13=cam_posy;
+        // cam_matrix.m14=cam_posz;
+
+        save_matrix44(cam_matrix_filepath, &cam_matrix );
+
+        //hmm, this returns the same matrix .. investigate 
+        //grab_projection_matrix(&foo);
+        //save_matrix44("projection_matrix.olm", &foo );
 
         software_render();
     }
@@ -1393,8 +1476,8 @@ void software_render(void){
 
     //./renderthing 512 512 3d_obj/monkey.obj ../camera_matrix.olm 0 0 0 render.bmp 100
 
-    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "cpp_render.bmp");
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
+    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp");
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
 
     // printf("./renderthing %d %d %s %d %d %s %d %d\n", scr_size_x, scr_size_y, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
     // //                                                    xres yres inputfile X Y Z outputfile renderscale which
