@@ -544,26 +544,31 @@ def pyrender_ogl():
 
     ##----------
     #ropr.COLOR_MODE = 'flat'
-    #ropr.COLOR_MODE = 'lighted'
-    ropr.COLOR_MODE = 'lightedshaded'
+    ropr.COLOR_MODE = 'lighted'
+    #ropr.COLOR_MODE = 'lightedshaded'
 
 
     ropr.SHOW_VTXS        = False
     ropr.SHOW_FACE_CENTER = False
-    ropr.SHOW_EDGES       = False    
+    ropr.SHOW_EDGES       = True    
 
     ##----------
 
     ropr.scanline(obj, 1000/abs(persp_m44.m[14]), lightpos=lightpos, texmap=img_op ) 
     ropr.save_image( PYCORE_BMP_OUT )
 
+
+
+#####################################################
+
 """
 obj = object3d()
-obj.load('pyrender2/objects/cube.obj')
-#obj.save(PYCORE_OBJ_OUT)
-obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
+#obj.load('pyrender2/objects/cube.obj')
+obj.load('3d_obj/teapot.obj')
+obj.rotate_pts((45,45,45))
+obj.save(PYCORE_OBJ_OUT)
+#obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
 """
-
 
 
 
@@ -579,14 +584,14 @@ def runcommand():
     #scratch_obj1()
     #scratch_obj2()
 
-    circle_cube_pts()
+    #circle_cube_pts()
     
     #primitive('triangle')
     
     #procedural_1()
     #primitive('sphere')
 
-    #gen_normals()
+    gen_normals()
 
     #face_extrude()
    
@@ -602,6 +607,7 @@ def runcommand():
     
     #copy_sop()
 
+    pass
 
 
 

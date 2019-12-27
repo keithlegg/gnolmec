@@ -26,6 +26,7 @@
         - load multiple objects in scene ( layers )  
         - object save 
         - think about a scenegraph   
+        - SHAKE, Image compositing 
 
         - WIDGETS, BUTTONS
         - ON SCREEN TEXT 
@@ -246,7 +247,7 @@ void tweak_matrix( void )
 
 
     //glPushMatrix();
-    glMatrixMode(GL_PROJECTION);
+    //glMatrixMode(GL_PROJECTION);
     
     //glMatrixMode(GL_MODELVIEW);
                               
@@ -259,6 +260,24 @@ void tweak_matrix( void )
     //glutm44_to_m44(pt_mpm, model);
 
 }
+
+
+void negate_y_axis(m44 *input){
+   // this is a hack!  (invert Y is option on renderer! debug )
+   // for some reason python 3D renderer wants y inverted  
+
+    float a,b,c;
+
+    a = -input->m1;
+    b = -input->m5;
+    c = -input->m9;
+   
+    input->m1 = a;
+    input->m5 = b;
+    input->m9 = c;
+    
+}
+
 
 /***************************************/
 /***************************************/
@@ -382,14 +401,24 @@ static void render_loop()
         resetPerspectiveProjection();
     }
 
+    // --------------------------------------------
 
-    //glPushMatrix();
+    // // glPushMatrix();
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
 
+    //----------------------------------------------
 
+    // // move the view without using gluLookAt
+    // glMatrixMode( GL_MODELVIEW );
+    // glLoadIdentity();
+    // glTranslatef( 0,0,-10 );
+    // glRotatef( 90, 1,0,0 );
+
+    //----------------------------------------------
+   
     switch (VIEW_MODE) 
     { 
         // orthographic side 
@@ -434,7 +463,7 @@ static void render_loop()
 
         break;   
     } 
-
+ 
     
     /******************************************/
     /******************************************/
@@ -1138,27 +1167,13 @@ void olmec_mouse_motion(int x, int y)
 */
 
 
-void negate_y_axis(m44 *input){
-   // this is a hack!  (invert Y is option on renderer! debug )
-   // for some reason python 3D renderer wants y inverted  
 
-    float a,b,c;
-
-    a = -input->m1;
-    b = -input->m5;
-    c = -input->m9;
-   
-    input->m1 = a;
-    input->m5 = b;
-    input->m9 = c;
-    
-}
 
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("scancode key %u \n", key );
+    printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -1400,7 +1415,7 @@ static void keyPressed(unsigned char key, int x, int y)
         grab_camera_matrix(&cam_matrix);
         //negate_y_axis(&foo); - PIL, CPP and framebuffer use different origins!
 
-        // // probably a terrible idea 
+        //// probably a terrible idea 
         // cam_matrix.m12=cam_posx;
         // cam_matrix.m13=cam_posy;
         // cam_matrix.m14=cam_posz;
@@ -1474,15 +1489,16 @@ void software_render(void){
     set_screen_square(&scr_size_x, &scr_size_y);
     char buffer[512];
 
-    //./renderthing 512 512 3d_obj/monkey.obj ../camera_matrix.olm 0 0 0 render.bmp 100
+    // printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp");
+    // snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
+    
+    // we need to export a setup.olm file here 
+    char* scenefilepath = "setup.olm";
+    write_scenefile(active_filepath, cam_matrix_filepath, scenefilepath );
 
-    printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp");
-    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
+    printf("./renderthing %d %d %s %s\n", scr_size_x, scr_size_y, scenefilepath, "cpp_render.bmp");
+    snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s", scr_size_x, scr_size_y, scenefilepath, "cpp_render.bmp");
 
-    // printf("./renderthing %d %d %s %d %d %s %d %d\n", scr_size_x, scr_size_y, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
-    // //                                                    xres yres inputfile X Y Z outputfile renderscale which
-    // snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %d %d %d %s %d %d", 512, 512, active_filepath, 0, 0, -90 ,"foo.bmp", (int)abs(orbit_dist*30) , 100);
-   
     int ret = system(buffer);
 
 }
