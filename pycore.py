@@ -2,13 +2,13 @@
 import sys
 
 
-from pyrender2.pygfx.math_ops import  *
-from pyrender2.pygfx.point_ops import *
-from pyrender2.pygfx.obj3d import  *
-from pyrender2.pygfx.render import *
+from gnelscript.pygfx.math_ops import  *
+from gnelscript.pygfx.point_ops import *
+from gnelscript.pygfx.obj3d import  *
+from gnelscript.pygfx.render import *
 
-from pyrender2.pygfx.kicad_ops import * 
-from pyrender2.pygfx.milling_ops import * 
+from gnelscript.pygfx.kicad_ops import * 
+from gnelscript.pygfx.milling_ops import * 
 
 mu = math_util() 
 
@@ -544,13 +544,13 @@ def pyrender_ogl():
 
     ##----------
     #ropr.COLOR_MODE = 'flat'
-    ropr.COLOR_MODE = 'lighted'
-    #ropr.COLOR_MODE = 'lightedshaded'
+    #ropr.COLOR_MODE = 'lighted'
+    ropr.COLOR_MODE = 'lightedshaded'
 
 
     ropr.SHOW_VTXS        = False
     ropr.SHOW_FACE_CENTER = False
-    ropr.SHOW_EDGES       = True    
+    ropr.SHOW_EDGES       = False    
 
     ##----------
 
@@ -563,7 +563,7 @@ def pyrender_ogl():
 
 """ 
 obj = object3d()
-#obj.load('pyrender2/objects/cube.obj')
+#obj.load('gnelscript/objects/cube.obj')
 #obj.rotate_pts((45,45,45))
 obj.scale_pts((.5,.5,.5))
 
