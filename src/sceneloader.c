@@ -44,13 +44,29 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
     fp = fopen (scenefilepath, "w+");
 
 
-    fprintf(fp, "################# #\n"      );
+    fprintf(fp, "## Generated with Gnolmec.  ##\n\n"             );
+    fprintf(fp, "obj_path %s #\n"            , objpath           );
+    fprintf(fp, "cam_matrix_path %s #\n"     , cammatrixpath     );
 
-    fprintf(fp, "obj_path %s #\n"        , objpath       );
+    fprintf(fp, "\n# light setup #\n"                             );
+    fprintf(fp, "light_pos %s #\n"           , "0 5 0"           );
+    fprintf(fp, "light_intensity %s #\n"     , ".8"              );
 
-    fprintf(fp, "cam_matrix_path %s #\n" , cammatrixpath );
+    fprintf(fp, "\n# colors      #\n"                              );
+    fprintf(fp, "bg_color %s #\n"            , "20 15 15"        ); 
+    fprintf(fp, "line_color %s #\n"          , "0 0 100"         ); 
+    fprintf(fp, "fill_color %s #\n"          , "105 105 105"      ); 
+    //fprintf(fp, "vtx_color %s #\n"           , "litshaded"       ); 
 
-    fprintf(fp, "# THIS IS A TEST OF A COMMENT  #\n"  );
+    fprintf(fp, "\n# render prefs    #\n"                         );
+    fprintf(fp, "rendermode %s #\n"          , "litshaded"       ); 
+
+
+    fprintf(fp, "\n\n## Commands to play with someday ##\n\n" );
+    fprintf(fp, "#op_loadobj #\n" );
+    fprintf(fp, "#op_loadobj #\n" );
+    fprintf(fp, "#op_loadobj #\n" );    
+
 
     fclose(fp);
       

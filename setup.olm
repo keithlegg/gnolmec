@@ -1,4 +1,23 @@
-################# #
-obj_path 3d_obj/monkey.obj #
+## Generated with Gnolmec.  ##
+
+obj_path 3d_obj/monkey_quad.obj #
 cam_matrix_path camera_matrix.olm #
-# THIS IS A TEST OF A COMMENT  #
+
+# light setup #
+light_pos 0 0 0 #
+light_intensity 1 #
+
+# colors      #
+bg_color 120 15 15 #
+line_color 0 0 100 #
+fill_color 45 105 105 #
+
+# render prefs    #
+rendermode litshaded #
+
+
+## Commands to play with someday ##
+
+#op_loadobj #
+#op_loadobj #
+#op_loadobj #
