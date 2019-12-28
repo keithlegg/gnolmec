@@ -26,8 +26,8 @@
 
 
 //For now we work on the stack. It will die if you load a large model 
-const int num_vtx   = 12000;
-const int num_faces = 5000;
+const int num_vtx   = 120000;
+const int num_faces = 120000;
 
 
 // index/indices for a line object 

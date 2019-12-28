@@ -1,16 +1,16 @@
 ## Generated with Gnolmec.  ##
 
-obj_path 3d_obj/monkey_quad.obj #
+obj_path 3d_obj/sphere.obj #
 cam_matrix_path camera_matrix.olm #
 
 # light setup #
-light_pos 0 0 0 #
-light_intensity 1 #
+light_pos 0 5 0 #
+light_intensity 1.8 #
 
 # colors      #
-bg_color 120 15 15 #
+bg_color 20 15 15 #
 line_color 0 0 100 #
-fill_color 45 105 105 #
+fill_color 105 105 105 #
 
 # render prefs    #
 rendermode litshaded #

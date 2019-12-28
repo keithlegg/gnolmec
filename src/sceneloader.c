@@ -50,7 +50,7 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 
     fprintf(fp, "\n# light setup #\n"                             );
     fprintf(fp, "light_pos %s #\n"           , "0 5 0"           );
-    fprintf(fp, "light_intensity %s #\n"     , ".8"              );
+    fprintf(fp, "light_intensity %s #\n"     , "1.8"              );
 
     fprintf(fp, "\n# colors      #\n"                              );
     fprintf(fp, "bg_color %s #\n"            , "20 15 15"        ); 
