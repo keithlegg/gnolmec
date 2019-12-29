@@ -561,15 +561,16 @@ def pyrender_ogl():
 
 #####################################################
 
-""" 
 obj = object3d()
 #obj.load('gnelscript/objects/cube.obj')
+obj.load(PYCORE_OBJ_IN)
+
 #obj.rotate_pts((45,45,45))
 obj.scale_pts((.5,.5,.5))
 
 obj.save(PYCORE_OBJ_OUT)
 #obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
-""" 
+ 
 
 
 
@@ -592,7 +593,7 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    gen_normals()
+    #gen_normals()
 
     #face_extrude()
    

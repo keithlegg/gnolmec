@@ -1,8 +1,10 @@
 /*****************************************************************/
     /*
+        Gnolmec - GNU-Olmec. 
 
-        Gnolmec - GNOlmec. Its not Maya and I built it myself.
-        Keith Legg, 2019 
+        "Olmec" because its not Maya. 
+        Copyright (C) 2014-2020 Keith Legg - keithlegg23@gmail.com
+
 
     */
 /*****************************************************************/

@@ -21,22 +21,20 @@
 
     TODO:
         - textures, line color, lighting 
-        - obj model_buffer - get object info 
-        - obj model_buffer - calc bbox /bsphere 
-        - load multiple objects in scene ( layers )  
+        - load multiple objects in scene ( layers )
         - object save 
-        - think about a scenegraph   
-        - SHAKE, Image compositing 
+        - FTDI driver 
+        - serial port 
 
-        - WIDGETS, BUTTONS
-        - ON SCREEN TEXT 
-        - HANDLE PYCORE ERRORS 
-        - PREFS FORMAT 
-        - SCENE FORMAT ? (load/save?)
-        - TCP socket ? 
-        - (its a cheap, gay-menjun)
+        - scenegraph
+        - timer , animation 
+        - bezier function 
+        - Image compositing ALA Ye olden days of Shake  
+        - widgets in GL fixed to screen region 
 
-      Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
+
+
+      Copyright (C) 2014-2020 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/
@@ -1166,14 +1164,64 @@ void olmec_mouse_motion(int x, int y)
     // shft p - unparent 
 */
 
+void test_light(void){
+    // FROM - https://www.khronos.org/opengl/wiki/How_lighting_works#glMaterial_and_glLight 
+    // FROM - https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glLight.xml
+    // FROM - https://www.cse.msu.edu/~cse872/tutorial3.html
 
+
+    /* 
+        GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_POSITION, GL_SPOT_CUTOFF, GL_SPOT_DIRECTION, 
+        GL_SPOT_EXPONENT, GL_CONSTANT_ATTENUATION, GL_LINEAR_ATTENUATION,  GL_QUADRATIC_ATTENUATION 
+    */
+
+
+    // position to something like 45 degrees to the 'vertical'. 
+    // Coordinate (1,1,0) should work nicely in most cases.
+    GLfloat lightpos[] = {.5, 1., 1., 0.};
+    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+
+    // Set GL_LIGHT_0's Ambient color to 0,0,0,1
+    GLfloat lightamb[] = {0., 0., 0., 1. };
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb);
+
+    // Set GL_LIGHT_0's Diffuse color to 1,1,1,1
+    GLfloat lightdif[] = {1., 1., 1., 1. };
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdif);
+
+    // Set GL_LIGHT_0's Specular color to 1,1,1,1
+    GLfloat lightspec[] = {1., 1., 1., 1. };
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightspec);
+
+
+    // Set the glLightModel global ambient to 0.2,0.2,0.2,1 (this is the default).
+    // Don't set any other glLight or glLightModel options - just let them default.
+
+    // Enable GL_LIGHTING and GL_LIGHT_0.
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    // Enable GL_COLOR_MATERIAL and set glColorMaterial to GL_AMBIENT_AND_DIFFUSE. 
+    // This means that glMaterial will control the polygon's specular and emission colours 
+    // and the ambient and diffuse will both be set using glColor.
+
+    //glEnable(GL_COLOR_MATERIAL); //overrides lighting 
+    
+    //glColorMaterial ( GL_AMBIENT_AND_DIFFUSE ) ;
+
+    // Set the glMaterial Specular colour to 1,1,1,1
+    // Set the glMaterial Emission colour to 0,0,0,1
+    // Set the glColor to whatever colour you want each polygon to basically appear to be. That sets the Ambient and Diffuse to the same value - which is what you generally want.
+
+
+}
 
 
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    printf("scancode key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -1262,19 +1310,37 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 53) //5 - display as solid, no texture  
     { 
-        // glShadeModel(GL_SMOOTH);              
 
+        test_light();
+
+        // glShadeModel(GL_SMOOTH);              
         glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LIGHTING);
+
+        //------------------------
+
+        //glDisable(GL_COLOR_MATERIAL);
+
+        // glDisable(GL_LIGHT0);
+        // glDisable(GL_LIGHT1);
+        // glDisable(GL_LIGHT2);
+        // glDisable(GL_LIGHT3);
+        // glDisable(GL_LIGHT4);
+           
+        //------------------------
+                        
         glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     }
     
     if (key == 54) //6 - display as solid, with texture 
     { 
-
         glEnable(GL_TEXTURE_2D);
-        glEnable(GL_LIGHTING);
-        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+
+        test_light();
+
+        //glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+ 
+ 
+
     }
 
     if (key == 55) //7
