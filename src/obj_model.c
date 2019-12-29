@@ -302,6 +302,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) {
 
+        char nrmls_str[256]; // string that verts get copied to 
         char coords_str[256]; // string that verts get copied to 
         char fidx_str[256];   // string that faces get copied to
 
@@ -358,7 +359,51 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
 
             }//end vertex loader 
-            
+
+
+            /******************************/
+
+            //  look for normals
+            if ( strcmp( tok_spacs, "vn") == 0)
+            {
+
+                strcpy (nrmls_str, tok_spacs+4);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(nrmls_str, " ");
+                int nidx = 0;
+                
+                float xc, yc, zc = 0.0;
+
+                while (tok_line) 
+                {
+                    // printf("%s \n", tok_line );   
+                    
+                    if(nidx==0){
+                        xc = atof(tok_line);
+                    }
+                    if(nidx==1){
+                        yc = atof(tok_line);                        
+                    }  
+                    if(nidx==2){
+                        zc = atof(tok_line);
+                    }                                        
+                    
+                    nidx++;tok_line = strtok(NULL, " ");
+                }
+                
+                //if three points its a proper vertex 
+                if (nidx==3){
+                    vec3 vn = newvec3( xc, yc, zc  );
+                    loader->normals[loader->num_nrmls] = vn;
+                    loader->num_nrmls++;
+                    
+                    //print_vec3(vn); //to view output 
+                }     
+
+
+            }//end normal loader 
+
             /******************************/
 
             //  look for F / faces
@@ -436,8 +481,9 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
             }//end face loader
 
-            /******************************/
 
+
+            /******************************/
             //  look for UV coordinates
             if ( strcmp( tok_spacs, "vt") == 0)
             {

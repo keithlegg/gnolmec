@@ -150,6 +150,7 @@ float ticker = 0;
 int VIEW_MODE = -1; 
 
 
+bool toglr_flatshaded = FALSE;
 bool view_ismoving = FALSE;
 bool mouseLeftDown = FALSE;
 bool mouseRightDown = FALSE;
@@ -581,24 +582,44 @@ static void render_loop()
                 int tri2 = pt_model_buffer->tris[p_i].pt2;
                 int tri3 = pt_model_buffer->tris[p_i].pt3;
 
-                
+                /***********************/                
                 //vec2 uv = pt_model_buffer->uvs[tri1];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.5, 1.0);                
                 vec3 pt1 = pt_model_buffer->points[tri1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
+                // if normals TRUE 
+                vec3 nrm1 = pt_model_buffer->normals[tri1-1];
+                glNormal3f( nrm1.x, nrm1.y, nrm1.z);
+                //printf( " %d %d %d \n",  nrm1.x, nrm1.y, nrm1.z);
+
+                /***********************/ 
+
                 //vec2 uv = pt_model_buffer->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.0, 1.0); 
+
                 vec3 pt2 = pt_model_buffer->points[tri2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
+                // if normals TRUE 
+                vec3 nrm2 = pt_model_buffer->normals[tri2-1];
+                glNormal3f( nrm2.x, nrm2.y, nrm2.z);
+
+                /***********************/
+
                 //vec2 uv = pt_model_buffer->uvs[tri3];
                 //glTexCoord2f(uv.x, uv.y);
-                glTexCoord2f(1.0, 0.0);                
+                glTexCoord2f(1.0, 0.0);       
+
                 vec3 pt3 = pt_model_buffer->points[tri3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
+
+                // if normals TRUE 
+                vec3 nrm3 = pt_model_buffer->normals[tri3-1];
+                glNormal3f( nrm3.x, nrm3.y, nrm3.z);
+
 
             }
 
@@ -1164,7 +1185,7 @@ void olmec_mouse_motion(int x, int y)
     // shft p - unparent 
 */
 
-void test_light(void){
+void setlight0(void){
     // FROM - https://www.khronos.org/opengl/wiki/How_lighting_works#glMaterial_and_glLight 
     // FROM - https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glLight.xml
     // FROM - https://www.cse.msu.edu/~cse872/tutorial3.html
@@ -1176,9 +1197,10 @@ void test_light(void){
     */
 
 
+
     // position to something like 45 degrees to the 'vertical'. 
     // Coordinate (1,1,0) should work nicely in most cases.
-    GLfloat lightpos[] = {.5, 1., 1., 0.};
+    GLfloat lightpos[] = {1., 1., 1., 0.};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     // Set GL_LIGHT_0's Ambient color to 0,0,0,1
@@ -1204,14 +1226,24 @@ void test_light(void){
     // Enable GL_COLOR_MATERIAL and set glColorMaterial to GL_AMBIENT_AND_DIFFUSE. 
     // This means that glMaterial will control the polygon's specular and emission colours 
     // and the ambient and diffuse will both be set using glColor.
-
-    //glEnable(GL_COLOR_MATERIAL); //overrides lighting 
     
-    //glColorMaterial ( GL_AMBIENT_AND_DIFFUSE ) ;
+    // glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+    // glEnable(GL_COLOR_MATERIAL);  
 
     // Set the glMaterial Specular colour to 1,1,1,1
+    // GLfloat matspec[] = {1.f, 1.f, 1.f, 1.f};
+    // glMaterialfv(GL_FRONT, GL_SPECULAR, matspec);
+
+    // GLfloat matemis[] = {1.f, 0.f, 0.f, 0.f};
+    // glMaterialfv(GL_FRONT, GL_EMISSION, matemis);
+
     // Set the glMaterial Emission colour to 0,0,0,1
-    // Set the glColor to whatever colour you want each polygon to basically appear to be. That sets the Ambient and Diffuse to the same value - which is what you generally want.
+    // Set the glColor to whatever colour you want each polygon to basically appear to be. 
+    // That sets the Ambient and Diffuse to the same value - which is what you generally want.
+
+
+    //  // GLfloat matdiff[] = {1.f, 1.f, 1.f, 1.f};
+    //  // glMaterialfv(GL_FRONT, GL_DIFFUSE, matdiff);
 
 
 }
@@ -1308,10 +1340,26 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
+    /*
+    if (key == 37) //shift 5 , ignore lights  
+    { 
+
+        if (toglr_flatshaded == TRUE){
+            //glEnable(GL_COLOR_MATERIAL);  
+            toglr_flatshaded = FALSE;
+        }else{
+            //glDisable(GL_COLOR_MATERIAL); 
+            setlight0();  
+            toglr_flatshaded = TRUE;
+        }
+ 
+    }*/
+
+
     if (key == 53) //5 - display as solid, no texture  
     { 
 
-        test_light();
+        setlight0();
 
         // glShadeModel(GL_SMOOTH);              
         glDisable(GL_TEXTURE_2D);
@@ -1335,7 +1383,7 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
         glEnable(GL_TEXTURE_2D);
 
-        test_light();
+        setlight0();
 
         //glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
  

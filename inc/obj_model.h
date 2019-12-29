@@ -54,14 +54,17 @@ typedef struct quad{
 // 3D object in its full glory 
 typedef struct obj_model{
     int num_pts;
+    int num_nrmls;    
     int num_uvs;
 
     int num_lines;
     int num_tris;
     int num_quads;    
 
-    struct vec2 uvs[num_vtx];         // UV coords 
-    struct vec3 points[num_vtx];      // 3 floats  
+    struct vec2 uvs[num_vtx];          // UV coords 
+    struct vec3 points[num_vtx];       // 3 floats  
+    struct vec3 normals[num_vtx];      // 3 floats 
+
     //struct vec3 vtx_colors[1000];   
 
     struct line lines[num_faces];       //2 point lines 
@@ -74,6 +77,7 @@ typedef struct obj_model{
 // store info about an object , bbox, etc 
 typedef struct obj_info{
     int num_pts;
+    int num_nrmls;
     int num_uvs;
 
     int num_tris;

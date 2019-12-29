@@ -273,7 +273,9 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
     float grd_size    = 2.5;
     float gspac = grd_size/(grd_num/2);
 
-    glBindTexture(GL_TEXTURE_2D, texture[0]);    
+    // glBindTexture(GL_TEXTURE_2D, texture[0]);    
+    // GLfloat matemis[] = {1.f, pt_gridcolor->r, pt_gridcolor->g, pt_gridcolor->b};
+    // glMaterialfv(GL_FRONT, GL_EMISSION, matemis);
 
     float id = 0;
 

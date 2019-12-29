@@ -1,6 +1,6 @@
 ## Generated with Gnolmec.  ##
 
-obj_path 3d_obj/monkey.obj #
+obj_path 3d_obj/teapot.obj #
 cam_matrix_path camera_matrix.olm #
 
 # light setup #
