@@ -18,6 +18,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <iostream>
+
+using namespace std;
+
 
 #include "obj_model.h"
 
@@ -29,7 +33,7 @@ int uv_cnt   = 0;  // number of UVs loaded
 
 /*
 
-    Take a pointer to an object and populate an object info sturcture 
+    Take a pointer to an object and populate an object info structure 
 */
 
 void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
@@ -292,8 +296,11 @@ void load_objfile( char *filepath, struct obj_model* loader)
     int pofst = 0; //pointoffset indices to points if geom exists already 
 
     fp = fopen(filepath, "r");
+    
     if (fp == NULL)
         exit(EXIT_FAILURE);
+
+
 
     if (loader->num_pts>0){
         pofst = loader->num_pts;

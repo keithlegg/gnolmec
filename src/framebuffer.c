@@ -12,6 +12,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+
 #include <stdarg.h>
 #include <cmath>
 
@@ -97,7 +100,7 @@ Image* createBufferImage(int w, int h){
 /*****************************/
 
 
-RGBType newRgb(int r, int g, int b){
+RGBType newRgb(uint8_t r, uint8_t g, uint8_t b){
     RGBType color;
 
     color.r = r;
@@ -107,7 +110,7 @@ RGBType newRgb(int r, int g, int b){
     return color;
 }
 
-RGBAType newRgba(int r, int g, int b, int a){
+RGBAType newRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
     RGBAType color;
 
     color.r = r;
@@ -749,6 +752,8 @@ void draw_point ( Image *imgBuffer, int imagewidth, int xcoord, int ycoord, RGBT
 }
 
 /*****************************/
+
+// DRAWPOINT FUNCTIONS EXPLODE IF YOU GO OFF PAGE 
 
 void draw_point ( RGBAType *fb_image, int imagewidth, int pt[2], int color[3]  ){
     RGBAType* ptr = &(fb_image[(pt[1]*imagewidth)+pt[0]]);

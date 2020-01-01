@@ -20,17 +20,30 @@
     
 
     TODO:
+        - once and for all - settle RGB framebuffer color debacle 
+        - glcolorf vs glcolori 
         - textures, line color, lighting 
+        - auto generate face/vertex normals
+        - UV map loading 
+        - MOVE DATA OFF STACK AND ONTO HEAP!  
         - load multiple objects in scene ( layers )
-        - object save 
-        - FTDI driver 
-        - serial port 
+        - test with many models 
 
+        - 3D object save 
         - scenegraph
         - timer , animation 
+
+        - FTDI driver, serial port IO  
         - bezier function 
         - Image compositing ALA Ye olden days of Shake  
         - widgets in GL fixed to screen region 
+
+
+    IDEAS:
+
+         color :
+             3 floats 0-1 after each vertex 
+             commented out command in obj 
 
 
 
@@ -38,8 +51,15 @@
 
 */
 /*************************************************************/
-#include <stdlib.h>
-#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+
+#include <vector>
+
+#include <iostream>
+using namespace std;
+
+
 #include <string.h>
 #include <unistd.h>      
 #include <cmath>
@@ -54,12 +74,21 @@
 
 
 
+#define LEN(arr) ( (int) (sizeof (arr) / sizeof (arr)[0]) ) 
+
+
+
 /***********/
 // window related 
 extern int window_id;
 extern int scr_size_x;
 extern int scr_size_y;
 extern bool scr_full_toglr;
+
+
+
+extern vector<string>  obj_filepaths;
+
 
 // view prefs 
 bool DRAW_POLYS      = TRUE;
@@ -81,6 +110,7 @@ bool render_text     = TRUE;
 // object related 
 
 extern char* obj_filepath;
+extern int num_loaded_obj;
 
 char *cam_matrix_filepath = "camera_matrix.olm";
 char *proj_matrix_filepath = "projection_matrix.olm";
@@ -92,23 +122,21 @@ extern GLuint texture[3];
 
 char active_filepath[300];
 
+// OLD STACK WAY - MOVED TO HEAP 
+// struct obj_model model_buffer;
+// struct obj_model *pt_model_buffer = &model_buffer;
+// struct obj_info obj_info;
+// struct obj_info* pt_obinfo = &obj_info;
+// struct obj_info loader_info;
+// struct obj_info *pt_loadernfo = &loader_info;
+// OLD STACK WAY - MOVED TO HEAP 
 
-//struct obj_model draw_points_buffer;
-//struct obj_model *pt_draw_points = &draw_points_buffer;
+//my mind is blown... C++ Class with structs in it seems to work!
+obj_model * pt_model_buffer = new(obj_model);
+obj_model * pt_loader       = new(obj_model);
 
-struct obj_model model_buffer;
-struct obj_model *pt_model_buffer = &model_buffer;
-struct obj_info obj_info;
-struct obj_info* pt_obinfo = &obj_info;
-
-
-struct obj_model loader;
-struct obj_model *pt_loader = &loader;
-struct obj_info loader_info;
-struct obj_info *pt_loadernfo = &loader_info;
-
-
-
+obj_info* pt_obinfo         = new(obj_info);
+obj_info* pt_loadernfo      = new(obj_info);
 
 
 float xrot, yrot, zrot; 
@@ -193,6 +221,28 @@ GLfloat vertices[100];
 int mouseClickCount = 0;
 int rectPlotted;
 
+
+
+//WE ARE DOING VERY BAD STUFF HERE - MIXING C++ AND C 
+void load_scene(char * scenepath){
+    read_scenefile( scenepath );
+    char char_array[100];
+    
+    int x = 0;
+
+    for(x=0;x<num_loaded_obj;x++)
+    {
+
+        cout << "paths " << obj_filepaths[x] <<"\n";
+        strcpy(char_array, obj_filepaths[x].c_str()); 
+        load_objfile(char_array , pt_model_buffer );
+
+        get_obj_info( pt_model_buffer, pt_obinfo);
+    }
+
+    strcpy(active_filepath, char_array ); 
+
+}
 
 /***************************************/
 //DEBUG - GL_MODELVIEW_MATRIX and GL_PROJECTION_MATRIX seem to be the same 
@@ -302,26 +352,25 @@ void toggle_polygon_draw(){
 /***************************************/
 
 void set_colors(void){
-    //make a color for some lines 
-    pt_gridcolor->r = 30;
-    pt_gridcolor->g = 30;
-    pt_gridcolor->b = 30;
+    //peripheral grid color  
+    pt_gridcolor->r = 1;
+    pt_gridcolor->g = 105;
+    pt_gridcolor->b = 5;
+
+    //centergrid gnomon color  
+    pt_gridcolor2->r = 200;
+    pt_gridcolor2->g = 200;
+    pt_gridcolor2->b = 200;
 
     //make a color for some lines 
-    pt_gridcolor2->r = 0;
-    pt_gridcolor2->g = 20;
-    pt_gridcolor2->b = 20;
-
-    //make a color for some lines 
-    pt_linecolor->r = 0;
+    pt_linecolor->r = 100;
     pt_linecolor->g = 255;
     pt_linecolor->b = 0;
 
-    //make a color for some lines 
-    pt_linecolor2->r = 155;
-    pt_linecolor2->g = 160;
-    pt_linecolor2->b = 50;
-
+    //general line geom color 
+    pt_linecolor2->r = 10;
+    pt_linecolor2->g = 0;
+    pt_linecolor2->b = 0;
 }
 
 
@@ -367,6 +416,9 @@ void reset_view(void){
 
 int q_i, p_i, f_i = 0;
 
+GLfloat emis_text[] = { .8, .8, .9, 0};
+GLfloat emis_off[] = { 1., 1., 1., 0};
+
 static void render_loop()
 {
 
@@ -378,7 +430,10 @@ static void render_loop()
 
     if (render_text)
     {
-        glBindTexture(GL_TEXTURE_2D, texture[1]); 
+        
+        //glBindTexture(GL_TEXTURE_2D, texture[1]); 
+
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_text);
 
         char s[100];
         glColor3d(1.0, 1.0, 1.0);
@@ -392,12 +447,13 @@ static void render_loop()
         sprintf(s, "camera position : %f %f %f", cam_posx, cam_posy, cam_posz);
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
 
-        
-
         //renderBitmapString(110, scr_size_y-20  , (void*)font, s);
         //renderBitmapString(210, scr_size_y-10  ,(void *)font,"Esc - Quit");
         glPopMatrix();
         resetPerspectiveProjection();
+
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+
     }
 
     // --------------------------------------------
@@ -467,9 +523,6 @@ static void render_loop()
     /******************************************/
     /******************************************/
 
-
-
-
     graticulate(&draw_grid, &draw_cntrgrid, pt_gridcolor, pt_gridcolor2);
 
     show_bbox(&draw_bbox, pt_obinfo, pt_gridcolor);
@@ -503,13 +556,6 @@ static void render_loop()
         GLfloat vertices[num_pts_drw*4];
         GLfloat* pt_vert = vertices;
         dump_points_GLfloat( pt_vert, pt_model_buffer, num_pts_drw );
-        
-        //-------------------------
-        
-        // experimental draw points 
-
-        
-
 
         //-------------------------
 
@@ -544,7 +590,9 @@ static void render_loop()
     // draw 3D line geometry 
     if (draw_lines)
     {
-        glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
+        glColor3f(100,0,0); 
+
+        //glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
             
         for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   
@@ -572,6 +620,8 @@ static void render_loop()
 
     if(draw_triangles)
     {
+        glColor3f(100,100,0); 
+
         glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
 
         glBegin(GL_TRIANGLES);  
@@ -797,10 +847,7 @@ void olmec(int *argc, char** argv){
     //shader_test();
     set_colors();
 
-     
-    strcpy(active_filepath, obj_filepath);
-    load_objfile(active_filepath, pt_model_buffer ); 
-
+    load_scene(obj_filepath);
 
     warnings();
 
@@ -1249,6 +1296,7 @@ void setlight0(void){
 }
 
 
+
 //define keyboard events 
 static void keyPressed(unsigned char key, int x, int y) 
 {
@@ -1386,10 +1434,8 @@ static void keyPressed(unsigned char key, int x, int y)
         setlight0();
 
         //glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
- 
- 
-
     }
+
 
     if (key == 55) //7
     { 
@@ -1438,17 +1484,14 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 105) //i - draw bbox
     { 
-
         if (draw_bbox == TRUE){
             draw_bbox = FALSE;
         }else{
             draw_bbox = TRUE;
             show(pt_model_buffer);            
         }
-
-
-
     }
+
 
     if (key == 111) //o
     { 
@@ -1552,12 +1595,9 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 114) //r
     { 
-        strcpy(active_filepath, obj_filepath );
-
-        load_objfile(active_filepath, pt_model_buffer ); 
-        get_obj_info( pt_model_buffer, pt_obinfo);
-      
+        load_scene(obj_filepath);
     }
+
 
     if (key == 102) //f
     { 
@@ -1606,8 +1646,8 @@ void software_render(void){
     // printf("./renderthing %d %d %s %s %d %d %d %s\n", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp");
     // snprintf(buffer, sizeof(buffer), "./renderthing %d %d %s %s %d %d %d %s", scr_size_x, scr_size_y, active_filepath, cam_matrix_filepath, 0, 0, 0, "cpp_render.bmp"); 
     
-    // we need to export a setup.olm file here 
-    char* scenefilepath = "setup.olm";
+    // we need to export a render.olm file here 
+    char* scenefilepath = "render.olm";
     write_scenefile(active_filepath, cam_matrix_filepath, scenefilepath );
 
     printf("./renderthing %d %d %s %s\n", scr_size_x, scr_size_y, scenefilepath, "cpp_render.bmp");

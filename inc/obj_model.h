@@ -4,8 +4,6 @@
 #include "math_op.h"
 
 
-
-
 //DEBUG TODO - dynamically set the size of the 3D object 
 // get this off the stack and into heap. Not sure how to go about it
 // the problem is you cant easily do a struct of structs 
@@ -51,31 +49,91 @@ typedef struct quad{
     int pt4;
 };
 
-// 3D object in its full glory 
-typedef struct obj_model{
-    int num_pts;
-    int num_nrmls;    
-    int num_uvs;
+/*
+    // store info about an object , bbox, etc 
+    typedef struct obj_info{
+        int num_pts;
+        int num_nrmls;
+        int num_uvs;
 
-    int num_lines;
-    int num_tris;
-    int num_quads;    
+        int num_tris;
+        int num_faces;
+        int num_quads;
 
-    struct vec2 uvs[num_vtx];          // UV coords 
-    struct vec3 points[num_vtx];       // 3 floats  
-    struct vec3 normals[num_vtx];      // 3 floats 
+        float centroid_x;
+        float centroid_y;
+        float centroid_z;
 
-    //struct vec3 vtx_colors[1000];   
+        float bb_min_x;
+        float bb_max_x;
+        
+        float bb_min_y;
+        float bb_max_y;
 
-    struct line lines[num_faces];       //2 point lines 
-    struct triangle tris[num_faces];    //3 point polygons 
-    struct quad quads[num_faces];       //4 point polygons 
+        float bb_min_z;
+        float bb_max_z;    
+
+    };
+*/
+
+
+/*
+    // 3D object in its full glory 
+    typedef struct obj_model{
+        int num_pts;
+        int num_nrmls;    
+        int num_uvs;
+
+        int num_lines;
+        int num_tris;
+        int num_quads;    
+
+        struct vec2 uvs[num_vtx];          // UV coords 
+        struct vec3 points[num_vtx];       // 3 floats  
+        struct vec3 normals[num_vtx];      // 3 floats 
+
+        //struct vec3 vtx_colors[1000];   
+
+        struct line lines[num_faces];       //2 point lines 
+        struct triangle tris[num_faces];    //3 point polygons 
+        struct quad quads[num_faces];       //4 point polygons 
+    };
+*/
+
+
+class obj_model {
+    public:
+        obj_model(){
+
+        };
+
+        ~obj_model(){};
+
+        int num_pts;
+        int num_nrmls;    
+        int num_uvs;
+        int num_lines;
+        int num_tris;
+        int num_quads;    
+
+        struct vec2 uvs[num_vtx];          // UV coords 
+        struct vec3 points[num_vtx];       // 3 floats  
+        struct vec3 normals[num_vtx];      // 3 floats 
+        struct line lines[num_faces];       //2 point lines 
+        struct triangle tris[num_faces];    //3 point polygons 
+        struct quad quads[num_faces];       //4 point polygons 
 
 };
 
 
-// store info about an object , bbox, etc 
-typedef struct obj_info{
+class obj_info {
+    public:
+        obj_info(){
+
+        };
+
+        ~obj_info(){};
+
     int num_pts;
     int num_nrmls;
     int num_uvs;
@@ -100,7 +158,6 @@ typedef struct obj_info{
 };
 
 
-
 vec3 get_extents(struct obj_info* obinfo);
 vec3 get_centroid(struct obj_info* obinfo);
 
@@ -113,7 +170,9 @@ void show_obj_geom(struct obj_model* loader);
 
 void get_obj_info(struct obj_model* loader, struct obj_info* obinfo);
 void reset_objfile(struct obj_model* loader, struct obj_info* obinfo);
+
 void load_objfile( char *filepath, struct obj_model* loader);
+
 void save_objfile( char *filepath, struct obj_model* loader);
 
 void test_loader_data(struct obj_model* loader);

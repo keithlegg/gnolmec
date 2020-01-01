@@ -3,16 +3,21 @@
 /*
    sceneloader.c 
 
-   Read setup.olm for a proto-dream scene format  
+   Read scene.olm for a proto-dream scene format  
 
    Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
 */
 /*************************************************************/
 
-#include <stdlib.h>
-#include <stdio.h>
-// #include <string.h>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+// #include <stdlib.h>
+// #include <stdio.h>
+
+#include <string.h>
 // #include <unistd.h>      
 // #include <cmath>
 
@@ -26,6 +31,89 @@
 #include "sceneloader.h"
 
 
+
+ 
+
+//char obj_filepaths[100][100];
+vector<string> obj_filepaths;
+int num_loaded_obj = 0;
+
+/*
+
+  filepath 
+  material 
+  matrix 
+  pos 
+  rotation 
+
+
+*/
+
+
+void read_scenefile( char* filepath )
+{
+    printf("#loading setup file %s \n", filepath );
+    
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen(filepath, "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+
+    // walk the file line by line
+    while ((read = getline(&line, &len, fp)) != -1) 
+    {
+
+        char cmd_str[256]; // string that verts get copied to 
+        
+        // walk the line, token by token  
+        char* tok_spacs = strtok(line, " ");
+        while (tok_spacs) 
+        {
+             
+            if ( strcmp( tok_spacs, "op_loadobj") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0)
+                    {
+                        //strcpy(obj_filepaths[objct], tok_line);  
+                        obj_filepaths.push_back(tok_line);
+                        num_loaded_obj++;
+                    }
+
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+
+                }
+            }
+
+
+           
+      
+            /******************************/
+            tok_spacs = strtok(NULL, " ");
+        }
+
+    }
+
+    //  
+    //strcpy(obj_filepaths[1], "3d_obj/sphere.obj"); 
+
+
+}
+
+/*****************************************************
 
 /*
    DEBUG - I added the exta "#" at the end because my c++ code is dumb
@@ -45,8 +133,13 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 
 
     fprintf(fp, "## Generated with Gnolmec.  ##\n\n"              );
+
     fprintf(fp, "obj_path %s #\n"            , objpath            );
     fprintf(fp, "cam_matrix_path %s #\n"     , cammatrixpath      );
+    
+    fprintf(fp, "op_loadobj %s #\n"          , objpath            );
+
+
 
     fprintf(fp, "\n# light setup #\n"                             );
     fprintf(fp, "light_pos %s #\n"           , "0 5 0"            );
@@ -63,11 +156,13 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 
     fprintf(fp, "\n# render prefs    #\n"                         );
     fprintf(fp, "rendermode %s #\n"          , "litshaded"        ); 
+ 
+    // 
+
 
     fprintf(fp, "\n\n## Commands to play with someday ##\n\n"     );
-    fprintf(fp, "#op_loadobj #\n"                                 );
-    fprintf(fp, "#op_loadobj #\n"                                 );
-    fprintf(fp, "#op_loadobj #\n"                                 );    
+    //fprintf(fp, "#op_loadobj #\n"                                 );
+   
 
     fclose(fp);
 

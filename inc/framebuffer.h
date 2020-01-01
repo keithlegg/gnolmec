@@ -1,6 +1,8 @@
 #ifndef FRAMEBUFFER_H    
 #define FRAMEBUFFER_H
 
+#include <stdint.h>
+
 #include "point_op.h"
 
 //these are not exclusively framebuffer related, but this is a good home for them since it is used everywhere
@@ -32,17 +34,17 @@ typedef struct Image{
 
 //24 bit color 
 typedef struct{
-    int r=0;
-    int g=0;
-    int b=0;
+    uint8_t r=0;
+    uint8_t g=0;
+    uint8_t b=0;
 }RGBType;
 
 //32 bit (24 color+ 8 alpha) 
 typedef struct{
-    int r=0;
-    int g=0;
-    int b=0;
-    int a=0;    
+    uint8_t r=0;
+    uint8_t g=0;
+    uint8_t b=0;
+    uint8_t a=0;    
 }RGBAType;
 
 //1 bit (black and white)
@@ -52,7 +54,7 @@ typedef struct{
 
 //8 bit (grayscale)
 typedef struct{
-    int l=0;
+    uint8_t l=0;
 }GSI_Type;
 
 
