@@ -209,6 +209,39 @@ quaternion orbt_rot_original;
 vec3 orbt_xform_original;
 */
 
+
+/***************************************/
+
+
+GLfloat emis_text[] = { .8, .8, .9, 0};
+GLfloat emis_points[] = { 0, .3, .1, 0};
+GLfloat emis_off[] = { 0, 0, 0, 0};
+
+
+void set_colors(void){
+    //peripheral grid color  
+    pt_gridcolor->r = 1;
+    pt_gridcolor->g = 105;
+    pt_gridcolor->b = 5;
+
+    //centergrid gnomon color  
+    pt_gridcolor2->r = 200;
+    pt_gridcolor2->g = 200;
+    pt_gridcolor2->b = 200;
+
+    // geom color  
+    pt_linecolor->r = 100;
+    pt_linecolor->g = 100;
+    pt_linecolor->b = 100;
+
+    // line geom color 
+    pt_linecolor2->r = 0;
+    pt_linecolor2->g = 100;
+    pt_linecolor2->b = 0;
+}
+
+
+
 /***************************************/
 int num_pts_drw = 0;
 GLfloat vertices[100];
@@ -349,29 +382,6 @@ void toggle_polygon_draw(){
     }
 }
 
-/***************************************/
-
-void set_colors(void){
-    //peripheral grid color  
-    pt_gridcolor->r = 1;
-    pt_gridcolor->g = 105;
-    pt_gridcolor->b = 5;
-
-    //centergrid gnomon color  
-    pt_gridcolor2->r = 200;
-    pt_gridcolor2->g = 200;
-    pt_gridcolor2->b = 200;
-
-    //make a color for some lines 
-    pt_linecolor->r = 100;
-    pt_linecolor->g = 255;
-    pt_linecolor->b = 0;
-
-    //general line geom color 
-    pt_linecolor2->r = 10;
-    pt_linecolor2->g = 0;
-    pt_linecolor2->b = 0;
-}
 
 
 /***************************************/
@@ -416,8 +426,6 @@ void reset_view(void){
 
 int q_i, p_i, f_i = 0;
 
-GLfloat emis_text[] = { .8, .8, .9, 0};
-GLfloat emis_off[] = { 1., 1., 1., 0};
 
 static void render_loop()
 {
@@ -438,18 +446,12 @@ static void render_loop()
         char s[100];
         glColor3d(1.0, 1.0, 1.0);
         setOrthographicProjection();
-        glPushMatrix();
+        //glPushMatrix();
         glLoadIdentity();
         void *font = GLUT_BITMAP_8_BY_13;     
-        
-        //renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font,"Gnolmec -Keith Legg 2019");
-
         sprintf(s, "camera position : %f %f %f", cam_posx, cam_posy, cam_posz);
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
-
-        //renderBitmapString(110, scr_size_y-20  , (void*)font, s);
-        //renderBitmapString(210, scr_size_y-10  ,(void *)font,"Esc - Quit");
-        glPopMatrix();
+        //glPopMatrix();
         resetPerspectiveProjection();
 
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
@@ -545,7 +547,8 @@ static void render_loop()
         //http://ogldev.atspace.co.uk/www/tutorial02/tutorial02.html 
         //https://stackoverflow.com/questions/28849321/how-to-draw-polygon-with-3d-points-in-modern-opengl
         //This is the first place in the code that required OpenGL library (not just Glut)
-       
+        
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_points);
        
         glPointSize(4);
  
@@ -583,6 +586,9 @@ static void render_loop()
         glDrawArrays(GL_POINTS, 0, num_pts_drw);
         //glDrawArrays(GL_LINES, 0, num_pts_drw);
         glDisableVertexAttribArray(0);
+        
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+
 
     }
 
@@ -590,7 +596,7 @@ static void render_loop()
     // draw 3D line geometry 
     if (draw_lines)
     {
-        glColor3f(100,0,0); 
+        //glColor3f(100,0,0); 
 
         //glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
             
@@ -604,15 +610,15 @@ static void render_loop()
                 vec3 pt1 = pt_model_buffer->points[lin1-1];
                 vec3 pt2 = pt_model_buffer->points[lin2-1];
 
-                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                glColor3f(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt2.x, pt2.y, pt2.z);
             glEnd();
         }
 
-
+        
     }
 
     /******************************************/
@@ -620,7 +626,7 @@ static void render_loop()
 
     if(draw_triangles)
     {
-        glColor3f(100,100,0); 
+        glColor3f( pt_linecolor->r, pt_linecolor->g, pt_linecolor->b); 
 
         glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
 
@@ -891,9 +897,10 @@ void olmec(int *argc, char** argv){
     glGenTextures(4, &texture[0]);            //create 3 textures
 
     //grid color
-    glBindTexture(GL_TEXTURE_2D, texture[0]);  
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    // glBindTexture(GL_TEXTURE_2D, texture[0]);  
+    // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR ); // scale linearly when image bigger than texture
+    // glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ); // scale linearly when image smalled than texture
+    
     //glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr2->data);
 
 

@@ -273,14 +273,16 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
     float grd_size    = 2.5;
     float gspac = grd_size/(grd_num/2);
 
-    // glBindTexture(GL_TEXTURE_2D, texture[0]);    
-    
+    glBindTexture(GL_TEXTURE_2D, texture[0]);    
+
+
     GLfloat emis_off[]  = { 0, 0, 0, 0};
     GLfloat emis_teal[] = { 0, 1., 1., 0};
     GLfloat emis_half[] = { .5, .5, .5, 0};
 
     float id = 0;
 
+    glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
 
     glBegin(GL_LINES);
   
@@ -305,8 +307,8 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
 
                 }
 
-            }else if (*draw_grid == 1) {
-                
+            }else if (*draw_grid == 1) 
+            {
                 glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
 
                 glVertex3f(-id, grd_height,  grd_size);
