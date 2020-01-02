@@ -216,6 +216,7 @@ GLfloat emis_full[] = { 1, 1, 1, 0};
 GLfloat emis_text[] = { .8, .8, .9, 0};
 GLfloat emis_points[] = { 0, .6, .2, 0};
 GLfloat emis_off[] = { 0, 0, 0, 0};
+GLfloat emis_lines[] = { .5, 0, .5, 0};
 
 
 void set_colors(void){
@@ -439,9 +440,10 @@ static void render_loop()
     if (render_text)
     {
         
-        //glBindTexture(GL_TEXTURE_2D, texture[1]); 
+        glBindTexture(GL_TEXTURE_2D, texture[0]); 
 
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_text);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
         char s[100];
         glColor3d(1.0, 1.0, 1.0);
@@ -455,7 +457,7 @@ static void render_loop()
         resetPerspectiveProjection();
 
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
-
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);
     }
 
     // --------------------------------------------
@@ -551,7 +553,7 @@ static void render_loop()
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_points);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
-        glPointSize(4);
+        glPointSize(2);
  
         //-------------------------
         // KEEP THIS CODE - 
@@ -589,7 +591,6 @@ static void render_loop()
         glDisableVertexAttribArray(0);
         
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
-
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);
 
     }
@@ -598,9 +599,11 @@ static void render_loop()
     // draw 3D line geometry 
     if (draw_lines)
     {
-        //glColor3f(100,0,0); 
 
-        //glBindTexture(GL_TEXTURE_2D, texture[1]);   // choose the texture to use.
+        glBindTexture(GL_TEXTURE_2D, texture[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_lines);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
             
         for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   
@@ -620,7 +623,8 @@ static void render_loop()
             glEnd();
         }
 
-        
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
     }
 
     /******************************************/
@@ -1509,7 +1513,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
         strcpy(active_filepath, "3d_obj/PYCORE.obj");
 
-        reset_objfile(pt_model_buffer, pt_obinfo);
+        //reset_objfile(pt_model_buffer, pt_obinfo);
 
         load_objfile(active_filepath, pt_model_buffer );
         get_obj_info( pt_model_buffer, pt_obinfo);

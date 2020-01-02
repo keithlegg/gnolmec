@@ -276,13 +276,15 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
     glBindTexture(GL_TEXTURE_2D, texture[0]);    
 
 
-    GLfloat emis_off[]  = { 0, 0, 0, 0};
-    GLfloat emis_teal[] = { 0, 1., 1., 0};
-    GLfloat emis_half[] = { .5, .5, .5, 0};
+    GLfloat emis_full[]  = { 1, 1, 1, 0};
+    GLfloat emis_off[]   = { 0, 0, 0, 0};
+    GLfloat emis_teal[]  = { 0, 1., 1., 0};
+    GLfloat emis_half[]  = { .5, .5, .5, 0};
 
     float id = 0;
 
     glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
     glBegin(GL_LINES);
   
@@ -345,7 +347,7 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
     
 
     glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
-
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);
 }
 
 

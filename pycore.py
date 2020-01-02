@@ -33,6 +33,14 @@ if __name__=="__main__":
 
 
 
+"""
+print("## DEBUG PATHS ")  
+print("## PYCORE_OBJ_IN   ", PYCORE_OBJ_IN )
+print("## PYCORE_GEOMPATH ", PYCORE_GEOMPATH )
+print("## PYCORE_OBJ_OUT  ", PYCORE_OBJ_OUT )
+print("## PYCORE_BMP_OUT  ", PYCORE_BMP_OUT )
+print("## M44_DISK_FILE   ", M44_DISK_FILE )
+"""
 
 
 ##***********************************************************##
@@ -395,8 +403,8 @@ def face_extrude():
     #end = len(obj.polygons)
     end = 20
 
-    for i in range(1, 30 ):   
-        obj.extrude_face(i, 1)
+    for i in range(71, 190 ):   
+        obj.extrude_face(i, .5)
     
     #for i in range(1,100 ):   
     #    obj.extrude_face(i, .1)
@@ -561,6 +569,7 @@ def pyrender_ogl():
 
 #####################################################
 
+"""
 obj = object3d()
 #obj.load('gnelscript/objects/cube.obj')
 obj.load(PYCORE_OBJ_IN)
@@ -570,7 +579,7 @@ obj.scale_pts((.5,.5,.5))
 
 obj.save(PYCORE_OBJ_OUT)
 #obj.save("%s/%s"%(PYCORE_GEOMPATH, "cube.obj"))
- 
+""" 
 
 
 
@@ -579,6 +588,8 @@ def runcommand():
     #visualize_matrix_rotation()
 
     #visualize_perspective_matrix()
+
+    # gen_normals()
 
     #loadgcode()
     #loadkicad()
@@ -593,9 +604,7 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    gen_normals()
-
-    #face_extrude()
+    face_extrude()
    
     #pt_transform()
     
