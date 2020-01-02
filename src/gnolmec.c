@@ -212,9 +212,9 @@ vec3 orbt_xform_original;
 
 /***************************************/
 
-
+GLfloat emis_full[] = { 1, 1, 1, 0};
 GLfloat emis_text[] = { .8, .8, .9, 0};
-GLfloat emis_points[] = { 0, .3, .1, 0};
+GLfloat emis_points[] = { 0, .6, .2, 0};
 GLfloat emis_off[] = { 0, 0, 0, 0};
 
 
@@ -234,10 +234,10 @@ void set_colors(void){
     pt_linecolor->g = 100;
     pt_linecolor->b = 100;
 
-    // line geom color 
-    pt_linecolor2->r = 0;
-    pt_linecolor2->g = 100;
-    pt_linecolor2->b = 0;
+    // line color 
+    // pt_linecolor2->r = 0;
+    // pt_linecolor2->g = 100;
+    // pt_linecolor2->b = 0;
 }
 
 
@@ -549,7 +549,8 @@ static void render_loop()
         //This is the first place in the code that required OpenGL library (not just Glut)
         
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_points);
-       
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
         glPointSize(4);
  
         //-------------------------
@@ -589,6 +590,7 @@ static void render_loop()
         
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
 
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);
 
     }
 
@@ -610,10 +612,10 @@ static void render_loop()
                 vec3 pt1 = pt_model_buffer->points[lin1-1];
                 vec3 pt2 = pt_model_buffer->points[lin2-1];
 
-                glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                //glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                //glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
                 glVertex3f(pt2.x, pt2.y, pt2.z);
             glEnd();
         }
