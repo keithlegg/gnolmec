@@ -2,9 +2,11 @@
 
 obj_path setup.olm #
 cam_matrix_path camera_matrix.olm #
-op_loadobj 3d_obj/sphere.obj #
-op_loadobj 3d_obj/teapot.obj #
+
 op_loadobj 3d_obj/cone.obj #
+#op_loadobj 3d_obj/monkey.obj #
+#op_loadobj 3d_obj/teapot.obj #
+
 
 # light setup #
 light_pos 0 5 0 #

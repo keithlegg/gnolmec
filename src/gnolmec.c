@@ -1589,6 +1589,9 @@ static void keyPressed(unsigned char key, int x, int y)
     //------
     if (key == 82) //shift r
     { 
+        //cout << "PATHS " << obj_filepaths.clear() << "\n";
+        num_loaded_obj = 0;
+          
         reset_objfile(pt_loader      , pt_obinfo);
         reset_objfile(pt_model_buffer, pt_obinfo);
     }

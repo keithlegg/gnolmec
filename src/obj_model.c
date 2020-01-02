@@ -266,13 +266,20 @@ void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
 {
 
     // uv_cnt   = 0;  // number UVs loaded 
-    
 
+    memset(loader->uvs, 0, loader->num_pts);
+    memset(loader->points, 0, loader->num_pts);
+    memset(loader->normals, 0, loader->num_pts);
+    memset(loader->tris, 0, loader->num_tris);
+    memset(loader->quads, 0, loader->num_quads);
+            
     loader->num_pts = 0;
     loader->num_uvs = 0;
     loader->num_lines = 0;
     loader->num_tris = 0;
-    loader->num_quads = 0;    
+    loader->num_quads = 0;
+
+
 
     obinfo->bb_min_x = 0;
     obinfo->bb_max_x = 0;

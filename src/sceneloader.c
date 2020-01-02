@@ -63,6 +63,7 @@ void read_scenefile( char* filepath )
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
+    obj_filepaths.clear();
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) 
@@ -87,6 +88,7 @@ void read_scenefile( char* filepath )
                 {
                     if(tidx==0)
                     {
+                        cout << "object found " << tok_line << "\n";
                         //strcpy(obj_filepaths[objct], tok_line);  
                         obj_filepaths.push_back(tok_line);
                         num_loaded_obj++;
