@@ -15,8 +15,6 @@
             |                    |        |                    | 
             ______X (look on Z)  |        ____X (look on Y)    |
        -------------------------------------------------------------------------------------
-
- 
     
 
     TODO:
@@ -1387,7 +1385,6 @@ static void keyPressed(unsigned char key, int x, int y)
 
             draw_points = FALSE;
         }else{
-
             draw_points = TRUE;
         }
 
@@ -1491,12 +1488,13 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
 
         get_obj_info( pt_model_buffer, pt_obinfo);
-        //show_obj_geom(pt_model_buffer);
+        show_obj_geom(pt_model_buffer);
     }
 
 
     if (key == 105) //i - draw bbox
     { 
+        get_obj_info( pt_model_buffer, pt_obinfo);        
         if (draw_bbox == TRUE){
             draw_bbox = FALSE;
         }else{

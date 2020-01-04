@@ -52,18 +52,6 @@ print("## M44_DISK_FILE   ", M44_DISK_FILE )
 
 
 
-def loadgcode():
-    gkod = gcode()
-    
-    #gkod.load_gcode('ngc/3D_Chips.ngc')
-    
-    gkod.load_gcode('bridgeport/king.txt')
-
-    gkod.show_data()
-
-    gkod.save_3d_object(PYCORE_OBJ_OUT) 
-
-
 def loadkicad():
     kicad = pcbfile()
 
@@ -516,7 +504,19 @@ def visualize_perspective_matrix():
 ##------------------
 
 
+def loadgcode():
+    gkod = gcode()
+    
+    #gkod.load_gcode('ngc/3D_Chips.ngc')
+    
+    gkod.load_gcode('3d_obj/arcspiral.ngc')
 
+    gkod.show_data()
+
+    gkod.save_3d_object(PYCORE_OBJ_OUT) 
+
+
+    
 ##***********************************************************##
 ##***********************************************************##
 ##***********************************************************##
@@ -591,7 +591,7 @@ def runcommand():
 
     # gen_normals()
 
-    #loadgcode()
+    loadgcode()
     #loadkicad()
 
     #scratch_obj1()
@@ -604,7 +604,7 @@ def runcommand():
     #procedural_1()
     #primitive('sphere')
 
-    face_extrude()
+    #face_extrude()
    
     #pt_transform()
     

@@ -33,10 +33,10 @@ int uv_cnt   = 0;  // number of UVs loaded
 
 /*
 
-    Take a pointer to an object and populate an object info structure 
+    Take a pointer to an object and populate another container object with info about it  
 */
 
-void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
+void get_obj_info( obj_model* loader,  obj_info* obinfo)
 {
     // reset the bounding box 
     obinfo->bb_min_x = 0;
@@ -94,7 +94,7 @@ void get_obj_info(struct obj_model* loader, struct obj_info* obinfo)
 */
 
 
-vec3 get_extents(struct obj_info* obinfo){
+vec3 get_extents(obj_info* obinfo){
 
     float bb_min_x;
     float bb_max_x;
@@ -108,11 +108,11 @@ vec3 get_extents(struct obj_info* obinfo){
 
 
 /* get the 3D center of an object */
-vec3 get_centroid(struct obj_info* obinfo){}
+vec3 get_obj_centroid(obj_info* obinfo){}
 
 
 
-void show_obj_geom(struct obj_model* loader)
+void show_obj_geom(obj_model* loader)
 {
     int i = 0;
     printf("\n");
@@ -158,10 +158,11 @@ void show_obj_geom(struct obj_model* loader)
 
 
 
-void show(struct obj_model* objmodel)
+void show(obj_model* objmodel)
 {
     printf("#----------------#\n");
     printf("# number  points    %d \n", objmodel->num_pts);
+    printf("# number  lines     %d \n", objmodel->num_lines);
     printf("# number  triangles %d \n", objmodel->num_tris);
     printf("# number  quads     %d \n", objmodel->num_quads);
     printf("# number  UVs       %d \n", objmodel->num_uvs);
@@ -170,7 +171,7 @@ void show(struct obj_model* objmodel)
 
 
 
-void show(struct obj_info* obinfo)
+void show(obj_info* obinfo)
 {
     printf("#----------------#\n");
 
@@ -188,7 +189,7 @@ void show(struct obj_info* obinfo)
      - TODO add filter for only transferring some components 
 */
 
-void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
+void insert_geom(obj_model* from_obj, obj_model* to_obj)
 {
 
     int x = 0;
@@ -262,7 +263,7 @@ void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj)
     Clear an object to "reset" it
 */
 
-void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
+void reset_objfile(obj_model* loader, obj_info* obinfo)
 {
 
     // uv_cnt   = 0;  // number UVs loaded 
@@ -293,7 +294,7 @@ void reset_objfile(struct obj_model* loader, struct obj_info* obinfo)
 
 /*******************************************************************/
 
-void load_objfile( char *filepath, struct obj_model* loader)
+void load_objfile( char *filepath, obj_model* loader)
 {
     FILE * fp;
     char * line = NULL;
@@ -306,8 +307,6 @@ void load_objfile( char *filepath, struct obj_model* loader)
     
     if (fp == NULL)
         exit(EXIT_FAILURE);
-
-
 
     if (loader->num_pts>0){
         pofst = loader->num_pts;
@@ -358,7 +357,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     vidx++;tok_line = strtok(NULL, " ");
                 }
                 
-                //if two points its a 2D coord (probably not a standard obj file )  
+                //if two points its a 2D coord ( not a standard obj file )  
                 if (vidx==2){
                     printf("2D point detected! \n"); 
                 }
@@ -370,8 +369,6 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     loader->num_pts++;
                     // print_vec3(vpt); //to view output 
                 }                
-
-
             }//end vertex loader 
 
 
@@ -405,14 +402,13 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     
                     nidx++;tok_line = strtok(NULL, " ");
                 }
-                
-                //if three points its a proper vertex 
-                if (nidx==3){
+
+                if (nidx==3)
+                {
                     vec3 vn = newvec3( xc, yc, zc  );
                     loader->normals[loader->num_nrmls] = vn;
                     loader->num_nrmls++;
-                    
-                    //print_vec3(vn); //to view output 
+
                 }     
 
 
@@ -432,6 +428,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
                 // walk the tokens on the line 
                 // ASSUME TRIANGLES ONLY! (3 coords per vertex)
+                // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
                 while (tok_line) 
                 {
                     //printf("%d %s\n", fidx, tok_line); // <- face line                  
@@ -456,22 +453,27 @@ void load_objfile( char *filepath, struct obj_model* loader)
                     /***********/
 
                     //n = atoi (buffer);
-                    fidx++;tok_line = strtok(NULL, " ");
+                    tok_line = strtok(NULL, " ");fidx++;
 
                 }
-
+                // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
+                
                 /***********/
                 //TODO - implement single point visualization !
-                
-                /***********/                    
+                /***********/
+
+                //-------                  
                 //if two face indices - its a line  
-                if (fidx==2){
+                if (fidx==2)
+                {
                     loader->lines[loader->num_lines].pt1 = pt1;
                     loader->lines[loader->num_lines].pt2 = pt2;                          
                     loader->num_lines++;                    
-                }
+                }//end line loader
 
-                if (fidx==3){
+                //-------
+                if (fidx==3)
+                {
 
                     // if you want the actual point data from this index
                     // print_vec3(loader->points[pt1]);
@@ -483,15 +485,18 @@ void load_objfile( char *filepath, struct obj_model* loader)
 
                     loader->num_tris++;
 
-                }
+                }//end triangle loader
 
-                if (fidx==4){
+                //------- 
+
+                if (fidx==4)
+                {
                     loader->quads[loader->num_quads].pt1 = pt1;
                     loader->quads[loader->num_quads].pt2 = pt2;                          
                     loader->quads[loader->num_quads].pt3 = pt3;
                     loader->quads[loader->num_quads].pt4 = pt4;
                     loader->num_quads++;
-                }
+                }//end quad loader 
 
             }//end face loader
 
@@ -529,7 +534,7 @@ void load_objfile( char *filepath, struct obj_model* loader)
 }
 
 /*******************************************************************/
-void save_objfile( char *filepath, struct obj_model* loader)
+void save_objfile( char *filepath, obj_model* loader)
 {
 
    FILE * fp;
@@ -544,7 +549,7 @@ void save_objfile( char *filepath, struct obj_model* loader)
 
 /*******************************************************************/
 
-void test_loader_data(struct obj_model* loader){
+void test_loader_data( obj_model* loader){
 
     loader->uvs[0]    = newvec2(  0.0 , 0.0         );  
     loader->points[0] = newvec3( -1.0 , -1.0,  1.0  );

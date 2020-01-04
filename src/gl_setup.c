@@ -20,7 +20,10 @@
 extern GLuint texture[3];
 
 
-
+static GLfloat emis_full[]  = { 1, 1, 1, 0};
+static GLfloat emis_off[]   = { 0, 0, 0, 0};
+static GLfloat emis_teal[]  = { 0, 1., 1., 0};
+static GLfloat emis_half[]  = { .5, .5, .5, 0};
 
 // quaternion frank = quaternion_identity();
 
@@ -275,12 +278,6 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
 
     glBindTexture(GL_TEXTURE_2D, texture[0]);    
 
-
-    GLfloat emis_full[]  = { 1, 1, 1, 0};
-    GLfloat emis_off[]   = { 0, 0, 0, 0};
-    GLfloat emis_teal[]  = { 0, 1., 1., 0};
-    GLfloat emis_half[]  = { .5, .5, .5, 0};
-
     float id = 0;
 
     glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
@@ -359,6 +356,9 @@ void show_bbox(bool *pt_draw_bbox, struct obj_info* pt_obinfo, RGBType *pt_gridc
 
    if (*pt_draw_bbox == 1)
    {
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
         glBindTexture(GL_TEXTURE_2D, texture[0]);    
 
         float id = 0;
@@ -406,7 +406,8 @@ void show_bbox(bool *pt_draw_bbox, struct obj_info* pt_obinfo, RGBType *pt_gridc
 
         glEnd();
 
-
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);
     }
 
 }

@@ -116,13 +116,15 @@ class obj_model {
         int num_tris;
         int num_quads;    
 
-        struct vec2 uvs[num_vtx];          // UV coords 
-        struct vec3 points[num_vtx];       // 3 floats  
-        struct vec3 normals[num_vtx];      // 3 floats 
-        struct line lines[num_faces];       //2 point lines 
-        struct triangle tris[num_faces];    //3 point polygons 
-        struct quad quads[num_faces];       //4 point polygons 
+        //struct vec2 pt2d[num_vtx];        // 2 floats ( experimental - 2d points )
+        struct vec3 points[num_vtx];        // 3 floats - vertex  
+        struct vec2 uvs[num_vtx];           // 2 floats - UV coords 
+        struct vec3 normals[num_vtx];       // 3 floats - face normal 
+        struct line lines[num_faces];       // 2 ints   - lines    idx
+        struct triangle tris[num_faces];    // 3 ints   - tirangle idx 
+        struct quad quads[num_faces];       // 4 ints   - quad     idx 
 
+    
 };
 
 
@@ -158,24 +160,26 @@ class obj_info {
 };
 
 
-vec3 get_extents(struct obj_info* obinfo);
-vec3 get_centroid(struct obj_info* obinfo);
+vec3 get_extents( obj_info* obinfo );
+vec3 get_obj_centroid( obj_info* obinfo );
 
-void insert_geom(struct obj_model* from_obj, struct obj_model* to_obj);
+//void gen_normals():
 
-void show(struct obj_model* objmodel);
-void show(struct obj_info* obinfo);
-void show_obj_geom(struct obj_model* loader);
+void insert_geom(obj_model* from_obj, obj_model* to_obj);
+
+void show(obj_model* objmodel);
+void show(obj_info* obinfo);
+void show_obj_geom(obj_model* loader);
 
 
-void get_obj_info(struct obj_model* loader, struct obj_info* obinfo);
-void reset_objfile(struct obj_model* loader, struct obj_info* obinfo);
+void get_obj_info(obj_model* loader, obj_info* obinfo);
+void reset_objfile(obj_model* loader, obj_info* obinfo);
 
-void load_objfile( char *filepath, struct obj_model* loader);
+void load_objfile( char *filepath, obj_model* loader);
 
-void save_objfile( char *filepath, struct obj_model* loader);
+void save_objfile( char *filepath, obj_model* loader);
 
-void test_loader_data(struct obj_model* loader);
+void test_loader_data( obj_model* loader);
 
 
 
