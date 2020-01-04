@@ -7,8 +7,8 @@ cam_matrix_path camera_matrix.olm #
 #op_loadobj 3d_obj/cube.obj #
 
 #op_loadobj 3d_obj/monkey.obj #
-#op_loadobj 3d_obj/teapot.obj #
-op_loadobj 3d_obj/arcspiral.obj #
+op_loadobj 3d_obj/teapot.obj #
+#op_loadobj 3d_obj/arcspiral.obj #
 
 
 # light setup #
