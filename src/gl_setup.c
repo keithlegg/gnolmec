@@ -20,10 +20,13 @@
 extern GLuint texture[3];
 
 
-static GLfloat emis_full[]  = { 1, 1, 1, 0};
-static GLfloat emis_off[]   = { 0, 0, 0, 0};
-static GLfloat emis_teal[]  = { 0, 1., 1., 0};
-static GLfloat emis_half[]  = { .5, .5, .5, 0};
+static GLfloat emis_full[]   = { 1, 1, 1, 0};
+static GLfloat emis_off[]    = { 0, 0, 0, 0};
+static GLfloat emis_half[]   = { .5, .5, .5, 0};
+static GLfloat emis_teal[]   = { 0, 1., 1., 0};
+static GLfloat emis_red[]    = { 1., 0, 0, 0};
+static GLfloat emis_green[]  = { 0, 1., 0, 0};
+static GLfloat emis_blue[]   = { 0, 0, 1., 0};
 
 // quaternion frank = quaternion_identity();
 
@@ -34,6 +37,11 @@ static GLfloat emis_half[]  = { .5, .5, .5, 0};
 // m33_from_euler
 // m44_from_euler
 
+/*
+   X - R
+   Y - G
+   Z - B 
+*/
 
 void render_m33(m33 *t33)
 {
@@ -42,24 +50,33 @@ void render_m33(m33 *t33)
     //     v2 = vec3(m33[1], m33[4], m33[7])
     //     v3 = vec3(m33[2], m33[5], m33[8])  
 
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+
     // Not transposed
     vec3 v1 = newvec3(t33->m0, t33->m1, t33->m2);
     vec3 v2 = newvec3(t33->m3, t33->m4, t33->m5);
     vec3 v3 = newvec3(t33->m6, t33->m7, t33->m8);
 
     glBegin(GL_LINES);
+      
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_red);
        glVertex3f (0   ,    0,    0);
        glVertex3f (v1.x, v1.y, v1.z);
-       
+      
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_green);
        glVertex3f (0   ,    0,    0);
        glVertex3f (v2.x, v2.y, v2.z);
-       
+
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_blue);       
        glVertex3f (0   ,    0,    0);
        glVertex3f (v3.x, v3.y, v3.z);
 
         
     glEnd ();
- 
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, emis_off); 
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full); 
 }
 
 /*************************************************************/
@@ -72,24 +89,33 @@ void render_m44(m44 *t44)
     // ⎢8   9   10  11⎥     ⎢zx  zy  zz  0⎥
     // ⎣12  13  14  15⎦     ⎣0   0   0   0⎦
 
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+
     // Not transposed
     vec3 v1 = newvec3(t44->m0, t44->m1, t44->m2);
     vec3 v2 = newvec3(t44->m4, t44->m5, t44->m6);
     vec3 v3 = newvec3(t44->m8, t44->m9, t44->m10);
 
     glBegin(GL_LINES);
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_red);    
        glVertex3f (0   ,    0,    0);
        glVertex3f (v1.x, v1.y, v1.z);
-       
+
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_green);       
        glVertex3f (0   ,    0,    0);
        glVertex3f (v2.x, v2.y, v2.z);
-       
+
+       glMaterialfv(GL_FRONT, GL_EMISSION, emis_blue);        
        glVertex3f (0   ,    0,    0);
        glVertex3f (v3.x, v3.y, v3.z);
 
         
     glEnd ();
- 
+
+    glMaterialfv(GL_FRONT, GL_EMISSION, emis_off); 
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full); 
+
 }
 
 
@@ -270,7 +296,7 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
  
     int grd_num       = 10;
     
-    float pastedge    = .3;
+    float pastedge    = .01;
 
     float grd_height  = 0.0;
     float grd_size    = 2.5;
@@ -294,17 +320,19 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emis_teal);
 
+                    glVertex3f( id, (grd_size+pastedge) , id );
+                    glVertex3f( id, id                  , id ); 
+
+                }
+                if (*draw_grid == 1)
+                {
                     glVertex3f( id, grd_height,   (grd_size+pastedge) );
                     glVertex3f( id, grd_height,  -(grd_size+pastedge) );  
 
                     glVertex3f(  (grd_size+pastedge), grd_height, id );
                     glVertex3f( -(grd_size+pastedge), grd_height, id ); 
-                    
-                    glVertex3f( id, (grd_size+pastedge) , id );
-                    glVertex3f( id, id                  , id ); 
+                }   
 
-
-                }
 
             }else if (*draw_grid == 1) 
             {

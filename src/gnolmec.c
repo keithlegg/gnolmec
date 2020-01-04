@@ -534,6 +534,9 @@ static void render_loop()
     //m33 foobar = m33_from_euler(45,45,45);
     //render_m33(&foobar);
     
+    // m44 foobar = m44_from_euler(0,45,90);
+    // render_m44(&foobar);
+
     /******************************************/
 
 
