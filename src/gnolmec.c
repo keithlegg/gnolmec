@@ -19,7 +19,6 @@
 
     TODO:
         - once and for all - settle RGB framebuffer color debacle 
-        - glcolorf vs glcolori 
         - textures, line color, lighting 
         - auto generate face/vertex normals
         - UV map loading 
@@ -91,8 +90,10 @@ extern vector<string>  obj_filepaths;
 // view prefs 
 bool DRAW_POLYS      = TRUE;
 
-bool draw_points     = TRUE; //not working, test of VBO  
+bool draw_points_vbo = TRUE; // test of VBO 
+bool draw_points     = TRUE;   
 bool draw_lines      = TRUE;
+bool draw_normals    = FALSE;
 
 bool draw_quads      = TRUE;
 bool draw_triangles  = TRUE;
@@ -215,6 +216,7 @@ GLfloat emis_text[] = { .8, .8, .9, 0};
 GLfloat emis_points[] = { 0, .6, .2, 0};
 GLfloat emis_off[] = { 0, 0, 0, 0};
 GLfloat emis_lines[] = { .5, 0, .5, 0};
+GLfloat clr_yellow[] = { 1., 1., 0, 0};
 
 
 void set_colors(void){
@@ -540,7 +542,7 @@ static void render_loop()
     /******************************************/
 
 
-    if (draw_points)
+    if (draw_points_vbo)
     {
         // persistant point buffer   
         // Not tested well! - I think it needs OpenGL4 amd up
@@ -597,6 +599,39 @@ static void render_loop()
     }
 
     /******************************************/
+    // display loaded normals as lines 
+    if (draw_normals)
+    {
+         
+        glBindTexture(GL_TEXTURE_2D, texture[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
+            
+        for (p_i=0;p_i<pt_model_buffer->num_nrmls;p_i++)
+        {   
+            glBegin(GL_LINES);
+                vec3 nrml = pt_model_buffer->normals[p_i];
+                 
+                // // fetch the line indices from vertex list 
+                // int lin1 = pt_model_buffer->lines[p_i].pt1;
+                // int lin2 = pt_model_buffer->lines[p_i].pt2;
+                // vec3 pt1 = pt_model_buffer->points[lin1-1];
+                // vec3 pt2 = pt_model_buffer->points[lin2-1];
+  
+                glVertex3f(0, 0, 0);
+                glVertex3f(nrml.x, nrml.y, nrml.z);
+                
+            glEnd();
+        }
+
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
+        
+    }
+
+    /******************************************/
+
     // draw 3D line geometry 
     if (draw_lines)
     {
@@ -646,6 +681,8 @@ static void render_loop()
                 int tri3 = pt_model_buffer->tris[p_i].pt3;
 
                 /***********************/                
+                glColor3f(1.,0,0);   
+
                 //vec2 uv = pt_model_buffer->uvs[tri1];
                 //glTexCoord2f(uv.x, uv.y);
                 glTexCoord2f(0.5, 1.0);                
@@ -658,6 +695,7 @@ static void render_loop()
                 //printf( " %d %d %d \n",  nrm1.x, nrm1.y, nrm1.z);
 
                 /***********************/ 
+                glColor3f(0,1.,0);  
 
                 //vec2 uv = pt_model_buffer->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
@@ -868,7 +906,7 @@ void olmec(int *argc, char** argv){
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
     glutInitWindowPosition(0, 0);  
     
-    window_id = glutCreateWindow("Olmec v.00002.51"); //create an opengl window 
+    window_id = glutCreateWindow("Olmec v.b0002.75"); //create an opengl window 
 
     /***********/
     reset_view();
@@ -1257,10 +1295,6 @@ void setlight0(void){
         GL_SPOT_EXPONENT, GL_CONSTANT_ATTENUATION, GL_LINEAR_ATTENUATION,  GL_QUADRATIC_ATTENUATION 
     */
 
-
-
-    // position to something like 45 degrees to the 'vertical'. 
-    // Coordinate (1,1,0) should work nicely in most cases.
     GLfloat lightpos[] = {1., 1., 1., 0.};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
@@ -1315,7 +1349,7 @@ void setlight0(void){
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("scancode key %u \n", key );
+    printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -1383,13 +1417,14 @@ static void keyPressed(unsigned char key, int x, int y)
         //glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
         //glPointSize(4);
     
-    
         if (draw_points == TRUE){
-
+            glPolygonMode (GL_FRONT_AND_BACK,  GL_POINT);
             draw_points = FALSE;
         }else{
+            glPolygonMode (GL_FRONT_AND_BACK,  GL_LINE);
             draw_points = TRUE;
         }
+
 
     }
 
@@ -1401,20 +1436,16 @@ static void keyPressed(unsigned char key, int x, int y)
 
     }
 
-    /*
+    
     if (key == 37) //shift 5 , ignore lights  
     { 
-
-        if (toglr_flatshaded == TRUE){
-            //glEnable(GL_COLOR_MATERIAL);  
-            toglr_flatshaded = FALSE;
-        }else{
-            //glDisable(GL_COLOR_MATERIAL); 
-            setlight0();  
-            toglr_flatshaded = TRUE;
-        }
+        //trying to get the flat, no shaded ambient look 
+        //if (toglr_flatshaded == TRUE){
+           //glEnable(GL_TEXTURE_2D);        
+           //glLightModelf(GL_LIGHT_MODEL_AMBIENT,GL_TRUE);//GL_LIGHT_MODEL_AMBIENT);
+        //toglr_flatshaded = FALSE;
  
-    }*/
+    } 
 
 
     if (key == 53) //5 - display as solid, no texture  
@@ -1449,8 +1480,17 @@ static void keyPressed(unsigned char key, int x, int y)
         //glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    if (key == 94) //shift 6 - toggle texture 
+    { 
+        if (draw_points_vbo == TRUE)
+        {
+            draw_points_vbo = FALSE;
+        }else{
+            draw_points_vbo = TRUE;
+        }
+    }
 
-    if (key == 55) //7
+    if (key == 55) // 7
     { 
 
         glEnable(GL_LIGHTING);
@@ -1459,7 +1499,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     //------
 
-    if (key == 45) //minus
+    if (key == 45) // minus
     { 
         orbit_dist-=.1;  
     }
@@ -1471,7 +1511,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
      //------
 
-    if (key == 32) //space
+    if (key == 32) // space
     { 
 
         if (scr_full_toglr == TRUE){
@@ -1507,7 +1547,24 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
 
-    if (key == 111) //o
+    if (key == 110) // shift n
+    { 
+       // TODO generate normals here 
+
+    }
+
+    if (key == 110) // n
+    { 
+
+        if (draw_normals == TRUE){
+            draw_normals = FALSE;
+        }else{
+            draw_normals = TRUE;
+              
+        }
+    }
+
+    if (key == 111) // o
     { 
 
         //char* file2 = "3d_obj/PYCORE.obj";
@@ -1612,6 +1669,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 114) //r
     { 
+        glColor3f( 1., 1., 1.); 
         load_scene(obj_filepath);
     }
 

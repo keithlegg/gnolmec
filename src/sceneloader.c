@@ -139,6 +139,8 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
     fprintf(fp, "obj_path %s #\n"            , objpath            );
     fprintf(fp, "cam_matrix_path %s #\n"     , cammatrixpath      );
     
+    fprintf(fp, "cam_pos %s #\n"        , "0 0 -5"          );
+
     fprintf(fp, "op_loadobj %s #\n"          , objpath            );
 
 
@@ -154,7 +156,7 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
     fprintf(fp, "vtx_color %s #\n"           , "200 0 0"          ); 
 
     fprintf(fp, "show_vtx %s #\n"            , "false"            ); 
-    fprintf(fp, "show_lines %s #\n"          , "false"            ); 
+    fprintf(fp, "show_lines %s #\n"          , "true"            ); 
 
     fprintf(fp, "\n# render prefs    #\n"                         );
     fprintf(fp, "rendermode %s #\n"          , "litshaded"        ); 

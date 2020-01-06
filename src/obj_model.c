@@ -166,7 +166,8 @@ void show(obj_model* objmodel)
     printf("# number  triangles %d \n", objmodel->num_tris);
     printf("# number  quads     %d \n", objmodel->num_quads);
     printf("# number  UVs       %d \n", objmodel->num_uvs);
-
+    //printf("# number  normals   %d \n", objmodel->num_uvs);
+    //printf("# number  vtxcolr   %d \n", objmodel->num_uvs);    
 }
 
 
@@ -273,7 +274,12 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
     memset(loader->normals, 0, loader->num_pts);
     memset(loader->tris, 0, loader->num_tris);
     memset(loader->quads, 0, loader->num_quads);
-            
+
+
+    //struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
+    //struct line lines[num_faces];       // 2 ints   - lines    idx
+
+
     loader->num_pts = 0;
     loader->num_uvs = 0;
     loader->num_lines = 0;
@@ -338,7 +344,8 @@ void load_objfile( char *filepath, obj_model* loader)
                 char* tok_line = strtok(coords_str, " ");
                 int vidx = 0;
                 
-                float xc, yc, zc = 0.0;
+                float  xc, yc, zc = 0.0;
+                float  cr, cg, cb = 0.0; //RGB float (0.0 - 1.0)
 
                 while (tok_line) 
                 {
@@ -353,7 +360,19 @@ void load_objfile( char *filepath, obj_model* loader)
                     if(vidx==2){
                         zc = atof(tok_line);
                     }                                        
-                    
+
+                    /*
+                    //optional vertex color 
+                    if(vidx==3){
+                        cr = atof(tok_line);
+                    }
+                    if(vidx==4){
+                        cg = atof(tok_line);                        
+                    }  
+                    if(vidx==5){
+                        cb = atof(tok_line);
+                    }*/ 
+
                     vidx++;tok_line = strtok(NULL, " ");
                 }
                 
@@ -368,7 +387,16 @@ void load_objfile( char *filepath, obj_model* loader)
                     loader->points[loader->num_pts] = vpt;
                     loader->num_pts++;
                     // print_vec3(vpt); //to view output 
-                }                
+                }  
+                
+                //-------------------- 
+                // optional color per vertex 
+
+                //if 4th, color B 
+                //if (vidx==6){
+                //    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
+                //} 
+
             }//end vertex loader 
 
 

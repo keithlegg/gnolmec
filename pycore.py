@@ -589,9 +589,9 @@ def runcommand():
 
     #visualize_perspective_matrix()
 
-    # gen_normals()
+    gen_normals()
 
-    loadgcode()
+    #loadgcode()
     #loadkicad()
 
     #scratch_obj1()

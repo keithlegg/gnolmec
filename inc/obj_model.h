@@ -120,6 +120,7 @@ class obj_model {
         struct vec3 points[num_vtx];        // 3 floats - vertex  
         struct vec2 uvs[num_vtx];           // 2 floats - UV coords 
         struct vec3 normals[num_vtx];       // 3 floats - face normal 
+        struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
         struct line lines[num_faces];       // 2 ints   - lines    idx
         struct triangle tris[num_faces];    // 3 ints   - tirangle idx 
         struct quad quads[num_faces];       // 4 ints   - quad     idx 
