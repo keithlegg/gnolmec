@@ -32,7 +32,7 @@ int uv_cnt   = 0;  // number of UVs loaded
 /*******************************************************************/
 
 /*
-
+    // DEPRECATED!  - get data staight from the object class instead 
     Take a pointer to an object and populate another container object with info about it  
 */
 
@@ -107,9 +107,6 @@ vec3 get_extents(obj_info* obinfo){
 }
 
 
-/* get the 3D center of an object */
-vec3 get_obj_centroid(obj_info* obinfo){}
-
 
 
 void show_obj_geom(obj_model* loader)
@@ -166,8 +163,8 @@ void show(obj_model* objmodel)
     printf("# number  triangles %d \n", objmodel->num_tris);
     printf("# number  quads     %d \n", objmodel->num_quads);
     printf("# number  UVs       %d \n", objmodel->num_uvs);
-    //printf("# number  normals   %d \n", objmodel->num_uvs);
-    //printf("# number  vtxcolr   %d \n", objmodel->num_uvs);    
+    printf("# number  normals   %d \n", objmodel->num_nrmls);
+    printf("# number  vtxcolr   %d \n", objmodel->num_vtxrgb);    
 }
 
 
@@ -189,7 +186,7 @@ void show(obj_info* obinfo)
      - points, triangles, quads, UVs, Normals
      - TODO add filter for only transferring some components 
 */
-
+/*
 void insert_geom(obj_model* from_obj, obj_model* to_obj)
 {
 
@@ -257,7 +254,7 @@ void insert_geom(obj_model* from_obj, obj_model* to_obj)
     //printf("# %d %d \n", to_obj->num_pts, to_obj->num_tris);
 
 }
-
+*/
 
 /*******************************************************************/
 /*
@@ -343,13 +340,15 @@ void load_objfile( char *filepath, obj_model* loader)
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(coords_str, " ");
                 int vidx = 0;
-                
+
+                //printf("TOK %s\n", tok_line); // <- vertex line 
+
                 float  xc, yc, zc = 0.0;
                 float  cr, cg, cb = 0.0; //RGB float (0.0 - 1.0)
 
                 while (tok_line) 
                 {
-                    // printf("%s \n", tok_line );   
+                    //printf("%s \n", tok_line );   
                     
                     if(vidx==0){
                         xc = atof(tok_line);
@@ -360,8 +359,7 @@ void load_objfile( char *filepath, obj_model* loader)
                     if(vidx==2){
                         zc = atof(tok_line);
                     }                                        
-
-                    /*
+                      
                     //optional vertex color 
                     if(vidx==3){
                         cr = atof(tok_line);
@@ -371,11 +369,14 @@ void load_objfile( char *filepath, obj_model* loader)
                     }  
                     if(vidx==5){
                         cb = atof(tok_line);
-                    }*/ 
+                    } 
+                     
 
                     vidx++;tok_line = strtok(NULL, " ");
                 }
                 
+                //printf( " NUM IS %d %f %f %f \n", vidx, cr, cg, cb);
+
                 //if two points its a 2D coord ( not a standard obj file )  
                 if (vidx==2){
                     printf("2D point detected! \n"); 
@@ -387,16 +388,42 @@ void load_objfile( char *filepath, obj_model* loader)
                     loader->points[loader->num_pts] = vpt;
                     loader->num_pts++;
                     // print_vec3(vpt); //to view output 
+
+                    ////set color to white initially  ?? DEBUG 
+                    //vec3 color;
+                    //color.x=1.0;   
+                    //color.y=1.0;
+                    //color.z=1.0; 
+                    //loader->vtxrgb[loader->num_vtxrgb] = color;
+
                 }  
                 
                 //-------------------- 
                 // optional color per vertex 
 
-                //if 4th, color B 
-                //if (vidx==6){
-                //    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
-                //} 
+                //if 4 deep - we have RGB DEBUG - space at end of line throws this off ! 
+                if (vidx==6){
+                    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
+                    
+                    vec3 color;
+                    // DEBUG - CLAMP 0 - 1.0 
+                    color.x=cr;   
+                    color.y=cg;
+                    color.z=cb;   
+                    loader->vtxrgb[loader->num_vtxrgb] = color;
+                    loader->num_vtxrgb++;                                      
+                }
 
+                //else{
+                //    //add a white color if none specified 
+                //    vec3 color;
+                //    color.x=1.0;   
+                //    color.y=1.0;
+                //    color.z=1.0; 
+                //    loader->vtxrgb[loader->num_pts] = color;
+                //} 
+                 
+                
             }//end vertex loader 
 
 

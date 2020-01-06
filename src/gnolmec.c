@@ -18,7 +18,9 @@
     
 
     TODO:
-        - once and for all - settle RGB framebuffer color debacle 
+        - spaces at end of obj file mess up parsing!
+          it prefers NO SPACES currently 
+
         - textures, line color, lighting 
         - auto generate face/vertex normals
         - UV map loading 
@@ -668,10 +670,13 @@ static void render_loop()
 
     if(draw_triangles)
     {
-        glColor3f( pt_linecolor->r, pt_linecolor->g, pt_linecolor->b); 
-
+        //glColor3f( pt_linecolor->r, pt_linecolor->g, pt_linecolor->b); 
         glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
-
+        
+        if (toglr_flatshaded){
+            glColor3f(1.,1.,1.);
+        }
+        
         glBegin(GL_TRIANGLES);  
             for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
             { 
@@ -679,9 +684,14 @@ static void render_loop()
                 int tri1 = pt_model_buffer->tris[p_i].pt1;
                 int tri2 = pt_model_buffer->tris[p_i].pt2;
                 int tri3 = pt_model_buffer->tris[p_i].pt3;
+                
+                //use the same vertex indices to lookup RGB 
+                vec3 rgb1 = pt_model_buffer->vtxrgb[tri1-1];
+                vec3 rgb2 = pt_model_buffer->vtxrgb[tri2-1];
+                vec3 rgb3 = pt_model_buffer->vtxrgb[tri3-1];
 
                 /***********************/                
-                glColor3f(1.,0,0);   
+                glColor3f(rgb1.x,rgb1.y,rgb1.z);   
 
                 //vec2 uv = pt_model_buffer->uvs[tri1];
                 //glTexCoord2f(uv.x, uv.y);
@@ -694,8 +704,9 @@ static void render_loop()
                 glNormal3f( nrm1.x, nrm1.y, nrm1.z);
                 //printf( " %d %d %d \n",  nrm1.x, nrm1.y, nrm1.z);
 
+
                 /***********************/ 
-                glColor3f(0,1.,0);  
+                glColor3f(rgb2.x,rgb2.y,rgb2.z); 
 
                 //vec2 uv = pt_model_buffer->uvs[tri2];
                 //glTexCoord2f(uv.x, uv.y);
@@ -708,7 +719,9 @@ static void render_loop()
                 vec3 nrm2 = pt_model_buffer->normals[tri2-1];
                 glNormal3f( nrm2.x, nrm2.y, nrm2.z);
 
+
                 /***********************/
+                glColor3f(rgb3.x,rgb3.y,rgb3.z); 
 
                 //vec2 uv = pt_model_buffer->uvs[tri3];
                 //glTexCoord2f(uv.x, uv.y);
@@ -727,10 +740,14 @@ static void render_loop()
         glEnd(); 
     }
 
-
+    //DEBUG - IF THERE IS A SPACE AT END OF FIDS, IT LOADS TRI AS QUAD
     if (draw_quads )
     {
         
+        if (toglr_flatshaded){
+            glColor3f(1.,1.,1.);
+        }
+
         glBindTexture(GL_TEXTURE_2D, texture[3]);
 
         glBegin(GL_QUADS);                      
@@ -743,21 +760,32 @@ static void render_loop()
                 int qu3 = pt_model_buffer->quads[q_i].pt3;
                 int qu4 = pt_model_buffer->quads[q_i].pt4;
 
+                //DEBUG VTX COLORS ARE BROKEN - INDEXING ISSUES 
+                vec3 rgb1 = pt_model_buffer->vtxrgb[qu1-1];
+                vec3 rgb2 = pt_model_buffer->vtxrgb[qu2-1];
+                vec3 rgb3 = pt_model_buffer->vtxrgb[qu3-1];
+                vec3 rgb4 = pt_model_buffer->vtxrgb[qu4-1];
 
+                /***********************/
+                glColor3f(rgb1.x,rgb1.y,rgb1.z);                 
                 glTexCoord2f(0.5, 1.0);                
                 vec3 pt1 = pt_model_buffer->points[qu1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                //vec2 uv = pt_model_buffer->uvs[tri2];
-                //glTexCoord2f(uv.x, uv.y);
+                /***********************/
+                glColor3f(rgb2.x,rgb2.y,rgb2.z); 
                 glTexCoord2f(0.0, 1.0); 
                 vec3 pt2 = pt_model_buffer->points[qu2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
+                /***********************/
+                glColor3f(rgb3.x,rgb3.y,rgb3.z);                 
                 glTexCoord2f(1.0, 0.0);                
                 vec3 pt3 = pt_model_buffer->points[qu3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
+                /***********************/
+                glColor3f(rgb4.x,rgb4.y,rgb4.z);                 
                 glTexCoord2f(1.0, 0.0);                
                 vec3 pt4 = pt_model_buffer->points[qu4-1];
                 glVertex3f(pt4.x, pt4.y, pt4.z);
@@ -1440,11 +1468,18 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 37) //shift 5 , ignore lights  
     { 
         //trying to get the flat, no shaded ambient look 
-        //if (toglr_flatshaded == TRUE){
-           //glEnable(GL_TEXTURE_2D);        
-           //glLightModelf(GL_LIGHT_MODEL_AMBIENT,GL_TRUE);//GL_LIGHT_MODEL_AMBIENT);
-        //toglr_flatshaded = FALSE;
- 
+        if (toglr_flatshaded == TRUE){
+            glDisable(GL_TEXTURE_2D);        
+            glDisable(GL_LIGHTING);
+            toglr_flatshaded = FALSE;
+        }else{
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_LIGHTING);
+            toglr_flatshaded = TRUE;
+        }
+
+
+
     } 
 
 
@@ -1547,11 +1582,10 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
 
-    if (key == 110) // shift n
-    { 
-       // TODO generate normals here 
-
-    }
+    // if (key == 110) // shift n
+    // { 
+    //    // TODO generate normals here 
+    // }
 
     if (key == 110) // n
     { 
@@ -1663,8 +1697,9 @@ static void keyPressed(unsigned char key, int x, int y)
         //cout << "PATHS " << obj_filepaths.clear() << "\n";
         num_loaded_obj = 0;
           
-        reset_objfile(pt_loader      , pt_obinfo);
-        reset_objfile(pt_model_buffer, pt_obinfo);
+        reset_objfile(pt_loader      , pt_obinfo);// DEBUG why is the same info object here?
+        reset_objfile(pt_model_buffer, pt_obinfo);// DEBUG why is the same info object here?
+
     }
 
     if (key == 114) //r

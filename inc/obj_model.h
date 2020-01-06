@@ -23,7 +23,7 @@
 // loader.uvs = uvs;
 
 
-//For now we work on the stack. It will die if you load a large model 
+//Cautiously moved to the heap  
 const int num_vtx   = 120000;
 const int num_faces = 120000;
 
@@ -104,28 +104,35 @@ typedef struct quad{
 class obj_model {
     public:
         obj_model(){
-
+            num_pts    = 0;
+            num_nrmls  = 0;
+            num_uvs    = 0;
+            num_lines  = 0;
+            num_tris   = 0;
+            num_quads  = 0; 
+            num_vtxrgb = 0;            
         };
 
         ~obj_model(){};
 
         int num_pts;
+        int num_vtxrgb;
         int num_nrmls;    
         int num_uvs;
         int num_lines;
         int num_tris;
         int num_quads;    
 
-        //struct vec2 pt2d[num_vtx];        // 2 floats ( experimental - 2d points )
         struct vec3 points[num_vtx];        // 3 floats - vertex  
+        struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
         struct vec2 uvs[num_vtx];           // 2 floats - UV coords 
         struct vec3 normals[num_vtx];       // 3 floats - face normal 
-        struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
         struct line lines[num_faces];       // 2 ints   - lines    idx
-        struct triangle tris[num_faces];    // 3 ints   - tirangle idx 
+        struct triangle tris[num_faces];    // 3 ints   - triangle idx 
         struct quad quads[num_faces];       // 4 ints   - quad     idx 
 
-    
+        //vec3 get_obj_centroid( void );
+
 };
 
 
@@ -162,11 +169,11 @@ class obj_info {
 
 
 vec3 get_extents( obj_info* obinfo );
-vec3 get_obj_centroid( obj_info* obinfo );
+
 
 //void gen_normals():
 
-void insert_geom(obj_model* from_obj, obj_model* to_obj);
+//void insert_geom(obj_model* from_obj, obj_model* to_obj);
 
 void show(obj_model* objmodel);
 void show(obj_info* obinfo);
