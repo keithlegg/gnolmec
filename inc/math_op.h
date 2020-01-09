@@ -89,7 +89,8 @@ vec3 mult( m33 m, vec3 v );
 vec3 mult( m44 m, vec3 v );
 vec3 mult( double scalar, vec3 v );
 
-vec3 div (vec3 v1, vec3 v2);
+vec3 div (vec3 v2); //BROKEN?
+vec3 div (vec3 v1, double sclr);
 
 vec3 cross(vec3 v1, vec3 v2);
 

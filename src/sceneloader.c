@@ -56,6 +56,14 @@ int num_drawpoints = 0;
 
 */
 
+void clear_scenegeom( void)
+{
+
+    scene_drawvec3.clear();
+    scene_drawvecclr.clear();
+    num_drawvec3 = 0;
+
+}
 
 void read_scenefile( char* filepath )
 {

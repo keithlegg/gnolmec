@@ -239,14 +239,32 @@ vec3 mult (vec3 v1, vec3 v2){
     return output;
 }
 
+ 
+vec3 div (vec3 v1, double sclr){
+     // UNTESTED/ BROKEN /NORMALIZE 
 
-vec3 div (vec3 v1, vec3 v2){
+     vec3 output;
+
+     if(sclr != 0)
+     {
+        output.x = v1.x/sclr;
+        output.y = v1.y/sclr;
+        output.z = v1.z/sclr;
+     }
+
+     return output; 
+
+
+}
+ 
+
+vec3 div (vec3 v2){
     // UNTESTED - normalized? 
     vec3 output;
 
     output.x = v2.x / length(v2);
     output.y = v2.y / length(v2);
-    output.z = v2.y / length(v2);
+    output.z = v2.z / length(v2);
 
     return output;
 

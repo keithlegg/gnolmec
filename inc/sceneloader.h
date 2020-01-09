@@ -5,6 +5,7 @@
 
 
 
+void clear_scenegeom( void );
 
 void save_matrix44(char* filepath, m44 *input );
 

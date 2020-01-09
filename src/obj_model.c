@@ -271,6 +271,7 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
     memset(loader->points, 0, loader->num_pts);
     memset(loader->vnormals, 0, loader->num_pts);
     //memset(loader->fnormals, 0, loader->num_pts);
+    memset(loader->fnormals, 0, loader->num_pts);
     memset(loader->tris, 0, loader->num_tris);
     memset(loader->quads, 0, loader->num_quads);
 

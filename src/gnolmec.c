@@ -495,6 +495,8 @@ static void render_loop()
         //glPushMatrix();
         glLoadIdentity();
         void *font = GLUT_BITMAP_8_BY_13;     
+        sprintf(s, "    %d polys loaded", pt_model_buffer->num_tris );
+        renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-20  ,(void *)font, s );
         sprintf(s, "camera position : %f %f %f", cam_posx, cam_posy, cam_posz);
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
         //glPopMatrix();
@@ -654,7 +656,7 @@ static void render_loop()
         glBindTexture(GL_TEXTURE_2D, texture[0]);
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_lines);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
-
+        glColor3f(.5, 0, .5);
             
         for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   
@@ -757,6 +759,8 @@ static void render_loop()
         // display loaded normals as lines 
         if (draw_normals)
         {
+            glColor3f(.5,.5,0);
+
             for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
             {             
                 // fetch the pts for a triangle
@@ -769,7 +773,7 @@ static void render_loop()
                 tri_cntr.y = (p1.y + p2.y + p3.y)/3;
                 tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
                   
-                vec3 mv =  add(tri_cntr, pt_model_buffer->fnormals[p_i]);
+                vec3 mv =  add(tri_cntr, div(pt_model_buffer->fnormals[p_i],5 ));
                 //vec3 mv =  add(tri_cntr, pt_model_buffer->fnormals[p_i]);
 
                 //print_vec3( mv );
@@ -1462,6 +1466,9 @@ static void keyPressed(unsigned char key, int x, int y)
 
     usleep(100);
 
+
+
+
     //ESCAPE KEY
     if (key == 27) 
     { 
@@ -1469,6 +1476,11 @@ static void keyPressed(unsigned char key, int x, int y)
         exit(0);                   
     }
 
+    //d key 
+    if (key == 100) 
+    { 
+        toggle_polygon_draw();
+    }
 
     if (key == 49) //1 - perspective mode
     { 
@@ -1771,13 +1783,24 @@ static void keyPressed(unsigned char key, int x, int y)
 
         software_render();
     }
+    
+    //------
+    if (key == 70) //shift f
+    { 
+        if (draw_scene_geom == TRUE){
+            draw_scene_geom = FALSE;
+
+        }else{
+            draw_scene_geom = TRUE;
+        }
+    }
 
     //------
     if (key == 82) //shift r
     { 
         //cout << "PATHS " << obj_filepaths.clear() << "\n";
         num_loaded_obj = 0;
-          
+        clear_scenegeom();
         reset_objfile(pt_loader      , pt_obinfo);// DEBUG why is the same info object here?
         reset_objfile(pt_model_buffer, pt_obinfo);// DEBUG why is the same info object here?
 
