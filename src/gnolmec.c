@@ -431,32 +431,24 @@ void calc_normals(void)
     vec3 tri_cntr;
 
     //debug - clear any loaded normals 
-    pt_model_buffer->num_nrmls = 0;
+    pt_model_buffer->num_fnrmls = 0;
 
-    for (p_i=1;p_i<pt_model_buffer->num_tris;p_i++)
+    for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
     {   
             
         // fetch the pts for a triangle
-        vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt1];
-        vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt2];
-        vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt3];
-
-        //calculate the centroid 
-        tri_cntr.x = (p1.x + p2.x + p3.x)/3;
-        tri_cntr.y = (p1.y + p2.y + p3.y)/3;
-        tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
+        vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
+        vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
+        vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
 
         // calculate the face normal  
         vec3 a = sub(p1,p2);
         vec3 b = sub(p1,p3);
-        vec3 n = cross(a,b);
+        vec3 n = normalize(cross(a,b));
 
-        vec3 mv = add(n, tri_cntr);
-        //vec3 mv = n;
+        pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
 
-        pt_model_buffer->normals[pt_model_buffer->num_nrmls]=mv;
-
-        pt_model_buffer->num_nrmls++;
+        pt_model_buffer->num_fnrmls++;
 
     }
 
@@ -505,7 +497,7 @@ static void render_loop()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    vec3 tri_cntr;
+
     //----------------------------------------------
 
     // // move the view without using gluLookAt
@@ -637,24 +629,7 @@ static void render_loop()
     }
 
     /******************************************/
-    // display loaded normals as lines 
-    if (draw_normals)
-    {
-        /* 
-        glBindTexture(GL_TEXTURE_2D, texture[0]);
-        glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
-            glBegin(GL_LINES);
-                glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
-                glVertex3f(mv.x, mv.y, mv.z);
-            glEnd();
-
-
-        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
-        */ 
-    }
 
     /******************************************/
 
@@ -723,8 +698,8 @@ static void render_loop()
                 vec3 pt1 = pt_model_buffer->points[tri1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                // if normals TRUE 
-                vec3 nrm1 = pt_model_buffer->normals[tri1-1];
+              
+                vec3 nrm1 = pt_model_buffer->vnormals[tri1-1];
                 glNormal3f( nrm1.x, nrm1.y, nrm1.z);
                 //printf( " %d %d %d \n",  nrm1.x, nrm1.y, nrm1.z);
 
@@ -739,8 +714,8 @@ static void render_loop()
                 vec3 pt2 = pt_model_buffer->points[tri2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
-                // if normals TRUE 
-                vec3 nrm2 = pt_model_buffer->normals[tri2-1];
+                // calculated face normals 
+                vec3 nrm2 = pt_model_buffer->vnormals[tri2-1];
                 glNormal3f( nrm2.x, nrm2.y, nrm2.z);
 
 
@@ -754,14 +729,52 @@ static void render_loop()
                 vec3 pt3 = pt_model_buffer->points[tri3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
-                // if normals TRUE 
-                vec3 nrm3 = pt_model_buffer->normals[tri3-1];
+                // calculated face normals
+                vec3 nrm3 = pt_model_buffer->vnormals[tri3-1];
                 glNormal3f( nrm3.x, nrm3.y, nrm3.z);
 
 
             }
 
         glEnd(); 
+
+        vec3 tri_cntr;
+
+        // display loaded normals as lines 
+        if (draw_normals)
+        {
+            for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
+            {             
+                // fetch the pts for a triangle
+                vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
+                vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
+                vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
+
+                // calculate the centroid 
+                tri_cntr.x = (p1.x + p2.x + p3.x)/3;
+                tri_cntr.y = (p1.y + p2.y + p3.y)/3;
+                tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
+                  
+                vec3 mv =  add(tri_cntr, pt_model_buffer->fnormals[p_i]);
+                //vec3 mv =  add(tri_cntr, pt_model_buffer->fnormals[p_i]);
+
+                //print_vec3( mv );
+
+                glBindTexture(GL_TEXTURE_2D, texture[0]);
+                glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
+                    glBegin(GL_LINES);
+                        glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
+                        glVertex3f(mv.x, mv.y, mv.z);
+                    glEnd();
+
+
+                glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
+            }
+        }        
+
     }
 
     //DEBUG - IF THERE IS A SPACE AT END OF FIDS, IT LOADS TRI AS QUAD
@@ -1401,7 +1414,7 @@ void setlight0(void){
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    printf("scancode key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 

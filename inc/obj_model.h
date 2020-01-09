@@ -105,7 +105,8 @@ class obj_model {
     public:
         obj_model(){
             num_pts    = 0;
-            num_nrmls  = 0;
+            num_vnrmls  = 0;
+            num_fnrmls  = 0;
             num_uvs    = 0;
             num_lines  = 0;
             num_tris   = 0;
@@ -117,7 +118,8 @@ class obj_model {
 
         int num_pts;
         int num_vtxrgb;
-        int num_nrmls;    
+        int num_vnrmls;    
+        int num_fnrmls;
         int num_uvs;
         int num_lines;
         int num_tris;
@@ -126,7 +128,8 @@ class obj_model {
         struct vec3 points[num_vtx];        // 3 floats - vertex  
         struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
         struct vec2 uvs[num_vtx];           // 2 floats - UV coords 
-        struct vec3 normals[num_vtx];       // 3 floats - face normal 
+        struct vec3 vnormals[num_vtx];      // 3 floats - face normal 
+        struct vec3 fnormals[num_faces];    // 3 floats - face normal 
         struct line lines[num_faces];       // 2 ints   - lines    idx
         struct triangle tris[num_faces];    // 3 ints   - triangle idx 
         struct quad quads[num_faces];       // 4 ints   - quad     idx 

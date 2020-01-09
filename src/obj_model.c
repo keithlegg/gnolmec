@@ -163,7 +163,8 @@ void show(obj_model* objmodel)
     printf("# number  triangles %d \n", objmodel->num_tris);
     printf("# number  quads     %d \n", objmodel->num_quads);
     printf("# number  UVs       %d \n", objmodel->num_uvs);
-    printf("# number  normals   %d \n", objmodel->num_nrmls);
+    printf("# number  vtx nrml  %d \n", objmodel->num_vnrmls);
+    printf("# number  fac nrml  %d \n", objmodel->num_fnrmls);
     printf("# number  vtxcolr   %d \n", objmodel->num_vtxrgb);    
 }
 
@@ -268,7 +269,8 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
 
     memset(loader->uvs, 0, loader->num_pts);
     memset(loader->points, 0, loader->num_pts);
-    memset(loader->normals, 0, loader->num_pts);
+    memset(loader->vnormals, 0, loader->num_pts);
+    //memset(loader->fnormals, 0, loader->num_pts);
     memset(loader->tris, 0, loader->num_tris);
     memset(loader->quads, 0, loader->num_quads);
 
@@ -282,7 +284,8 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
     loader->num_lines = 0;
     loader->num_tris = 0;
     loader->num_quads = 0;
-    loader->num_nrmls = 0;
+    loader->num_vnrmls = 0;
+    loader->num_fnrmls = 0;
 
 
     obinfo->bb_min_x = 0;
@@ -461,13 +464,13 @@ void load_objfile( char *filepath, obj_model* loader)
                 if (nidx==3)
                 {
                     vec3 vn = newvec3( xc, yc, zc  );
-                    loader->normals[loader->num_nrmls] = vn;
-                    loader->num_nrmls++;
+                    loader->vnormals[loader->num_vnrmls] = vn;
+                    loader->num_vnrmls++;
 
                 }     
 
 
-            }//end normal loader 
+            }//end vertex normal loader 
 
             /******************************/
 
