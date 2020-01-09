@@ -282,7 +282,7 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
     loader->num_lines = 0;
     loader->num_tris = 0;
     loader->num_quads = 0;
-
+    loader->num_nrmls = 0;
 
 
     obinfo->bb_min_x = 0;

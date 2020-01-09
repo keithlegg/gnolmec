@@ -13,6 +13,8 @@ void grab_projection_matrix(m44 *pt_mpm );
 
 void set_screen_square(void);
 
+void calc_normals(void);
+
 void init_pycore(void);
 
 void set_view_ortho(void);

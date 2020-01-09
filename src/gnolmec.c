@@ -276,6 +276,7 @@ void load_scene(char * scenepath){
         get_obj_info( pt_model_buffer, pt_obinfo);
     }
 
+    calc_normals();
     strcpy(active_filepath, char_array ); 
 
 }
@@ -424,7 +425,42 @@ void reset_view(void){
 
 }
 
+void calc_normals(void)
+{
+    int  p_i = 0;
+    vec3 tri_cntr;
 
+    //debug - clear any loaded normals 
+    pt_model_buffer->num_nrmls = 0;
+
+    for (p_i=1;p_i<pt_model_buffer->num_tris;p_i++)
+    {   
+            
+        // fetch the pts for a triangle
+        vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt1];
+        vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt2];
+        vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i-1].pt3];
+
+        //calculate the centroid 
+        tri_cntr.x = (p1.x + p2.x + p3.x)/3;
+        tri_cntr.y = (p1.y + p2.y + p3.y)/3;
+        tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
+
+        // calculate the face normal  
+        vec3 a = sub(p1,p2);
+        vec3 b = sub(p1,p3);
+        vec3 n = cross(a,b);
+
+        vec3 mv = add(n, tri_cntr);
+        //vec3 mv = n;
+
+        pt_model_buffer->normals[pt_model_buffer->num_nrmls]=mv;
+
+        pt_model_buffer->num_nrmls++;
+
+    }
+
+}
 /***************************************/
 
 int q_i, p_i, f_i = 0;
@@ -469,7 +505,7 @@ static void render_loop()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-
+    vec3 tri_cntr;
     //----------------------------------------------
 
     // // move the view without using gluLookAt
@@ -604,32 +640,20 @@ static void render_loop()
     // display loaded normals as lines 
     if (draw_normals)
     {
-         
+        /* 
         glBindTexture(GL_TEXTURE_2D, texture[0]);
         glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
-            
-        for (p_i=0;p_i<pt_model_buffer->num_nrmls;p_i++)
-        {   
             glBegin(GL_LINES);
-                vec3 nrml = pt_model_buffer->normals[p_i];
-                 
-                // // fetch the line indices from vertex list 
-                // int lin1 = pt_model_buffer->lines[p_i].pt1;
-                // int lin2 = pt_model_buffer->lines[p_i].pt2;
-                // vec3 pt1 = pt_model_buffer->points[lin1-1];
-                // vec3 pt2 = pt_model_buffer->points[lin2-1];
-  
-                glVertex3f(0, 0, 0);
-                glVertex3f(nrml.x, nrml.y, nrml.z);
-                
+                glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
+                glVertex3f(mv.x, mv.y, mv.z);
             glEnd();
-        }
+
 
         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
-        
+        */ 
     }
 
     /******************************************/
@@ -1645,7 +1669,7 @@ static void keyPressed(unsigned char key, int x, int y)
     }
   
 
-    if (key == 80) //p
+    if (key == 80) //shift p
     { 
 
         //go ahead and dump camera matrix automatically 
