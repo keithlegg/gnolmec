@@ -38,6 +38,13 @@ using namespace std;
 vector<string> obj_filepaths;
 int num_loaded_obj = 0;
 
+vector<vec3> scene_drawvec3;
+vector<vec3> scene_drawvecclr;
+int num_drawvec3 = 0;
+
+vector<vec3> scene_drawpoints;
+int num_drawpoints = 0;
+
 /*
 
   filepath 
@@ -64,6 +71,7 @@ void read_scenefile( char* filepath )
         exit(EXIT_FAILURE);
 
     obj_filepaths.clear();
+    float vx,vy,vz,cr,cg,cb = 0;
 
     // walk the file line by line
     while ((read = getline(&line, &len, fp)) != -1) 
@@ -75,7 +83,8 @@ void read_scenefile( char* filepath )
         char* tok_spacs = strtok(line, " ");
         while (tok_spacs) 
         {
-             
+
+            //-------------------------------             
             if ( strcmp( tok_spacs, "op_loadobj") == 0)
             {
                 strcpy (cmd_str, line);
@@ -99,11 +108,61 @@ void read_scenefile( char* filepath )
 
                 }
             }
+            //-------------------------------
+            if ( strcmp( tok_spacs, "op_draw_vec3") == 0)
+            {
+                strcpy (cmd_str, line);
 
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){vx = atof(tok_line);}
+                    if(tidx==1){vy = atof(tok_line);}
+                    if(tidx==2){vz = atof(tok_line);}
+                    if(tidx==3){cr = atoi(tok_line);}
+                    if(tidx==4){cg = atoi(tok_line);}
+                    if(tidx==5)                                                           
+                    {
+                        cb = atoi(tok_line); 
+                        cout << "draw vec3 found " << vx <<" "<< vy << " "<< vz <<" RGB  " << cr <<" "<< cg <<" "<< cb <<"\n";
+                        scene_drawvec3.push_back(newvec3(vx,vy,vz));
+                        scene_drawvecclr.push_back(newvec3(cr,cg,cb)); 
+                        num_drawvec3++;                       
+                    }
 
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+
+                }
+            }
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "op_draw_point") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0)
+                    {
+                        cout << "draw point found " << tok_line << "\n";
+                    }
+
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+
+                }
+            }
            
       
-            /******************************/
+            //-------------------------------
             tok_spacs = strtok(NULL, " ");
         }
 

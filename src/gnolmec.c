@@ -90,12 +90,16 @@ extern vector<string>  obj_filepaths;
 
 
 // view prefs 
-bool DRAW_POLYS      = TRUE;
+bool DRAW_POLYS      = TRUE; // is this needed? 
+
+bool draw_scene_geom = TRUE;
 
 bool draw_points_vbo = TRUE; // test of VBO 
 bool draw_points     = TRUE;   
 bool draw_lines      = TRUE;
 bool draw_normals    = FALSE;
+
+
 
 bool draw_quads      = TRUE;
 bool draw_triangles  = TRUE;
@@ -110,8 +114,18 @@ bool render_text     = TRUE;
 /***************************************/
 // object related 
 
+
 extern char* obj_filepath;
 extern int num_loaded_obj;
+
+extern vector<vec3> scene_drawvec3;
+extern vector<vec3> scene_drawvecclr;
+
+
+extern int num_drawvec3;
+
+extern vector<vec3> scene_drawpoints;
+extern int num_drawpoints;
 
 char *cam_matrix_filepath = "camera_matrix.olm";
 char *proj_matrix_filepath = "projection_matrix.olm";
@@ -777,6 +791,38 @@ static void render_loop()
 
     }
 
+    // ----------------------
+    // draw scene defined geom 
+    if (draw_scene_geom )
+    {
+
+        glBindTexture(GL_TEXTURE_2D, texture[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_full);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+
+        for (p_i=0;p_i<num_drawvec3;p_i++)
+        {   
+            vec3 dv  = scene_drawvec3[p_i];
+            vec3 rgb = scene_drawvecclr[p_i];            
+            //print_vec3(dv);
+
+            glBegin(GL_LINES);
+                glColor3f(rgb.x,rgb.y,rgb.z);
+                glVertex3f(0,0,0);
+
+                glColor3f(rgb.x,rgb.y,rgb.z);
+                glVertex3f(dv.x, dv.y, dv.z);
+        
+            glEnd();
+        }
+        
+        glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full); 
+
+    }
+
+    //-----------------------
+
     //DEBUG - IF THERE IS A SPACE AT END OF FIDS, IT LOADS TRI AS QUAD
     if (draw_quads )
     {
@@ -956,8 +1002,6 @@ void set_view_persp(void)
 
 void olmec(int *argc, char** argv){
  
-
-
     glutInit(argc, argv);  
 
     //shader_test();
@@ -971,7 +1015,7 @@ void olmec(int *argc, char** argv){
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
     glutInitWindowPosition(0, 0);  
     
-    window_id = glutCreateWindow("Olmec v.b0002.75"); //create an opengl window 
+    window_id = glutCreateWindow("Olmec v.b0002.80"); //create an opengl window 
 
     /***********/
     reset_view();

@@ -3,7 +3,7 @@
 obj_path setup.olm #
 cam_matrix_path camera_matrix.olm #
 
-op_loadobj 3d_obj/cone.obj #
+#op_loadobj 3d_obj/cone.obj #
 #op_loadobj 3d_obj/cube.obj #
 #op_loadobj 3d_obj/monkey.obj #
 #op_loadobj 3d_obj/teapot.obj #
@@ -13,6 +13,12 @@ op_loadobj 3d_obj/cone.obj #
 #op_loadobj 3d_obj/triangle.obj #
 #op_loadobj 3d_obj/point_ops2.obj #
 
+
+op_draw_vec3 5 1 0 0 0 1 #
+op_draw_vec3 0 4 0 1 1 0 #
+op_draw_vec3 5 5 5 1 0 0 #
+
+#op_draw_point 
 
 # light setup #
 light_pos 0 5 0 #
