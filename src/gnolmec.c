@@ -109,6 +109,7 @@ bool draw_cntrgrid   = TRUE;
 bool draw_bbox       = FALSE;
 
 bool render_text     = TRUE;
+bool show_textures   = TRUE;
 
 
 /***************************************/
@@ -211,6 +212,11 @@ float orbit_dist = 5.0; // Z zoom
 float cam_posx = 0; // camera location
 float cam_posy = 0;
 float cam_posz = 0;
+
+
+int surfce_clr_r; //read from setup.olm 
+int surfce_clr_g; 
+int surfce_clr_b; 
 
 
 float moveSpeed    = 2.1f;
@@ -336,6 +342,7 @@ void grab_projection_matrix(m44 *pt_mpm )
 }
 
 
+/*
 //DEBUG - for testing 
 void tweak_matrix( void )
 {
@@ -360,6 +367,7 @@ void tweak_matrix( void )
     //glutm44_to_m44(pt_mpm, model);
 
 }
+*/
 
 
 void negate_y_axis(m44 *input){
@@ -668,10 +676,14 @@ static void render_loop()
                 vec3 pt1 = pt_model_buffer->points[lin1-1];
                 vec3 pt2 = pt_model_buffer->points[lin2-1];
 
-                //glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                //use the same vertex indices to lookup RGB 
+                vec3 c1 = pt_model_buffer->vtxrgb[lin1-1];
+                vec3 c2 = pt_model_buffer->vtxrgb[lin2-1];
+
+                glColor3f(c1.x, c1.y, c1.z);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
-                //glColor3i(pt_linecolor2->r, pt_linecolor2->g, pt_linecolor2->b);   
+                glColor3f(c2.x, c2.y, c2.z);  
                 glVertex3f(pt2.x, pt2.y, pt2.z);
             glEnd();
         }
@@ -1462,7 +1474,7 @@ void setlight0(void){
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    //printf("scancode key %u \n", key );
+    printf("scancode key %u \n", key );
 
     usleep(100);
 
@@ -1709,7 +1721,16 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 84) // shift t key 
     { 
-        tweak_matrix();
+       
+        if (show_textures == TRUE)
+        {
+        
+            show_textures = FALSE;
+        }else{
+
+            show_textures = TRUE;
+        }       
+ 
     }
 
 

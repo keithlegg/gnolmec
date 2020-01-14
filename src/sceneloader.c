@@ -34,6 +34,9 @@ extern float cam_posx;
 extern float cam_posy;
 extern float cam_posz;
 
+extern int surfce_clr_r; 
+extern int surfce_clr_g; 
+extern int surfce_clr_b; 
 
  
 
@@ -172,7 +175,30 @@ void read_scenefile( char* filepath )
                 }
             }
            
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "fill_color") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){surfce_clr_r = atoi(tok_line);}
+                    if(tidx==1){surfce_clr_g = atoi(tok_line);}
+                    if(tidx==2){surfce_clr_b = atoi(tok_line);}
+
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+
+                }
+            }
+
       
+
             //-------------------------------
             tok_spacs = strtok(NULL, " ");
         }
@@ -216,13 +242,13 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 
 
     fprintf(fp, "\n# light setup #\n"                             );
-    fprintf(fp, "light_pos %s #\n"           , "0 5 0"            );
+    fprintf(fp, "light_pos %s #\n"           , "0 1 0"            );
     fprintf(fp, "light_intensity %s #\n"     , "5.0"              );
 
     fprintf(fp, "\n# colors      #\n"                             );
     fprintf(fp, "bg_color %s #\n"            , "20 15 15"         ); 
     fprintf(fp, "line_color %s #\n"          , "0 0 100"          ); 
-    fprintf(fp, "fill_color %s #\n"          , "105 105 105"      ); 
+    fprintf(fp, "fill_color %d %d %d #\n"    , surfce_clr_r, surfce_clr_g, surfce_clr_b   ); 
     fprintf(fp, "vtx_color %s #\n"           , "200 0 0"          ); 
 
     fprintf(fp, "show_vtx %s #\n"            , "false"            ); 

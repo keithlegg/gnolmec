@@ -267,18 +267,16 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
 
     // uv_cnt   = 0;  // number UVs loaded 
 
-    memset(loader->uvs, 0, loader->num_pts);
-    memset(loader->points, 0, loader->num_pts);
+    memset(loader->uvs,      0, loader->num_pts);
+    memset(loader->points,   0, loader->num_pts);
     memset(loader->vnormals, 0, loader->num_pts);
-    //memset(loader->fnormals, 0, loader->num_pts);
+    memset(loader->vtxrgb,   0, loader->num_pts);
     memset(loader->fnormals, 0, loader->num_pts);
-    memset(loader->tris, 0, loader->num_tris);
-    memset(loader->quads, 0, loader->num_quads);
-
+    memset(loader->tris,     0, loader->num_tris);
+    memset(loader->quads,    0, loader->num_quads);
 
     //struct vec3 vtxrgb[num_vtx];        // 3 floats - color per vertex 
     //struct line lines[num_faces];       // 2 ints   - lines    idx
-
 
     loader->num_pts = 0;
     loader->num_uvs = 0;
@@ -287,6 +285,8 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
     loader->num_quads = 0;
     loader->num_vnrmls = 0;
     loader->num_fnrmls = 0;
+    loader->num_vtxrgb = 0;
+
 
 
     obinfo->bb_min_x = 0;
@@ -349,7 +349,6 @@ void load_objfile( char *filepath, obj_model* loader)
 
                 float  xc, yc, zc = 0.0;
                 float  cr, cg, cb = 0.0; //RGB float (0.0 - 1.0)
-
                 while (tok_line) 
                 {
                     //printf("%s \n", tok_line );   
@@ -374,9 +373,16 @@ void load_objfile( char *filepath, obj_model* loader)
                     if(vidx==5){
                         cb = atof(tok_line);
                     } 
-                     
+                    
 
-                    vidx++;tok_line = strtok(NULL, " ");
+                    printf("TOK LINE IS %s \n", tok_line );
+
+                    if (tok_line)
+                    {
+                        vidx++;
+                    }
+
+                    tok_line = strtok(NULL," \n\t");
                 }
                 
                 //printf( " NUM IS %d %f %f %f \n", vidx, cr, cg, cb);
@@ -391,7 +397,8 @@ void load_objfile( char *filepath, obj_model* loader)
                     vec3 vpt = newvec3( xc, yc, zc  );
                     loader->points[loader->num_pts] = vpt;
                     loader->num_pts++;
-                    // print_vec3(vpt); //to view output 
+ 
+                    //print_vec3(vpt); //to view output 
 
                     ////set color to white initially  ?? DEBUG 
                     //vec3 color;
@@ -407,8 +414,12 @@ void load_objfile( char *filepath, obj_model* loader)
 
                 //if 4 deep - we have RGB DEBUG - space at end of line throws this off ! 
                 if (vidx==6){
-                    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
-                    
+                    cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
+
+                    vec3 vpt = newvec3( xc, yc, zc  );
+                    loader->points[loader->num_pts] = vpt;
+                    loader->num_pts++;                    
+
                     vec3 color;
                     // DEBUG - CLAMP 0 - 1.0 
                     color.x=cr;   
