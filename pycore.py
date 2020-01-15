@@ -145,16 +145,16 @@ def circle_cube_pts():
 
     # PYCORE_OBJ_IN not needed 
     obj = object3d()
-    obj.prim_circle(axis='z', pos=(0,0,0), spokes=10, dia=.5) 
+    obj.prim_circle(axis='z', pos=(0,0,0), spokes=20, dia=.5) 
     
     #obj.scale_pts((1,5,1))
         
     obj.triangulate(force=True)
 
 
-    # for f in range(1,len(obj.polygons)-1,1):
-    #     if f%7==0:
-    #         obj.extrude_face(f, 1)
+    for f in range(1,len(obj.polygons)-1,1):
+        if f%3==0:
+            obj.extrude_face(f, 1)
     
     #obj.scale_pts((1,5,1))
     
@@ -170,7 +170,7 @@ def circle_cube_pts():
         #broken # tmp.prim_sphere(pos=pt, rot=(0,0,0), size=.05 )
         #tmp.prim_locator_xyz(pos=pt, rot=(0,0,0), size=1)
         #tmp.prim_cone('y', pos=pt, rot=(0,0,0), dia=.06, spokes=8)
-        tmp.prim_cube(size=.01, pos=pt, rot=(ct,ct,ct), pivot='world')
+        tmp.prim_cube(size=.1, pos=pt, rot=(ct,ct,ct), pivot='world')
         ct += 10
         obj.insert(tmp)  
 
@@ -333,8 +333,8 @@ def scratch_obj1():
 
     #add new geom and auto increment the ids
 
-    #3 sided polygons 
-    pts = [(1,1,1),(0,1,1),(-1,-1,1),(2,-2,1)]
+    #3 sided polygons with color
+    pts = [(1,1,1, 1,0,0),(0,1,1, 1,0,0),(-1,-1,1, 1,0,1),(2,-2,1, 0,1,0)]
     polys = [(1,2,3),  (4,3,1) ]
 
     geom = obj.insert_polygons(polys, pts, geom=geom) 
@@ -585,17 +585,19 @@ obj.save(PYCORE_OBJ_OUT)
 
 ## parse commands coming in and run them
 def runcommand():
+    scratch_obj1()
+    #scratch_obj2()
+
     #visualize_matrix_rotation()
 
     #visualize_perspective_matrix()
 
-    gen_normals()
+    #gen_normals()
 
     #loadgcode()
     #loadkicad()
 
-    #scratch_obj1()
-    #scratch_obj2()
+
 
     #circle_cube_pts()
     
