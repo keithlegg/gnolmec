@@ -469,8 +469,33 @@ void calc_normals(void)
         vec3 n = normalize(cross(a,b));
 
         pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
-
         pt_model_buffer->num_fnrmls++;
+    }
+
+    // broken experiment to put face normals in vertext normals
+    // only do so if nothing was loaded from the model 
+    // DEBUG - its wrong !
+    if (pt_model_buffer->num_vnrmls==0)
+    {
+        for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
+        {    
+            // fetch the pts for a triangle
+            vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
+            vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
+            vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
+
+            // calculate the face normal  
+            vec3 a = sub(p1,p2);
+            vec3 b = sub(p1,p3);
+            vec3 n = normalize(cross(a,b));
+            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt1-1]= n;
+            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt2-1]= n;
+            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt3-1]= n;      
+            pt_model_buffer->num_vnrmls++;
+            pt_model_buffer->num_vnrmls++;
+            pt_model_buffer->num_vnrmls++;
+    
+        }
 
     }
 
@@ -662,9 +687,10 @@ static void render_loop()
     {
 
         glBindTexture(GL_TEXTURE_2D, texture[0]);
-        glMaterialfv(GL_FRONT, GL_EMISSION, emis_lines);
+
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
-        glColor3f(.5, 0, .5);
+        //glEnable(GL_COLOR_MATERIAL);  
+        //glColor3f(.5, 0, .5);
             
         for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   
@@ -697,6 +723,9 @@ static void render_loop()
 
     if(draw_triangles)
     {
+        //glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full); 
+
         //glColor3f( pt_linecolor->r, pt_linecolor->g, pt_linecolor->b); 
         glBindTexture(GL_TEXTURE_2D, texture[2]);   // choose the texture to use.
         
@@ -1474,7 +1503,7 @@ void setlight0(void){
 static void keyPressed(unsigned char key, int x, int y) 
 {
 
-    printf("scancode key %u \n", key );
+    //printf("scancode key %u \n", key );
 
     usleep(100);
 

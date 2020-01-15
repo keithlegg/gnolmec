@@ -375,7 +375,7 @@ void load_objfile( char *filepath, obj_model* loader)
                     } 
                     
 
-                    printf("TOK LINE IS %s \n", tok_line );
+                    //printf("TOK LINE IS %s \n", tok_line );
 
                     if (tok_line)
                     {
@@ -470,7 +470,7 @@ void load_objfile( char *filepath, obj_model* loader)
                         zc = atof(tok_line);
                     }                                        
                     
-                    nidx++;tok_line = strtok(NULL, " ");
+                    nidx++;tok_line = strtok(NULL, " \t\n");
                 }
 
                 if (nidx==3)
@@ -523,7 +523,7 @@ void load_objfile( char *filepath, obj_model* loader)
                     /***********/
 
                     //n = atoi (buffer);
-                    tok_line = strtok(NULL, " ");fidx++;
+                    tok_line = strtok(NULL, " \t\n");fidx++;
 
                 }
                 // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
@@ -581,7 +581,7 @@ void load_objfile( char *filepath, obj_model* loader)
 
 
             /******************************/
-            tok_spacs = strtok(NULL, " ");
+            tok_spacs = strtok(NULL, " \t\n");
 
         }
 
