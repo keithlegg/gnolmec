@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 #include <stdarg.h>
 #include <unistd.h>      
@@ -42,19 +43,14 @@
 
 #include "sceneloader.h"  
 
+#include "timer.h"  
+
+using namespace std;
+
 /*******************************************************/
 
-/*
-#include <sys/time.h>
 
-void timer_test(){
-    //Test of timer 
-    timeval startCount;
-    float foo = gettimeofday(&startCount, NULL);
-    printf("%ld.%06ld\n", startCount.tv_sec, startCount.tv_usec);
 
-};
-*/
 
 
 
@@ -215,7 +211,6 @@ int main(int argc, char **argv)
 {  
 
     char runmode[10];
-
     
     // m33 foobar;
     // load_matrix33(argv[1], &foobar); 
@@ -224,7 +219,7 @@ int main(int argc, char **argv)
 
 
 
-
+    ///////////////////////////////////////////////////
     //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
     if( argc == 1 ) {    
         spinningCubeDemo(&argc, argv);

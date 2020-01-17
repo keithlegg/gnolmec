@@ -30,7 +30,6 @@
 
         - 3D object save 
         - scenegraph
-        - timer , animation 
 
         - FTDI driver, serial port IO  
         - bezier function 
@@ -70,6 +69,8 @@ using namespace std;
 #include "obj_model.h"
 #include "gnolmec.h"
 #include "sceneloader.h"
+
+#include "timer.h"
 
 
 
@@ -182,6 +183,10 @@ RGBType *pt_gridcolor2 = &grid_color2;
 
 
 float ticker = 0;
+
+
+timer tb;
+
 
 /***************************************/
 // camera properties 
@@ -508,7 +513,6 @@ int q_i, p_i, f_i = 0;
 static void render_loop()
 {
 
-
     // Clear The Screen And The Depth Buffer
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -543,9 +547,10 @@ static void render_loop()
 
     // // glPushMatrix();
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
+    //glMatrixMode(GL_MODELVIEW);
+    //glLoadIdentity();
+    //glTranslatef( sin(tb.getElapsedTime()), 0, 0);
+    //glRotatef(45,0,1,0);
 
     //----------------------------------------------
 
@@ -554,6 +559,11 @@ static void render_loop()
     // glLoadIdentity();
     // glTranslatef( 0,0,-10 );
     // glRotatef( 90, 1,0,0 );
+
+        // timer test 
+        //tb.stop();
+        // print the elapsed time in millisec
+ 
 
     //----------------------------------------------
    
@@ -923,6 +933,10 @@ static void render_loop()
         
 
         glEnd(); 
+
+
+
+
     }
 
 
@@ -1124,19 +1138,14 @@ void olmec(int *argc, char** argv){
     glTexImage2D(GL_TEXTURE_2D, 0, 3, imageloaded_bfr->sizeX, imageloaded_bfr->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, imageloaded_bfr->data);
 
     ///////////
+    
+    //tb.start(); //test of timer 
 
     glutMainLoop();// Start Event Processing Engine   
 
 
 }
 
-
-
-
-
-
-/**************************************************/
-/**************************************************/
 
 
 /**************************************************/

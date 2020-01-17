@@ -215,10 +215,6 @@ void read_scenefile( char* filepath )
 
 /*****************************************************/
 
-/*
-   DEBUG - I added the exta "#" at the end because my c++ code is dumb
-*/
-
 void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 {
 
@@ -445,15 +441,11 @@ void save_matrix44(char* filepath, m44 *input ){
 
    fp = fopen (filepath, "w+");
    
-   //---------------------- 
-   //fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
-   
    fprintf(fp, "%f %f %f %f\n", input->m0  , input->m1  , input->m2  , input->m3  );
    fprintf(fp, "%f %f %f %f\n", input->m4  , input->m5  , input->m6  , input->m7  );
    fprintf(fp, "%f %f %f %f\n", input->m8  , input->m9  , input->m10 , input->m11 );
    fprintf(fp, "%f %f %f %f\n", input->m12 , input->m13 , input->m14 , input->m15 );      
    
-   //----------------------
    fclose(fp);
       
 }
@@ -465,30 +457,14 @@ void save_matrix33(char* filepath, m33 *input ){
    FILE * fp;
 
    fp = fopen (filepath, "w+");
-   
-   //---------------------- 
-   //fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
-   
+ 
    fprintf(fp, "%f %f %f \n", input->m0  , input->m1  , input->m2   );
    fprintf(fp, "%f %f %f \n", input->m3  , input->m4  , input->m5   );
    fprintf(fp, "%f %f %f \n", input->m6  , input->m7  , input->m8   );
       
-   
-   //----------------------
    fclose(fp);
       
 }
-
-/***************************************************************/
-
-
-
-
-/*
-    scene_object
-    load_scene()
-    save_scene()
-*/
 
 
 
