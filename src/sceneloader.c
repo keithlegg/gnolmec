@@ -33,11 +33,16 @@ extern float cam_posx;
 extern float cam_posy;
 extern float cam_posz;
 
+extern float light_posx; 
+extern float light_posy;
+extern float light_posz;
+
 extern int surfce_clr_r; 
 extern int surfce_clr_g; 
 extern int surfce_clr_b; 
 
- 
+extern double light_intensity; 
+
 
 //char obj_filepaths[100][100];
 vector<string> obj_filepaths;
@@ -128,6 +133,43 @@ void read_scenefile( char* filepath )
 
                 }
             }
+            //-------------------------------
+            if ( strcmp( tok_spacs, "light_intensity") == 0)
+            {
+                strcpy (cmd_str, line);
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){light_intensity = atof(tok_line);}
+
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " \t\n");                    
+                }
+            }
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "light_pos") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){light_posx = atof(tok_line);}
+                    if(tidx==1){light_posy = atof(tok_line);}
+                    if(tidx==2){light_posz = atof(tok_line);}
+
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+
+                }
+            }
+
             //-------------------------------
             if ( strcmp( tok_spacs, "op_draw_vec3") == 0)
             {
@@ -228,22 +270,22 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 
     fprintf(fp, "## Generated with Gnolmec.  ##\n\n"             );
 
-    fprintf(fp, "obj_path %s \n"            , objpath            );
-    fprintf(fp, "cam_matrix_path %s \n"     , cammatrixpath      );
-    fprintf(fp, "cam_pos %f %f %f \n"       , cam_posx, cam_posy, cam_posz          );
-    fprintf(fp, "op_loadobj %s \n"          , objpath            );
-    fprintf(fp, "\n# light setup \n"                             );
-    fprintf(fp, "light_pos %s \n"           , "0 1 0"            );
-    fprintf(fp, "light_intensity %s \n"     , "5.0"              );
-    fprintf(fp, "\n# colors      \n"                             );
-    fprintf(fp, "bg_color %s \n"            , "20 15 15"         ); 
-    fprintf(fp, "line_color %s \n"          , "0 0 100"          ); 
+    fprintf(fp, "obj_path %s \n"            , objpath                                    );
+    fprintf(fp, "cam_matrix_path %s \n"     , cammatrixpath                              );
+    fprintf(fp, "cam_pos %f %f %f \n"       , cam_posx, cam_posy, cam_posz               );
+    fprintf(fp, "op_loadobj %s \n"          , objpath                                    );
+    fprintf(fp, "\n# light setup \n"                                                     );
+    fprintf(fp, "light_pos %f %f %f \n"     , light_posx, light_posy, light_posz         );
+    fprintf(fp, "light_intensity %f \n"     , light_intensity                            );
+    fprintf(fp, "\n# colors      \n"                                                     );
+    fprintf(fp, "bg_color %s \n"            , "20 15 15"                                 ); 
+    fprintf(fp, "line_color %s \n"          , "0 0 100"                                  ); 
     fprintf(fp, "fill_color %d %d %d \n"    , surfce_clr_r, surfce_clr_g, surfce_clr_b   ); 
-    fprintf(fp, "vtx_color %s \n"           , "200 0 0"          ); 
-    fprintf(fp, "show_vtx %s \n"            , "false"            ); 
-    fprintf(fp, "show_lines %s \n"          , "false"            ); 
-    fprintf(fp, "\n# render prefs   \n"                          );
-    fprintf(fp, "rendermode %s \n"          , "litshaded"        ); 
+    fprintf(fp, "vtx_color %s \n"           , "200 0 0"                                  ); 
+    fprintf(fp, "show_vtx %s \n"            , "false"                                    ); 
+    fprintf(fp, "show_lines %s \n"          , "false"                                    ); 
+    fprintf(fp, "\n# render prefs   \n"                                                  );
+    fprintf(fp, "rendermode %s \n"          , "litshaded"                                ); 
  
     // 
 

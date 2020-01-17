@@ -45,7 +45,7 @@ op_xfrom_parent harry sally
 
 
 # light setup 
-light_pos 0 1 0 
+light_pos 0 21 0 
 light_intensity 1.8 
 
 # colors      

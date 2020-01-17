@@ -219,10 +219,16 @@ float cam_posy = 0;
 float cam_posz = 0;
 
 
+float light_posx = 0; 
+float light_posy = 3.14;
+float light_posz = 0;
+
+
 int surfce_clr_r; //read from setup.olm 
 int surfce_clr_g; 
 int surfce_clr_b; 
 
+double light_intensity;
 
 float moveSpeed    = 2.1f;
 /*
