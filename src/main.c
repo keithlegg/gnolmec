@@ -38,8 +38,9 @@
 
 #include "demo_flat.h"     // 2D openGL demo 
 #include "demo_cube.h"     // 3D openGL demo  
-#include "gnolmec.h"       // 3D maya navigation dmeo (porting a tool in from Unity3D )  
+#include "gnolmec.h"       // the main event    
 
+#include "sceneloader.h"  
 
 /*******************************************************/
 
@@ -215,6 +216,15 @@ int main(int argc, char **argv)
 
     char runmode[10];
 
+    
+    // m33 foobar;
+    // load_matrix33(argv[1], &foobar); 
+    // print_matrix(foobar);
+    // return 0;
+
+
+
+
     //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
     if( argc == 1 ) {    
         spinningCubeDemo(&argc, argv);
@@ -273,6 +283,6 @@ int main(int argc, char **argv)
 
     //show_object();
 
-    return 1;
+    return 0;
 }
 

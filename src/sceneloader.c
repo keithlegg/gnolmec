@@ -12,14 +12,9 @@
 
 #include <vector>
 #include <iostream>
-using namespace std;
-
-// #include <stdlib.h>
-// #include <stdio.h>
-
 #include <string.h>
-// #include <unistd.h>      
-// #include <cmath>
+#include <fstream>
+#include <bits/stdc++.h> 
 
 //#include "gl_setup.h"
 //#include "bitmap_io.h" // includes framebuffer.h, colors, etc 
@@ -29,6 +24,10 @@ using namespace std;
 
 #include "math_op.h"
 #include "sceneloader.h"
+
+
+using namespace std;
+
 
 extern float cam_posx; 
 extern float cam_posy;
@@ -51,6 +50,10 @@ int num_drawvec3 = 0;
 vector<vec3> scene_drawpoints;
 int num_drawpoints = 0;
 
+
+const int MAX_CHARS_PER_LINE = 512;
+const int MAX_TOKENS_PER_LINE = 20;
+
 /*
 
   filepath 
@@ -70,6 +73,9 @@ void clear_scenegeom( void)
     num_drawvec3 = 0;
 
 }
+
+/*****************************************************/
+
 
 void read_scenefile( char* filepath )
 {
@@ -207,7 +213,7 @@ void read_scenefile( char* filepath )
 
 }
 
-/*****************************************************
+/*****************************************************/
 
 /*
    DEBUG - I added the exta "#" at the end because my c++ code is dumb
@@ -274,8 +280,165 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
 /***************************************************************/
 
 
-// load_matrix44()
 
+void load_matrix33(char* filename, m33 * pm33 )
+{
+    ifstream fin;
+
+    fin.open(filename); // open a file
+    if (!fin.good()){ 
+        cout << "matrix text file \""<< filename <<"\" appears to be missing or broken." << endl;
+        exit (EXIT_FAILURE); // exit if file not found
+    }
+
+    int l_idx = 0;
+
+    while (!fin.eof())
+    {
+        char buf[MAX_CHARS_PER_LINE];
+        fin.getline(buf, MAX_CHARS_PER_LINE);
+         
+        vector <string> tokens; 
+        stringstream check1(buf); 
+        string intermediate; 
+        
+        while(getline(check1, intermediate, ' ')) 
+        { 
+            tokens.push_back(intermediate); 
+        } 
+        
+        int t_idx = 0; 
+        for(int i = 0; i < tokens.size(); i++)
+        { 
+
+            // omit blank spaces 
+            if ( tokens[i].compare(" ") != -1)
+            {   
+                double elem = stod(tokens[i]);
+
+                if (l_idx==0 && t_idx==0 )
+                    pm33->m0 = elem;
+                if (l_idx==0 && t_idx==1 )
+                    pm33->m1 = elem;
+                if (l_idx==0 && t_idx==2 )
+                    pm33->m2 = elem;
+                                                      
+
+                if (l_idx==1 && t_idx==0 )
+                    pm33->m3 = elem;
+                if (l_idx==1 && t_idx==1 )
+                    pm33->m4 = elem;
+                if (l_idx==1 && t_idx==2 )
+                    pm33->m5 = elem;
+ 
+
+                if (l_idx==2 && t_idx==0 )
+                    pm33->m6 = elem;
+                if (l_idx==2 && t_idx==1 )
+                    pm33->m7 = elem;
+                if (l_idx==2 && t_idx==2 )
+                    pm33->m8 = elem;
+      
+                t_idx++; // non space token index
+
+            }
+
+        }
+       
+        l_idx++; //line index
+  
+   }
+      
+}
+
+/***************************************************************/
+
+void load_matrix44(char* filename, m44 * pm44 )
+{
+    ifstream fin;
+
+    fin.open(filename); // open a file
+    if (!fin.good()){ 
+        cout << "matrix text file \""<< filename <<"\" appears to be missing or broken." << endl;
+        exit (EXIT_FAILURE); // exit if file not found
+    }
+
+    int l_idx = 0;
+
+    while (!fin.eof())
+    {
+        char buf[MAX_CHARS_PER_LINE];
+        fin.getline(buf, MAX_CHARS_PER_LINE);
+         
+        vector <string> tokens; 
+        stringstream check1(buf); 
+        string intermediate; 
+        
+        while(getline(check1, intermediate, ' ')) 
+        { 
+            tokens.push_back(intermediate); 
+        } 
+        
+        int t_idx = 0; 
+        for(int i = 0; i < tokens.size(); i++)
+        { 
+
+            // omit blank spaces 
+            if ( tokens[i].compare(" ") != -1)
+            {   
+                double elem = stod(tokens[i]);
+
+                if (l_idx==0 && t_idx==0 )
+                    pm44->m0 = elem;
+                if (l_idx==0 && t_idx==1 )
+                    pm44->m1 = elem;
+                if (l_idx==0 && t_idx==2 )
+                    pm44->m2 = elem;
+                if (l_idx==0 && t_idx==3 )
+                    pm44->m3 = elem;                                                        
+
+                if (l_idx==1 && t_idx==0 )
+                    pm44->m4 = elem;
+                if (l_idx==1 && t_idx==1 )
+                    pm44->m5 = elem;
+                if (l_idx==1 && t_idx==2 )
+                    pm44->m6 = elem;
+                if (l_idx==1 && t_idx==3 )
+                    pm44->m7 = elem;  
+
+                if (l_idx==2 && t_idx==0 )
+                    pm44->m8 = elem;
+                if (l_idx==2 && t_idx==1 )
+                    pm44->m9 = elem;
+                if (l_idx==2 && t_idx==2 )
+                    pm44->m10 = elem;
+                if (l_idx==2 && t_idx==3 )
+                    pm44->m11 = elem;  
+
+                if (l_idx==3 && t_idx==0 )
+                    pm44->m12 = elem;
+                if (l_idx==3 && t_idx==1 )
+                    pm44->m13 = elem;
+                if (l_idx==3 && t_idx==2 )
+                    pm44->m14 = elem;
+                if (l_idx==3 && t_idx==3 )
+                    pm44->m15 = elem;                                      
+
+
+                t_idx++; // non space token index
+
+            }
+
+        }
+       
+        l_idx++; //line index
+  
+   }
+      
+}
+
+
+/***************************************************************/
 void save_matrix44(char* filepath, m44 *input ){
 
    FILE * fp;
@@ -295,9 +458,28 @@ void save_matrix44(char* filepath, m44 *input ){
       
 }
 
+/***************************************************************/
 
+void save_matrix33(char* filepath, m33 *input ){
 
+   FILE * fp;
 
+   fp = fopen (filepath, "w+");
+   
+   //---------------------- 
+   //fprintf(fp, "%s %s %s %d", "i", "an", "not working yet", 555);
+   
+   fprintf(fp, "%f %f %f \n", input->m0  , input->m1  , input->m2   );
+   fprintf(fp, "%f %f %f \n", input->m3  , input->m4  , input->m5   );
+   fprintf(fp, "%f %f %f \n", input->m6  , input->m7  , input->m8   );
+      
+   
+   //----------------------
+   fclose(fp);
+      
+}
+
+/***************************************************************/
 
 
 
