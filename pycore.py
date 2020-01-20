@@ -124,18 +124,15 @@ def copy_sop():
 def modify_partial():
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
+    
+    geom = obj.sub_select_geom( slice=(40,120) )
 
-    # if the number of points chnages you need to reindex
-    # geom = obj.sub_select_geom( slice=(10,700), reindex=True )
-    # newpts = obj.rotate_pts((45,45,45), pts=geom[1])
-    
-    geom = obj.sub_select_geom( slice=(10,700) )
+
     newpts = obj.points
-    
-    obj.rotate_pts((0,45,0))
 
     obj2 = object3d() 
     obj2.insert_polygons(geom[0], newpts  )      
+    obj2.rotate_pts((0,45,0))
     obj2.save(PYCORE_OBJ_OUT)    
 
 
@@ -315,69 +312,6 @@ def pt_transform():
 
 
 ##------------------
-def scratch_obj1():
-
-    """ build a new polygon object in memory from points 
-        
-        This could be used for a million things like procedural modeling,
-        custom file importers, exporters., etc  
-        
-        PYCORE_OBJ_IN not needed since we are generating the model           
-    """ 
-
-    geom  = [[],[]]
-    geom2 = [[],[]]
-
-    obj = object3d()
-    #obj.load(PYCORE_OBJ_IN)
-
-    #add new geom and auto increment the ids
-
-    #3 sided polygons with color
-    pts = [(1,1,1, 1,0,0),(0,1,1, 1,0,0),(-1,-1,1, 1,0,1),(2,-2,1, 0,1,0)]
-    polys = [(1,2,3),  (4,3,1) ]
-
-    geom = obj.insert_polygons(polys, pts, geom=geom) 
- 
-    #4 sided polygons
-    pts = [(4,-4.3,-3),(5.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
-    polys = [(1,2,3,4) ]
-
-    geom2 = obj.insert_polygons(polys, pts, geom=geom2) 
-
-    # use insert to add geom to object 
-    obj.insert(geom) 
-    obj.insert(geom2) 
-
-    obj.save( PYCORE_OBJ_OUT )
-
-##------------------
-def scratch_obj2():
-    """ another demo of a model built from coordinates
-        when you use asnew_shell , you can append to other models 
-    """
-    obj = object3d()
- 
-    obj.load(PYCORE_OBJ_IN)
-
-    #add new geom and auto increment the ids
-    polys = [(1,2,3,4) ]
-    pts = [(10,1,1),(0,11,1),(-1,-5,1),(2,-2,1)]
-    obj.insert_polygons([], pts) 
-
-    #add new geom and auto increment the ids
-    pts = [(0,-3,-1),(2,-2,1),(3,-1,1)]
-    obj.insert_polygons([], pts)
-
-    #add polys without new points into same "shell"
-    obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, asnew_shell=False)
-
-    #add new polygon in a new "shell" 
-    obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
-
-    obj.save(PYCORE_OBJ_OUT)
-
-##------------------
 def face_extrude():
     """ brute force test of face extrude 
         extrudes all faces in a polygon object 
@@ -516,7 +450,72 @@ def loadgcode():
     gkod.save_3d_object(PYCORE_OBJ_OUT) 
 
 
-    
+
+
+##------------------
+def scratch_obj1():
+
+    """ build a new polygon object in memory from points 
+        
+        This could be used for a million things like procedural modeling,
+        custom file importers, exporters., etc  
+        
+        PYCORE_OBJ_IN not needed since we are generating the model           
+    """ 
+
+    geom  = [[],[]]
+    geom2 = [[],[]]
+
+    obj = object3d()
+    #obj.load(PYCORE_OBJ_IN)
+
+    #add new geom and auto increment the ids
+
+    #3 sided polygons with color
+    pts = [(1,1,1, 1,0,0),(0,1,1, 1,0,0),(-1,-1,1, 1,0,1),(2,-2,1, 0,1,0)]
+    polys = [(1,2,3),  (4,3,1) ]
+
+    geom = obj.insert_polygons(polys, pts, geom=geom) 
+ 
+    #4 sided polygons
+    pts = [(4,-4.3,-3),(5.5,-2.5,-2.1),(-2,2,-4),(4,-4.2,1)]
+    polys = [(1,2,3,4) ]
+
+    geom2 = obj.insert_polygons(polys, pts, geom=geom2) 
+
+    # use insert to add geom to object 
+    obj.insert(geom) 
+    obj.insert(geom2) 
+
+    obj.save( PYCORE_OBJ_OUT )
+
+##------------------
+def scratch_obj2():
+    """ another demo of a model built from coordinates
+        when you use asnew_shell , you can append to other models 
+    """
+    obj = object3d()
+ 
+    obj.load(PYCORE_OBJ_IN)
+
+    #add new geom and auto increment the ids
+    polys = [(1,2,3,4) ]
+    pts = [(10,1,1),(0,11,1),(-1,-5,1),(2,-2,1)]
+    obj.insert_polygons([], pts) 
+
+    #add new geom and auto increment the ids
+    pts = [(0,-3,-1),(2,-2,1),(3,-1,1)]
+    obj.insert_polygons([], pts)
+
+    #add polys without new points into same "shell"
+    obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, asnew_shell=False)
+
+    #add new polygon in a new "shell" 
+    obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
+
+    obj.save(PYCORE_OBJ_OUT)
+
+
 ##***********************************************************##
 ##***********************************************************##
 ##***********************************************************##
@@ -567,6 +566,65 @@ def pyrender_ogl():
 
 
 
+
+def bezier3d():
+    obj = object3d()
+
+    start = (1 ,  0, 0)
+    ctrl1 = (.5,  0, 0)
+    ctrl2 = ( 0, .5, 0)
+    end   = (0 ,  1, 0)
+    kurve = [start, ctrl1, ctrl2, end]
+
+    ## start  = (2 ,  5, 0)
+    ## ctrl1  = (1 ,  2, 0)
+    ## ctrl2  = (1 ,  3, 0)
+    ## end    = (3 ,  7, 0)
+    ## kurve2 =[start, ctrl1, ctrl2, end]
+    ## curves = [kurve, kurve] 
+    
+    obj.draw_splines( [kurve], drawctrls=True, drawhulls=True)
+
+
+    obj.save(PYCORE_OBJ_OUT)
+
+
+
+
+def lathe():
+    """ needs to have the same num U and V to work """
+    obj = object3d()
+
+    num = 15
+    start = (1 ,  0, 0)
+    ctrl1 = (.5,  0, 0)
+    ctrl2 = ( 0, .5, 0)
+    end   = (0 ,  1, 0)
+    curve = obj.cubic_bezier(num, start, ctrl1, ctrl2, end)
+    obj.lathe(curve, num)
+
+    #pts = [(.1,.1,0),(1,1,0),(2,2,0),(3,3,0)]
+    #obj.lathe(pts, 4)
+
+    obj.save(PYCORE_OBJ_OUT)
+ 
+
+
+
+
+
+
+def test_pointgen():
+    #OBJ.locate_pt_along3d( x1, y1, z1, x2, y2, z2, num):
+
+    grid = OBJ.test_data_grid(10,10,1)
+
+    #pg.print_grid( grid )
+
+    print( OBJ.get_grid_column(grid, 3) )
+    print( OBJ.get_grid_row(grid, 3) )
+
+
 #####################################################
 
 """
@@ -585,8 +643,12 @@ obj.save(PYCORE_OBJ_OUT)
 
 ## parse commands coming in and run them
 def runcommand():
-    scratch_obj1()
+    #scratch_obj1()
     #scratch_obj2()
+    
+    #bezier3d()
+
+    lathe()
 
     #visualize_matrix_rotation()
 

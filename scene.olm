@@ -6,15 +6,14 @@
 ################
 # load obj files 
 
+#op_loadobj 3d_obj/sphere.obj 
+
+op_loadobj 3d_obj/PYCORE.obj 
 
 #op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/triangle.obj 
 #op_loadobj 3d_obj/cone.obj 
-op_loadobj 3d_obj/sphere.obj 
-
 #op_loadobj 3d_obj/testvectors.obj 
-
-
 #op_loadobj 3d_obj/cube.obj 
 #op_loadobj 3d_obj/monkey.obj 
 #op_loadobj 3d_obj/arcspiral.obj 
@@ -45,13 +44,16 @@ op_xfrom_parent harry sally
 
 
 # light setup 
-light_pos 0 21 0 
+light_pos 0 1 0 
 light_intensity 1.8 
 
 # colors      
 bg_color 20 15 15 
 line_color 0 0 100 
-fill_color 170 170 50 
+
+#fill_color 170 170 50 
+fill_color 1 1 1
+
 vtx_color 200 0 0 
 show_vtx true 
 show_lines false 

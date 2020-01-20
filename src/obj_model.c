@@ -414,7 +414,7 @@ void load_objfile( char *filepath, obj_model* loader)
 
                 //if 4 deep - we have RGB DEBUG - space at end of line throws this off ! 
                 if (vidx==6){
-                    cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
+                    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
 
                     vec3 vpt = newvec3( xc, yc, zc  );
                     loader->points[loader->num_pts] = vpt;
