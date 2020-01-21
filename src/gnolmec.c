@@ -483,7 +483,7 @@ void calc_normals(void)
         pt_model_buffer->num_fnrmls++;
     }
 
-    // broken experiment to put face normals in vertext normals
+    // broken experiment to put face normals in vertex normals
     // only do so if nothing was loaded from the model 
     // DEBUG - its wrong !
     if (pt_model_buffer->num_vnrmls==0)
@@ -830,7 +830,8 @@ static void render_loop()
                 tri_cntr.y = (p1.y + p2.y + p3.y)/3;
                 tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
                   
-                vec3 mv =  add(tri_cntr, div(pt_model_buffer->fnormals[p_i],5 ));
+                //display shorter for neatness  
+                vec3 mv =  add(tri_cntr, div(pt_model_buffer->fnormals[p_i], 20 ));
                 //vec3 mv =  add(tri_cntr, pt_model_buffer->fnormals[p_i]);
 
                 //print_vec3( mv );
@@ -839,10 +840,10 @@ static void render_loop()
                 glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
                 glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
 
-                    glBegin(GL_LINES);
-                        glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
-                        glVertex3f(mv.x, mv.y, mv.z);
-                    glEnd();
+                glBegin(GL_LINES);
+                    glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
+                    glVertex3f(mv.x, mv.y, mv.z);
+                glEnd();
 
 
                 glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
@@ -1757,6 +1758,7 @@ static void keyPressed(unsigned char key, int x, int y)
         //reset_objfile(pt_model_buffer, pt_obinfo);
 
         load_objfile(active_filepath, pt_model_buffer );
+        calc_normals();
         get_obj_info( pt_model_buffer, pt_obinfo);
 
 

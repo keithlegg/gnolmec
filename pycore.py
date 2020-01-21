@@ -576,15 +576,15 @@ def bezier3d():
     end   = (0 ,  1, 0)
     kurve = [start, ctrl1, ctrl2, end]
 
-    ## start  = (2 ,  5, 0)
-    ## ctrl1  = (1 ,  2, 0)
-    ## ctrl2  = (1 ,  3, 0)
-    ## end    = (3 ,  7, 0)
-    ## kurve2 =[start, ctrl1, ctrl2, end]
-    ## curves = [kurve, kurve] 
+    start  = (0   ,  1   , 0)
+    ctrl1  = (1.5 ,  1.0   , 0)
+    ctrl2  = (1   ,  1.5 , 0)
+    end    = (2   ,  2   , 0)
+    kurve2 =[start, ctrl1, ctrl2, end]
     
-    obj.draw_splines( [kurve], drawctrls=True, drawhulls=True)
-
+    curves = [kurve, kurve2] 
+    
+    obj.draw_splines( curves, drawctrls=True, drawhulls=True)
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -595,16 +595,60 @@ def lathe():
     """ needs to have the same num U and V to work """
     obj = object3d()
 
-    num = 15
-    start = (1 ,  0, 0)
-    ctrl1 = (.5,  0, 0)
-    ctrl2 = ( 0, .5, 0)
-    end   = (0 ,  1, 0)
-    curve = obj.cubic_bezier(num, start, ctrl1, ctrl2, end)
-    obj.lathe(curve, num)
+    # # simplest possible lathe example (must be square , num pts == num revolutions)
+    # pts = [(.1,.1,0),(1,1,0),(2,2,0),(3,3,0)]
+    # obj.lathe(pts, 4)
 
-    #pts = [(.1,.1,0),(1,1,0),(2,2,0),(3,3,0)]
-    #obj.lathe(pts, 4)
+
+    # # using bezier curve function 
+    # num = 23
+    # start = (1 ,  0, 0)
+    # ctrl1 = (.5,  0, 0)
+    # ctrl2 = ( 0, .5, 0)
+    # end   = (0 ,  1, 0)
+    # curve = obj.cubic_bezier(num, start, ctrl1, ctrl2, end)
+    # obj.lathe(curve, num)
+
+    #------ 
+
+    num = 10
+
+    start  = (2 ,  0, 0)
+    ctrl1  = (.5,  .5, 0)
+    ctrl2  = (3, .5, 0)
+    end    = (1 ,  1, 0)
+    curve1 = [  start, ctrl1, ctrl2, end ]
+
+    curvepts = obj.cubic_bezier(num, start, ctrl1, ctrl2, end )
+
+    start  = (1   ,  1   , 0)
+    ctrl1  = (2.5 ,  1.0   , 0)
+    ctrl2  = (1   ,  1.5 , 0)
+    end    = (2   ,  2   , 0)
+    curve2 = [ start, ctrl1, ctrl2, end ]
+  
+    tmp      = obj.cubic_bezier(num, start, ctrl1, ctrl2, end )
+   
+    curvepts.extend(tmp)
+
+    #obj.draw_splines( num, [curve1, curve2], drawctrls=True, drawhulls=True) 
+
+    obj.lathe2(curvepts, num*2)
+   
+    for i in range(120):
+        obj.extrude_face(i, -.4)
+
+    #scal command kills COLOR - DOH !
+    obj.scale_pts( (1,2,1) )
+
+    #------ 
+    
+    # num = 20
+    # #cross_section = obj.calc_circle(pos=(1,0,0), rot=(0,180,0), dia=.5, axis='z', periodic=True, spokes=num-1)
+    # cross_section = obj.calc_circle(pos=(1,0,0), dia=.5, axis='z', periodic=True, spokes=num-1)
+    # cross_section.reverse()
+    # obj.lathe(cross_section, num)
+
 
     obj.save(PYCORE_OBJ_OUT)
  

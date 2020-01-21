@@ -51,8 +51,8 @@ light_intensity 1.8
 bg_color 20 15 15 
 line_color 0 0 100 
 
-#fill_color 170 170 50 
-fill_color 1 1 1
+fill_color 170 170 50 
+#fill_color 1 1 1
 
 vtx_color 200 0 0 
 show_vtx true 
