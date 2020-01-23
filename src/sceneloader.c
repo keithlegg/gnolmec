@@ -14,7 +14,21 @@
 #include <iostream>
 #include <string.h>
 #include <fstream>
-#include <bits/stdc++.h> 
+
+
+//debug not working right - look in makefile to set ENV
+#ifdef ISLINUX
+    #include <bits/stdc++.h> 
+#else
+    #include "bits_stdc++.h" 
+#endif
+
+ 
+
+
+
+
+
 
 //#include "gl_setup.h"
 //#include "bitmap_io.h" // includes framebuffer.h, colors, etc 
