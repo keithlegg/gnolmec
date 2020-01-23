@@ -7,7 +7,8 @@ OBJDIR   =obj
 BINDIR   =bin
 
 
-CC       = g++
+#CC       = g++ -D_ISLINUX 
+CC       = g++ 
 
 
 #detect the OS (linux or OSX, dont care about windows)

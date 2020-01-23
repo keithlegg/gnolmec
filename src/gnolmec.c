@@ -1124,11 +1124,11 @@ void olmec(int *argc, char** argv){
 
     load_scene(obj_filepath);
 
-    //vec3 start = newvec3(0.0 ,3.0 ,1.0 );
-    //vec3 ctrl1 = newvec3(2.5  ,0.0 ,0.0 );
-    //vec3 ctrl2 = newvec3(0.0 ,1.0  ,0.0 );
-    //vec3 end   = newvec3(-1.0 ,0.0 ,-5.0 );
-    //test_bezier(start, ctrl1, ctrl2, end);
+    vec3 start = newvec3(0.0 ,3.0 ,1.0 );
+    vec3 ctrl1 = newvec3(2.5  ,0.0 ,0.0 );
+    vec3 ctrl2 = newvec3(0.0 ,1.0  ,0.0 );
+    vec3 end   = newvec3(-1.0 ,0.0 ,-5.0 );
+    test_bezier(start, ctrl1, ctrl2, end);
 
     warnings();
 

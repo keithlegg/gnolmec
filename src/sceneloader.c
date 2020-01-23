@@ -16,14 +16,12 @@
 #include <fstream>
 
 
-//debug not working right - look in makefile to set ENV
-#ifdef ISLINUX
+// USE MAKEFILE TO SET THIS 
+#ifdef _ISLINUX
     #include <bits/stdc++.h> 
 #else
     #include "bits_stdc++.h" 
 #endif
-
- 
 
 
 

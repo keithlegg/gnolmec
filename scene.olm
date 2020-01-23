@@ -10,7 +10,7 @@
 
 #op_loadobj 3d_obj/PYCORE.obj 
 
-#op_loadobj 3d_obj/teapot.obj 
+op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/triangle.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 
@@ -26,9 +26,9 @@
 
 # 3D vectors 
 
-op_draw_vec3  1  1  1   0 1 1 
-op_draw_vec3 -1 -1 -1   0 1 0 
-op_draw_vec3  0  1  1   1 0 0 
+# op_draw_vec3  1  1  1   0 1 1 
+# op_draw_vec3 -1 -1 -1   0 1 0 
+# op_draw_vec3  0  1  1   1 0 0 
 
 #3D points 
 
