@@ -633,13 +633,15 @@ def lathe():
 
     #obj.draw_splines( num, [curve1, curve2], drawctrls=True, drawhulls=True) 
 
-    obj.lathe2(curvepts, num*2)
-   
-    for i in range(120):
-        obj.extrude_face(i, -.4)
+    #obj.lathe2(curvepts, num*2)
+    
+    obj.lathe(curvepts, num*2)
+
+    #for i in range(120):
+    #    obj.extrude_face(i, -.4)
 
     #scal command kills COLOR - DOH !
-    obj.scale_pts( (1,2,1) )
+    #obj.scale_pts( (1,2,1) )
 
     #------ 
     
@@ -692,7 +694,7 @@ def runcommand():
     
     #bezier3d()
 
-    lathe()
+    #lathe()
 
     #visualize_matrix_rotation()
 

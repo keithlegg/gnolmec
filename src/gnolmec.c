@@ -32,7 +32,6 @@
         - scenegraph
 
         - FTDI driver, serial port IO  
-        - bezier function 
         - Image compositing ALA Ye olden days of Shake  
         - widgets in GL fixed to screen region 
 
@@ -122,12 +121,13 @@ extern int num_loaded_obj;
 
 extern vector<vec3> scene_drawvec3;
 extern vector<vec3> scene_drawvecclr;
-
-
 extern int num_drawvec3;
 
 extern vector<vec3> scene_drawpoints;
 extern int num_drawpoints;
+
+
+
 
 char *cam_matrix_filepath = "camera_matrix.olm";
 char *proj_matrix_filepath = "projection_matrix.olm";
@@ -466,6 +466,31 @@ void calc_normals(void)
     //debug - clear any loaded normals 
     pt_model_buffer->num_fnrmls = 0;
 
+    //calc normals for quads 
+    for (p_i=0;p_i<pt_model_buffer->num_quads;p_i++)
+    {   
+            
+        // fetch the pts for a triangle
+        vec3 p1 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt1-1];
+        vec3 p2 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt2-1];
+        vec3 p3 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt3-1];
+
+        // calculate the face normal  
+        vec3 a = sub(p1,p2);
+        vec3 b = sub(p1,p3);
+        vec3 n = normalize(cross(a,b));
+        
+        print_vec3(n);
+
+
+
+        pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
+        pt_model_buffer->num_fnrmls++;
+
+
+    }
+
+    // calc normals for triangles 
     for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
     {   
             
@@ -511,7 +536,26 @@ void calc_normals(void)
     }
 
 }
+
 /***************************************/
+
+void test_bezier( vec3 start, vec3 ctrl1, vec3 ctrl2, vec3 end)
+{
+
+    pointgen PG;
+
+    vector<vec3> * ptDrawvec = &scene_drawvec3;
+    vector<vec3> * ptDrawClr = &scene_drawvecclr;
+    int * ptnum_drawvec3 = &num_drawvec3;
+    
+    PG.cubic_bezier(ptDrawvec, ptDrawClr,  ptnum_drawvec3, 10, start, ctrl1, ctrl2, end);
+
+}
+
+
+
+/***************************************/
+
 
 int q_i, p_i, f_i = 0;
 
@@ -523,6 +567,9 @@ static void render_loop()
     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+
+    GLfloat lightpos[] = { light_posx, light_posy, light_posz, 0}; // homogeneous coordinates
+    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     if (render_text)
     {
@@ -1068,12 +1115,20 @@ void set_view_persp(void)
 
 void olmec(int *argc, char** argv){
  
+
+
     glutInit(argc, argv);  
 
     //shader_test();
     set_colors();
 
     load_scene(obj_filepath);
+
+    //vec3 start = newvec3(0.0 ,3.0 ,1.0 );
+    //vec3 ctrl1 = newvec3(2.5  ,0.0 ,0.0 );
+    //vec3 ctrl2 = newvec3(0.0 ,1.0  ,0.0 );
+    //vec3 end   = newvec3(-1.0 ,0.0 ,-5.0 );
+    //test_bezier(start, ctrl1, ctrl2, end);
 
     warnings();
 
@@ -1465,8 +1520,10 @@ void setlight0(void){
         GL_SPOT_EXPONENT, GL_CONSTANT_ATTENUATION, GL_LINEAR_ATTENUATION,  GL_QUADRATIC_ATTENUATION 
     */
 
-    GLfloat lightpos[] = {1., 1., 1., 0.};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    // //GLfloat lightpos[] = {1, light_posx, light_posy, light_posz}; // homogeneous coordinates
+    // GLfloat lightpos[] = {0, 1, 0, 0}; // homogeneous coordinates
+    // glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+
 
     // Set GL_LIGHT_0's Ambient color to 0,0,0,1
     GLfloat lightamb[] = {0., 0., 0., 1. };

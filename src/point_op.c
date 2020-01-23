@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cmath>
+#include <vector>
+
 
 
 #include "math_op.h"
@@ -23,6 +25,61 @@
 
 
 
+
+void pointgen::cubic_bezier(vector<vec3>* output, 
+                            vector<vec3>* colors,
+                            int* numvecs,
+                            int draw_steps, 
+                            vec3 start, 
+                            vec3 ctrl1, 
+                            vec3 ctrl2,
+                            vec3 end
+                        )
+{
+       
+        double x,y,z,t,tt,ttt,u,uu,uuu = 0;
+        double i;
+ 
+        vec3 color = newvec3(1.0,0.0,0.0);
+
+        for (i=0;i<draw_steps;i++)
+        {
+            t = i / draw_steps;
+            tt = t * t;
+            ttt = tt * t;
+            u = 1.0 - t;
+            uu = u * u;
+            uuu = uu * u;
+
+            x = uuu * start.x;
+            x = 3.0 * uu * t * ctrl1.x +1.0;
+            x = 3.0 * u * tt * ctrl2.x +1.0;
+            x = ttt * end.x+1.0;
+
+            y = uuu * start.y;
+            y = 3.0 * uu * t * ctrl1.y +1;
+            y = 3.0 * u * tt * ctrl2.y +1;
+            y = ttt * end.y+1;
+
+            z = uuu * start.z;
+            z = 3.0 * uu * t * ctrl1.z +1.0;
+            z = 3.0 * u * tt * ctrl2.z +1.0;
+            z = ttt * end.z +1.0;
+
+            vec3 out;
+            out.x = x; 
+            out.y = y;
+            out.z = z;
+
+            output->push_back( out );
+            colors->push_back( color );
+            *numvecs = *numvecs+1;
+
+        }
+
+
+        //return out;
+}
 
 
 

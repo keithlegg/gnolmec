@@ -1,13 +1,47 @@
 #ifndef POINTOP_H    
 #define POINTOP_H
 
+#include <vector>
+
 #include "math_op.h"
+
+using namespace std;
 
 //coordinate to a pixel in the scancache 
 struct pix_coord {
     int x;
     int y;
 };
+
+
+
+
+
+
+
+class pointgen
+{
+    public:
+
+        pointgen(){
+        };
+
+        ~pointgen(){};
+
+    void cubic_bezier(vector<vec3>* output, 
+                      vector<vec3>* colors,
+                      int* numvecs,
+                      int draw_steps, 
+                      vec3 start, 
+                      vec3 ctrl1, 
+                      vec3 ctrl2,
+                      vec3 end
+                     );
+
+};
+
+
+
 
 
 //utilities
