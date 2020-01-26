@@ -994,33 +994,34 @@ static void render_loop()
 
         glEnd(); 
 
-        // // display loaded normals as lines 
-        // if (draw_normals)
-        // {
-        //     glColor3f(.5,.5,0);
-        //     for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
-        //     {             
-        //         // fetch the pts for a triangle
-        //         vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
-        //         vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
-        //         vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
-        //         // calculate the centroid 
-        //         tri_cntr.x = (p1.x + p2.x + p3.x)/3;
-        //         tri_cntr.y = (p1.y + p2.y + p3.y)/3;
-        //         tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
-        //         //display shorter for neatness  
-        //         vec3 mv =  add(tri_cntr, div(pt_model_buffer->fnormals[p_i], 20 ));
-        //         glBindTexture(GL_TEXTURE_2D, texture[0]);
-        //         glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
-        //         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
-        //         glBegin(GL_LINES);
-        //             glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
-        //             glVertex3f(mv.x, mv.y, mv.z);
-        //         glEnd();
-        //         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
-        //         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
-        //     }
-        // }//draw normals    
+        // display loaded normals as lines 
+        if (draw_normals)
+        {
+            glColor3f(.5,.5,0);
+            for (p_i=0;p_i<pt_model_buffer->num_quads;p_i++)
+            {             
+                // fetch the pts for a triangle
+                vec3 p1 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt1-1];
+                vec3 p2 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt2-1];
+                vec3 p3 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt3-1];
+                // calculate the centroid 
+                vec3 quad_cntr;
+                quad_cntr.x = (p1.x + p2.x + p3.x)/3;
+                quad_cntr.y = (p1.y + p2.y + p3.y)/3;
+                quad_cntr.z = (p1.z + p2.z + p3.z)/3; 
+                //display shorter for neatness  
+                vec3 mv =  add(quad_cntr, div(pt_model_buffer->fnormals[p_i], 20 ));
+                glBindTexture(GL_TEXTURE_2D, texture[0]);
+                glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+                glBegin(GL_LINES);
+                    glVertex3f(quad_cntr.x, quad_cntr.y, quad_cntr.z);
+                    glVertex3f(mv.x, mv.y, mv.z);
+                glEnd();
+                glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
+            }
+        }//draw normals    
 
 
 
