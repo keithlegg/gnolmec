@@ -8,9 +8,10 @@
 
 #op_loadobj 3d_obj/sphere.obj 
 
-#op_loadobj 3d_obj/PYCORE.obj 
 
-op_loadobj 3d_obj/teapot.obj 
+op_loadobj 3d_obj/fuq_dis.obj 
+
+#op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/triangle.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 
@@ -26,9 +27,9 @@ op_loadobj 3d_obj/teapot.obj
 
 # 3D vectors 
 
-# op_draw_vec3  1  1  1   0 1 1 
-# op_draw_vec3 -1 -1 -1   0 1 0 
-# op_draw_vec3  0  1  1   1 0 0 
+#op_draw_vec3  1  1  1   0 1 1 
+#op_draw_vec3 -1 -1 -1   0 1 0 
+#op_draw_vec3  0  1  1   1 0 0 
 
 #3D points 
 
@@ -45,7 +46,7 @@ op_xfrom_parent harry sally
 
 # light setup 
 light_pos 0 0 1 
-light_intensity 1.8 
+light_intensity -1.8 
 
 # colors      
 bg_color 20 15 15 

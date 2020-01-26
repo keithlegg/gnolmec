@@ -18,14 +18,9 @@
     
 
     TODO:
-        - spaces at end of obj file mess up parsing!
-          it prefers NO SPACES currently 
-
         - textures, line color, lighting 
         - auto generate face/vertex normals
         - UV map loading 
-        - MOVE DATA OFF STACK AND ONTO HEAP!  
-        - load multiple objects in scene ( layers )
         - test with many models 
 
         - 3D object save 
@@ -458,6 +453,7 @@ void reset_view(void){
 
 }
 
+
 void calc_normals(void)
 {
     int  p_i = 0;
@@ -479,10 +475,6 @@ void calc_normals(void)
         vec3 a = sub(p1,p2);
         vec3 b = sub(p1,p3);
         vec3 n = normalize(cross(a,b));
-        
-        print_vec3(n);
-
-
 
         pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
         pt_model_buffer->num_fnrmls++;
@@ -585,8 +577,12 @@ static void render_loop()
         //glPushMatrix();
         glLoadIdentity();
         void *font = GLUT_BITMAP_8_BY_13;     
-        sprintf(s, "    %d polys loaded", pt_model_buffer->num_tris );
+        sprintf(s, "    %d tris ", pt_model_buffer->num_tris );
+        renderBitmapString( ((int)scr_size_x/2) , scr_size_y-20  ,(void *)font, s );
+
+        sprintf(s, "    %d quads ", pt_model_buffer->num_quads );
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-20  ,(void *)font, s );
+
         sprintf(s, "camera position : %f %f %f", cam_posx, cam_posy, cam_posz);
         renderBitmapString( ((int)scr_size_x/2)-150 , scr_size_y-10  ,(void *)font, s );
         //glPopMatrix();
@@ -896,7 +892,7 @@ static void render_loop()
                 glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
                 glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
             }
-        }        
+        }//draw normals         
 
     }
 
@@ -958,27 +954,37 @@ static void render_loop()
                 vec3 rgb3 = pt_model_buffer->vtxrgb[qu3-1];
                 vec3 rgb4 = pt_model_buffer->vtxrgb[qu4-1];
 
+                //DEBUG - not working or tested  
+                vec3 nrm1 = pt_model_buffer->vnormals[qu1-1];
+                vec3 nrm2 = pt_model_buffer->vnormals[qu2-1];
+                vec3 nrm3 = pt_model_buffer->vnormals[qu3-1];
+                vec3 nrm4 = pt_model_buffer->vnormals[qu4-1];
+     
                 /***********************/
                 glColor3f(rgb1.x,rgb1.y,rgb1.z);                 
                 glTexCoord2f(0.5, 1.0);                
+                glNormal3f( nrm1.x, nrm1.y, nrm1.z);
                 vec3 pt1 = pt_model_buffer->points[qu1-1];
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
                 /***********************/
                 glColor3f(rgb2.x,rgb2.y,rgb2.z); 
                 glTexCoord2f(0.0, 1.0); 
+                glNormal3f( nrm2.x, nrm2.y, nrm2.z);
                 vec3 pt2 = pt_model_buffer->points[qu2-1];
                 glVertex3f(pt2.x, pt2.y, pt2.z);
 
                 /***********************/
                 glColor3f(rgb3.x,rgb3.y,rgb3.z);                 
-                glTexCoord2f(1.0, 0.0);                
+                glTexCoord2f(1.0, 0.0);   
+                glNormal3f( nrm3.x, nrm3.y, nrm3.z);                             
                 vec3 pt3 = pt_model_buffer->points[qu3-1];
                 glVertex3f(pt3.x, pt3.y, pt3.z);
 
                 /***********************/
                 glColor3f(rgb4.x,rgb4.y,rgb4.z);                 
-                glTexCoord2f(1.0, 0.0);                
+                glTexCoord2f(1.0, 0.0);      
+                glNormal3f( nrm4.x, nrm4.y, nrm4.z);
                 vec3 pt4 = pt_model_buffer->points[qu4-1];
                 glVertex3f(pt4.x, pt4.y, pt4.z);
 
@@ -987,6 +993,34 @@ static void render_loop()
         
 
         glEnd(); 
+
+        // // display loaded normals as lines 
+        // if (draw_normals)
+        // {
+        //     glColor3f(.5,.5,0);
+        //     for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
+        //     {             
+        //         // fetch the pts for a triangle
+        //         vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
+        //         vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
+        //         vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
+        //         // calculate the centroid 
+        //         tri_cntr.x = (p1.x + p2.x + p3.x)/3;
+        //         tri_cntr.y = (p1.y + p2.y + p3.y)/3;
+        //         tri_cntr.z = (p1.z + p2.z + p3.z)/3; 
+        //         //display shorter for neatness  
+        //         vec3 mv =  add(tri_cntr, div(pt_model_buffer->fnormals[p_i], 20 ));
+        //         glBindTexture(GL_TEXTURE_2D, texture[0]);
+        //         glMaterialfv(GL_FRONT, GL_EMISSION, clr_yellow);
+        //         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
+        //         glBegin(GL_LINES);
+        //             glVertex3f(tri_cntr.x, tri_cntr.y, tri_cntr.z);
+        //             glVertex3f(mv.x, mv.y, mv.z);
+        //         glEnd();
+        //         glMaterialfv(GL_FRONT, GL_EMISSION, emis_off);
+        //         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_full);  
+        //     }
+        // }//draw normals    
 
 
 
@@ -1124,11 +1158,11 @@ void olmec(int *argc, char** argv){
 
     load_scene(obj_filepath);
 
-    vec3 start = newvec3(0.0 ,3.0 ,1.0 );
-    vec3 ctrl1 = newvec3(2.5  ,0.0 ,0.0 );
-    vec3 ctrl2 = newvec3(0.0 ,1.0  ,0.0 );
-    vec3 end   = newvec3(-1.0 ,0.0 ,-5.0 );
-    test_bezier(start, ctrl1, ctrl2, end);
+    // vec3 start = newvec3(0.0 ,3.0 ,1.0 );
+    // vec3 ctrl1 = newvec3(2.5  ,0.0 ,0.0 );
+    // vec3 ctrl2 = newvec3(0.0 ,1.0  ,0.0 );
+    // vec3 end   = newvec3(-1.0 ,0.0 ,-5.0 );
+    // test_bezier(start, ctrl1, ctrl2, end);
 
     warnings();
 
