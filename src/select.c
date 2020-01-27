@@ -1,3 +1,4 @@
+/*
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -19,11 +20,11 @@ void drawScene (void)
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    gluLookAt (7.5, 7.5, 12.5, 2.5, 2.5, -5.0, 0.0, 1.0, 0.0);
-   glColor3f (0.0, 1.0, 0.0);   /*  green triangle      */
+   glColor3f (0.0, 1.0, 0.0);    
    drawTriangle (2.0, 2.0, 3.0, 2.0, 2.5, 3.0, -5.0);
-   glColor3f (1.0, 0.0, 0.0);   /*  red triangle        */
+   glColor3f (1.0, 0.0, 0.0);    
    drawTriangle (2.0, 7.0, 3.0, 7.0, 2.5, 8.0, -5.0);
-   glColor3f (1.0, 1.0, 0.0);   /*  yellow triangles    */
+   glColor3f (1.0, 1.0, 0.0);    
    drawTriangle (2.0, 2.0, 3.0, 2.0, 2.5, 3.0, 0.0);
    drawTriangle (2.0, 2.0, 3.0, 2.0, 2.5, 3.0, -10.0);
    drawViewVolume (0.0, 5.0, 0.0, 5.0, 0.0, 10.0);
@@ -36,13 +37,13 @@ void processHits (GLint hits, GLuint buffer[])
 
    printf ("hits = %d\n", hits);
    ptr = (GLuint *) buffer;
-   for (i = 0; i < hits; i++) { /*  for each hit  */
+   for (i = 0; i < hits; i++) {  
       names = *ptr;
       printf (" number of names for hit = %d\n", names); ptr++;
       printf("  z1 is %g;", (float) *ptr/0x7fffffff); ptr++;
       printf(" z2 is %g\n", (float) *ptr/0x7fffffff); ptr++;
       printf ("   the name is ");
-      for (j = 0; j < names; j++) {     /*  for each name */
+      for (j = 0; j < names; j++) {      
          printf ("%d ", *ptr); ptr++;
       }
       printf ("\n");
@@ -108,3 +109,6 @@ int selectmain(int argc, char** argv)
    glutMainLoop();
    return 0; 
 }
+
+*/
+
