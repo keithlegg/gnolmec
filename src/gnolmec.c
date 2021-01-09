@@ -41,6 +41,71 @@
 
       Copyright (C) 2014-2020 Keith Legg - keithlegg23@gmail.com
 
+    -------------- HOTKEYS -----------------
+    ESC  - exit 
+
+    -- VIEW COMMANDS       
+
+          1    - perspesctive view mode
+          2    - orthographic view mode  
+    shift 2    - orthographic top
+          3    - orthographic front
+    shift 3    - ???
+          4    - display wireframe 
+    shift 4    - toggle display as points
+          5    - display as solid, no texture 
+    shift 5    - ignore lights
+          6    - display as solid, with texture 
+    shift 6    - toggle texture
+          7    - ? lighting ?
+    - (minus)  - zoom in 
+    + (plus)   - zoom out 
+      (space)  - toggle fullscreen 
+
+
+          i    - obhj info / draw bounding box (bbox) 
+    shift i    - object deep info to terminal 
+          n    - toggle normal display 
+          o    - ? load object ? 
+          t    - dump camera matrix file to disk based on view 
+    shift t    -        
+          f    - reset view/camera  
+    shift f    - ??
+          g    - toggle center grid 
+    shift g    - toggle centroid axis 
+
+    -----------------------------------------
+
+    -- wacky copmmands 
+          r    -  load scene 0 ONLY AFTER CLEARING OR IT BLOWS UP!
+    shift r    - Reset/ clear scene 
+
+          p    - run python via gnelscript    
+    shift p    - run python render (fixed custom py command) 
+
+    backspace /delete on OSX - run renderer if its installed 
+
+
+    d          - toggle polygon drawing 
+ 
+    -----------------------------------------
+    if (key == 112) //p
+    { 
+
+        //go ahead and dump camera matrix automatically 
+        m44 foo = identity44();
+        grab_camera_matrix(&foo);
+        negate_y_axis(&foo);
+        save_matrix44(cam_matrix_filepath, &foo );
+
+        //launch python3 
+        init_pycore(); 
+    }
+ 
+
+
+}
+
 */
 /*************************************************************/
 //#include <stdlib.h>

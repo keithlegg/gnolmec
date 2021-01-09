@@ -6,12 +6,12 @@
 ################
 # load obj files 
 
-op_loadobj 3d_obj/sphere.obj 
+#op_loadobj 3d_obj/sphere.obj 
 
 
 #op_loadobj 3d_obj/fuq_dis.obj 
 
-#op_loadobj 3d_obj/teapot.obj 
+op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/triangle.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 

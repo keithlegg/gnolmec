@@ -691,43 +691,24 @@ obj.save(PYCORE_OBJ_OUT)
 def runcommand():
     #scratch_obj1()
     #scratch_obj2()
-    
-    #bezier3d()
-
+    bezier3d()
     #lathe()
-
     #visualize_matrix_rotation()
-
     #visualize_perspective_matrix()
-
     #gen_normals()
-
     #loadgcode()
     #loadkicad()
-
-
-
     #circle_cube_pts()
-    
     #primitive('triangle')
-    
     #procedural_1()
     #primitive('sphere')
-
     #face_extrude()
-   
     #pt_transform()
-    
     #procedural_1()
-   
     #modify_partial()
-    
     #triangulate()
-    
     #object_rotate()
-    
     #copy_sop()
-
     pass
 
 
