@@ -12,7 +12,13 @@ from gnelscript.pygfx.milling_ops import *
 
 mu = math_util() 
 
+""" 
 
+    TO RUN FROM COMMAND LINE 
+
+    python3 pycore.py 3d_obj/sphere.obj runcommand 
+
+"""
 
 ##***********************************************************##
 
@@ -150,26 +156,26 @@ def circle_cube_pts():
 
 
     for f in range(1,len(obj.polygons)-1,1):
-        if f%3==0:
-            obj.extrude_face(f, 1)
+        if f%2==0:
+            obj.extrude_face(f, .1)
     
     #obj.scale_pts((1,5,1))
     
-   # obj.rotate_pts((35,35,0))
+    #obj.rotate_pts((35,35,0))
 
     #obj.extrude_face(len(obj.polygons)-2, -2)
 
-    pts = obj.get_face_pts(3) 
-    ct = 0
-    for pt in pts:
-        tmp = object3d()
-        
-        #broken # tmp.prim_sphere(pos=pt, rot=(0,0,0), size=.05 )
-        #tmp.prim_locator_xyz(pos=pt, rot=(0,0,0), size=1)
-        #tmp.prim_cone('y', pos=pt, rot=(0,0,0), dia=.06, spokes=8)
-        tmp.prim_cube(size=.1, pos=pt, rot=(ct,ct,ct), pivot='world')
-        ct += 10
-        obj.insert(tmp)  
+    ## pts = obj.get_face_pts(3) 
+    ## ct = 0
+    ## for pt in pts:
+    ##     tmp = object3d()
+    ##     
+    ##     #broken # tmp.prim_sphere(pos=pt, rot=(0,0,0), size=.05 )
+    ##     #tmp.prim_locator_xyz(pos=pt, rot=(0,0,0), size=1)
+    ##     #tmp.prim_cone('y', pos=pt, rot=(0,0,0), dia=.06, spokes=8)
+    ##     tmp.prim_cube(size=.1, pos=pt, rot=(ct,ct,ct), pivot='world')
+    ##     ct += 10
+    ##     obj.insert(tmp)  
 
     #obj.triangulate(force=True)
     obj.save(PYCORE_OBJ_OUT)
@@ -325,7 +331,7 @@ def face_extrude():
     #end = len(obj.polygons)
     end = 20
 
-    for i in range(71, 190 ):   
+    for i in range(1, 10 ):   
         obj.extrude_face(i, .5)
     
     #for i in range(1,100 ):   
@@ -584,7 +590,7 @@ def bezier3d():
     
     curves = [kurve, kurve2] 
     
-    obj.draw_splines( curves, drawctrls=True, drawhulls=True)
+    obj.draw_splines( 10, curves, drawctrls=True, drawhulls=True)
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -662,13 +668,20 @@ def lathe():
 
 def test_pointgen():
     #OBJ.locate_pt_along3d( x1, y1, z1, x2, y2, z2, num):
+    obj = object3d()
+    grid = obj.test_data_grid(10,10,2)
+    obj.print_grid( grid )
 
-    grid = OBJ.test_data_grid(10,10,1)
+    #print( obj.get_grid_column(grid, 3) )
+    #print( obj.get_grid_row(grid, 3) )
+    
+    #print( obj.indexer( ids=ids, slice=None, unique=True, nth=None) )
 
-    #pg.print_grid( grid )
+    obj.show()
 
-    print( OBJ.get_grid_column(grid, 3) )
-    print( OBJ.get_grid_row(grid, 3) )
+    ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+    # print( obj.indexer( ids, [1,10], False , 10) )
+    print(obj.chunker(6, ids) )
 
 
 #####################################################
@@ -689,20 +702,30 @@ obj.save(PYCORE_OBJ_OUT)
 
 ## parse commands coming in and run them
 def runcommand():
+
+    face_extrude()
+
+    #loadgcode()
+    #loadkicad()
+    #test_pointgen()
+
     #scratch_obj1()
     #scratch_obj2()
-    bezier3d()
+    #bezier3d()
     #lathe()
+    
     #visualize_matrix_rotation()
     #visualize_perspective_matrix()
     #gen_normals()
-    #loadgcode()
-    #loadkicad()
+    
     #circle_cube_pts()
     #primitive('triangle')
+    
     #procedural_1()
+    
+
     #primitive('sphere')
-    #face_extrude()
+
     #pt_transform()
     #procedural_1()
     #modify_partial()

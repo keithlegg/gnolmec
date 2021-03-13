@@ -3,6 +3,8 @@
 /*
    gnolmec.c 
 
+   Copyright (C) 2014-2021 Keith Legg - keithlegg23@gmail.com
+
        make a 3D environment to view models and play in that is navigatable in the way Maya does it
        Named Olmec - because its not Maya :) 
 
@@ -39,8 +41,6 @@
 
 
 
-      Copyright (C) 2014-2020 Keith Legg - keithlegg23@gmail.com
-
     -------------- HOTKEYS -----------------
     ESC  - exit 
 
@@ -66,7 +66,6 @@
           i    - obhj info / draw bounding box (bbox) 
     shift i    - object deep info to terminal 
           n    - toggle normal display 
-          o    - ? load object ? 
           t    - dump camera matrix file to disk based on view 
     shift t    -        
           f    - reset view/camera  
@@ -80,29 +79,14 @@
           r    -  load scene 0 ONLY AFTER CLEARING OR IT BLOWS UP!
     shift r    - Reset/ clear scene 
 
-          p    - run python via gnelscript    
+          p    - run python via gnelscript 
+          o    - load PYCORE.obj (output from gnelscript) 
     shift p    - run python render (fixed custom py command) 
 
     backspace /delete on OSX - run renderer if its installed 
 
-
     d          - toggle polygon drawing 
  
-    -----------------------------------------
-    if (key == 112) //p
-    { 
-
-        //go ahead and dump camera matrix automatically 
-        m44 foo = identity44();
-        grab_camera_matrix(&foo);
-        negate_y_axis(&foo);
-        save_matrix44(cam_matrix_filepath, &foo );
-
-        //launch python3 
-        init_pycore(); 
-    }
- 
-
 
 }
 

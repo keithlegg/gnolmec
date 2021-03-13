@@ -301,6 +301,7 @@ void reset_objfile(obj_model* loader, obj_info* obinfo)
 
 /*******************************************************************/
 
+//DEBUG ADD A FEATURE TO SKIP IF OBJ DOES NOT EXIST 
 void load_objfile( char *filepath, obj_model* loader)
 {
     FILE * fp;
@@ -312,295 +313,299 @@ void load_objfile( char *filepath, obj_model* loader)
 
     fp = fopen(filepath, "r");
     
-    if (fp == NULL)
-        exit(EXIT_FAILURE);
-
-    if (loader->num_pts>0){
-        pofst = loader->num_pts;
+    if (fp == NULL){
+        printf("Object %s does not exist\n", filepath);
+        //exit(EXIT_FAILURE);
     }
+    else
+    {
+        if (loader->num_pts>0){
+            pofst = loader->num_pts;
+        }
 
-    // walk the file line by line
-    while ((read = getline(&line, &len, fp)) != -1) {
+        // walk the file line by line
+        while ((read = getline(&line, &len, fp)) != -1) {
 
-        char nrmls_str[256]; // string that verts get copied to 
-        char coords_str[256]; // string that verts get copied to 
-        char fidx_str[256];   // string that faces get copied to
+            char nrmls_str[256]; // string that verts get copied to 
+            char coords_str[256]; // string that verts get copied to 
+            char fidx_str[256];   // string that faces get copied to
 
-        // printf("%s",line);
+            // printf("%s",line);
 
-        // walk the line, token by token  
-        char* tok_spacs = strtok(line, " ");
-        while (tok_spacs) 
-        {
-              
-            /******************************/
-            // look for V / vertices
-            if ( strcmp( tok_spacs, "v") == 0)
+            // walk the line, token by token  
+            char* tok_spacs = strtok(line, " ");
+            while (tok_spacs) 
             {
-                strcpy (coords_str, tok_spacs+2);
-
-                // printf("%s\n", coords_str); // <- vertex line 
-
-                //walk the tokens on the line (a copy of it)
-                char* tok_line = strtok(coords_str, " ");
-                int vidx = 0;
-
-                //printf("TOK %s\n", tok_line); // <- vertex line 
-
-                float  xc, yc, zc = 0.0;
-                float  cr, cg, cb = 0.0; //RGB float (0.0 - 1.0)
-                while (tok_line) 
+                  
+                /******************************/
+                // look for V / vertices
+                if ( strcmp( tok_spacs, "v") == 0)
                 {
-                    //printf("%s \n", tok_line );   
-                    
-                    if(vidx==0){
-                        xc = atof(tok_line);
-                    }
-                    if(vidx==1){
-                        yc = atof(tok_line);                        
-                    }  
-                    if(vidx==2){
-                        zc = atof(tok_line);
-                    }                                        
-                      
-                    //optional vertex color 
-                    if(vidx==3){
-                        cr = atof(tok_line);
-                    }
-                    if(vidx==4){
-                        cg = atof(tok_line);                        
-                    }  
-                    if(vidx==5){
-                        cb = atof(tok_line);
-                    } 
-                    
+                    strcpy (coords_str, tok_spacs+2);
 
-                    //printf("TOK LINE IS %s \n", tok_line );
+                    // printf("%s\n", coords_str); // <- vertex line 
 
-                    if (tok_line)
+                    //walk the tokens on the line (a copy of it)
+                    char* tok_line = strtok(coords_str, " ");
+                    int vidx = 0;
+
+                    //printf("TOK %s\n", tok_line); // <- vertex line 
+
+                    float  xc, yc, zc = 0.0;
+                    float  cr, cg, cb = 0.0; //RGB float (0.0 - 1.0)
+                    while (tok_line) 
                     {
-                        vidx++;
+                        //printf("%s \n", tok_line );   
+                        
+                        if(vidx==0){
+                            xc = atof(tok_line);
+                        }
+                        if(vidx==1){
+                            yc = atof(tok_line);                        
+                        }  
+                        if(vidx==2){
+                            zc = atof(tok_line);
+                        }                                        
+                          
+                        //optional vertex color 
+                        if(vidx==3){
+                            cr = atof(tok_line);
+                        }
+                        if(vidx==4){
+                            cg = atof(tok_line);                        
+                        }  
+                        if(vidx==5){
+                            cb = atof(tok_line);
+                        } 
+                        
+
+                        //printf("TOK LINE IS %s \n", tok_line );
+
+                        if (tok_line)
+                        {
+                            vidx++;
+                        }
+
+                        tok_line = strtok(NULL," \n\t");
                     }
-
-                    tok_line = strtok(NULL," \n\t");
-                }
-                
-                //printf( " NUM IS %d %f %f %f \n", vidx, cr, cg, cb);
-
-                //if two points its a 2D coord ( not a standard obj file )  
-                if (vidx==2){
-                    printf("2D point detected! \n"); 
-                }
-                
-                //if three points its a proper vertex 
-                if (vidx==3){
-                    vec3 vpt = newvec3( xc, yc, zc  );
-                    loader->points[loader->num_pts] = vpt;
-                    loader->num_pts++;
- 
-                    //print_vec3(vpt); //to view output 
-
-                    ////set color to white initially  ?? DEBUG 
-                    //vec3 color;
-                    //color.x=1.0;   
-                    //color.y=1.0;
-                    //color.z=1.0; 
-                    //loader->vtxrgb[loader->num_vtxrgb] = color;
-
-                }  
-                
-                //-------------------- 
-                // optional color per vertex 
-
-                //if 4 deep - we have RGB DEBUG - space at end of line throws this off ! 
-                if (vidx==6){
-                    //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
-
-                    vec3 vpt = newvec3( xc, yc, zc  );
-                    loader->points[loader->num_pts] = vpt;
-                    loader->num_pts++;                    
-
-                    vec3 color;
-                    // DEBUG - CLAMP 0 - 1.0 
-                    color.x=cr;   
-                    color.y=cg;
-                    color.z=cb;   
-                    loader->vtxrgb[loader->num_vtxrgb] = color;
-                    loader->num_vtxrgb++;                                      
-                }
-
-                //else{
-                //    //add a white color if none specified 
-                //    vec3 color;
-                //    color.x=1.0;   
-                //    color.y=1.0;
-                //    color.z=1.0; 
-                //    loader->vtxrgb[loader->num_pts] = color;
-                //} 
-                 
-                
-            }//end vertex loader 
-
-
-            /******************************/
-
-            //  look for normals
-            if ( strcmp( tok_spacs, "vn") == 0)
-            {
-
-                strcpy (nrmls_str, tok_spacs+4);
-
-                //walk the tokens on the line (a copy of it)
-                char* tok_line = strtok(nrmls_str, " ");
-                int nidx = 0;
-                
-                float xc, yc, zc = 0.0;
-
-                while (tok_line) 
-                {
-                    // printf("%s \n", tok_line );   
                     
-                    if(nidx==0){
-                        xc = atof(tok_line);
+                    //printf( " NUM IS %d %f %f %f \n", vidx, cr, cg, cb);
+
+                    //if two points its a 2D coord ( not a standard obj file )  
+                    if (vidx==2){
+                        printf("2D point detected! \n"); 
                     }
-                    if(nidx==1){
-                        yc = atof(tok_line);                        
-                    }  
-                    if(nidx==2){
-                        zc = atof(tok_line);
-                    }                                        
                     
-                    nidx++;tok_line = strtok(NULL, " \t\n");
-                }
+                    //if three points its a proper vertex 
+                    if (vidx==3){
+                        vec3 vpt = newvec3( xc, yc, zc  );
+                        loader->points[loader->num_pts] = vpt;
+                        loader->num_pts++;
+     
+                        //print_vec3(vpt); //to view output 
 
-                if (nidx==3)
-                {
-                    vec3 vn = newvec3( xc, yc, zc  );
-                    loader->vnormals[loader->num_vnrmls] = vn;
-                    loader->num_vnrmls++;
+                        ////set color to white initially  ?? DEBUG 
+                        //vec3 color;
+                        //color.x=1.0;   
+                        //color.y=1.0;
+                        //color.z=1.0; 
+                        //loader->vtxrgb[loader->num_vtxrgb] = color;
 
-                }     
+                    }  
+                    
+                    //-------------------- 
+                    // optional color per vertex 
 
+                    //if 4 deep - we have RGB DEBUG - space at end of line throws this off ! 
+                    if (vidx==6){
+                        //cout << "HAS COLOR! "<< " "<< cr <<" "<< cg << " " << cb << "\n"; 
 
-            }//end vertex normal loader 
+                        vec3 vpt = newvec3( xc, yc, zc  );
+                        loader->points[loader->num_pts] = vpt;
+                        loader->num_pts++;                    
 
-            /******************************/
-
-            //  look for F / faces
-            if ( strcmp( tok_spacs, "f") == 0)
-            {
-
-                strcpy (fidx_str, tok_spacs+2);
-                char* tok_line = strtok(fidx_str, " ");
-                int fidx = 0;
-                
-                int pt1,pt2,pt3,pt4 = 0;;
-
-                // walk the tokens on the line 
-                // ASSUME TRIANGLES ONLY! (3 coords per vertex)
-                // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
-                while (tok_line) 
-                {
-                    //printf("%d %s\n", fidx, tok_line); // <- face line                  
-
-                    //only supports 2,3,4 sided polygons  
-                    if(fidx==0){
-                        pt1 = atoi( tok_line);
-                        if (pofst>0){ pt1 = pt1+pofst;};
+                        vec3 color;
+                        // DEBUG - CLAMP 0 - 1.0 
+                        color.x=cr;   
+                        color.y=cg;
+                        color.z=cb;   
+                        loader->vtxrgb[loader->num_vtxrgb] = color;
+                        loader->num_vtxrgb++;                                      
                     }
-                    if(fidx==1){
-                        pt2 = atoi( tok_line);
-                        if (pofst>0){ pt2 = pt2+pofst;};                                               
-                    }  
-                    if(fidx==2){
-                        pt3 = atoi( tok_line);
-                        if (pofst>0){ pt3 = pt3+pofst;};                         
-                    }   
-                    if(fidx==3){
-                        pt4 = atoi( tok_line);
-                        if (pofst>0){ pt4 = pt4+pofst;};                                               
-                    }  
+
+                    //else{
+                    //    //add a white color if none specified 
+                    //    vec3 color;
+                    //    color.x=1.0;   
+                    //    color.y=1.0;
+                    //    color.z=1.0; 
+                    //    loader->vtxrgb[loader->num_pts] = color;
+                    //} 
+                     
+                    
+                }//end vertex loader 
+
+
+                /******************************/
+
+                //  look for normals
+                if ( strcmp( tok_spacs, "vn") == 0)
+                {
+
+                    strcpy (nrmls_str, tok_spacs+4);
+
+                    //walk the tokens on the line (a copy of it)
+                    char* tok_line = strtok(nrmls_str, " ");
+                    int nidx = 0;
+                    
+                    float xc, yc, zc = 0.0;
+
+                    while (tok_line) 
+                    {
+                        // printf("%s \n", tok_line );   
+                        
+                        if(nidx==0){
+                            xc = atof(tok_line);
+                        }
+                        if(nidx==1){
+                            yc = atof(tok_line);                        
+                        }  
+                        if(nidx==2){
+                            zc = atof(tok_line);
+                        }                                        
+                        
+                        nidx++;tok_line = strtok(NULL, " \t\n");
+                    }
+
+                    if (nidx==3)
+                    {
+                        vec3 vn = newvec3( xc, yc, zc  );
+                        loader->vnormals[loader->num_vnrmls] = vn;
+                        loader->num_vnrmls++;
+
+                    }     
+
+
+                }//end vertex normal loader 
+
+                /******************************/
+
+                //  look for F / faces
+                if ( strcmp( tok_spacs, "f") == 0)
+                {
+
+                    strcpy (fidx_str, tok_spacs+2);
+                    char* tok_line = strtok(fidx_str, " ");
+                    int fidx = 0;
+                    
+                    int pt1,pt2,pt3,pt4 = 0;;
+
+                    // walk the tokens on the line 
+                    // ASSUME TRIANGLES ONLY! (3 coords per vertex)
+                    // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
+                    while (tok_line) 
+                    {
+                        //printf("%d %s\n", fidx, tok_line); // <- face line                  
+
+                        //only supports 2,3,4 sided polygons  
+                        if(fidx==0){
+                            pt1 = atoi( tok_line);
+                            if (pofst>0){ pt1 = pt1+pofst;};
+                        }
+                        if(fidx==1){
+                            pt2 = atoi( tok_line);
+                            if (pofst>0){ pt2 = pt2+pofst;};                                               
+                        }  
+                        if(fidx==2){
+                            pt3 = atoi( tok_line);
+                            if (pofst>0){ pt3 = pt3+pofst;};                         
+                        }   
+                        if(fidx==3){
+                            pt4 = atoi( tok_line);
+                            if (pofst>0){ pt4 = pt4+pofst;};                                               
+                        }  
+                        /***********/
+
+                        //n = atoi (buffer);
+                        tok_line = strtok(NULL, " \t\n");fidx++;
+
+                    }
+                    // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
+                    
+                    /***********/
+                    //TODO - implement single point visualization !
                     /***********/
 
-                    //n = atoi (buffer);
-                    tok_line = strtok(NULL, " \t\n");fidx++;
+                    //-------                  
+                    //if two face indices - its a line  
+                    if (fidx==2)
+                    {
+                        loader->lines[loader->num_lines].pt1 = pt1;
+                        loader->lines[loader->num_lines].pt2 = pt2;                          
+                        loader->num_lines++;                    
+                    }//end line loader
 
+                    //-------
+                    if (fidx==3)
+                    {
+
+                        // if you want the actual point data from this index
+                        // print_vec3(loader->points[pt1]);
+
+                        //or just store the indices
+                        loader->tris[loader->num_tris].pt1 = pt1;
+                        loader->tris[loader->num_tris].pt2 = pt2;                          
+                        loader->tris[loader->num_tris].pt3 = pt3;
+
+                        loader->num_tris++;
+
+                    }//end triangle loader
+
+                    //------- 
+
+                    if (fidx==4)
+                    {
+                        loader->quads[loader->num_quads].pt1 = pt1;
+                        loader->quads[loader->num_quads].pt2 = pt2;                          
+                        loader->quads[loader->num_quads].pt3 = pt3;
+                        loader->quads[loader->num_quads].pt4 = pt4;
+                        loader->num_quads++;
+                    }//end quad loader 
+
+                }//end face loader
+
+
+
+                /******************************/
+                //  look for UV coordinates
+                if ( strcmp( tok_spacs, "vt") == 0)
+                {
+                   // uv_cnt++;
                 }
-                // STUPID BUG - IF THERE IS EMPTY SPACE AT END OF FIDS IT COUNTS ONE MORE fidx
-                
-                /***********/
-                //TODO - implement single point visualization !
-                /***********/
-
-                //-------                  
-                //if two face indices - its a line  
-                if (fidx==2)
-                {
-                    loader->lines[loader->num_lines].pt1 = pt1;
-                    loader->lines[loader->num_lines].pt2 = pt2;                          
-                    loader->num_lines++;                    
-                }//end line loader
-
-                //-------
-                if (fidx==3)
-                {
-
-                    // if you want the actual point data from this index
-                    // print_vec3(loader->points[pt1]);
-
-                    //or just store the indices
-                    loader->tris[loader->num_tris].pt1 = pt1;
-                    loader->tris[loader->num_tris].pt2 = pt2;                          
-                    loader->tris[loader->num_tris].pt3 = pt3;
-
-                    loader->num_tris++;
-
-                }//end triangle loader
-
-                //------- 
-
-                if (fidx==4)
-                {
-                    loader->quads[loader->num_quads].pt1 = pt1;
-                    loader->quads[loader->num_quads].pt2 = pt2;                          
-                    loader->quads[loader->num_quads].pt3 = pt3;
-                    loader->quads[loader->num_quads].pt4 = pt4;
-                    loader->num_quads++;
-                }//end quad loader 
-
-            }//end face loader
 
 
+                /******************************/
+                tok_spacs = strtok(NULL, " \t\n");
 
-            /******************************/
-            //  look for UV coordinates
-            if ( strcmp( tok_spacs, "vt") == 0)
-            {
-               // uv_cnt++;
             }
-
-
-            /******************************/
-            tok_spacs = strtok(NULL, " \t\n");
 
         }
 
-    }
+        fclose(fp);
+        if (line)
+            free(line);
 
-    fclose(fp);
-    if (line)
-        free(line);
-
-    // ---------------------------------------------
-    loader->num_uvs = 0;
+        // ---------------------------------------------
+        loader->num_uvs = 0;
 
 
-    // printf("\n\n---------------------------\n"  ) ;
-    // printf("%d vertices loaded   \n", loader->num_pts    ) ;
-    // printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
-    // printf("%d lines loaded      \n", loader->num_lines  ) ;
-    // printf("%d triangles loaded  \n", loader->num_tris   ) ;
-    // printf("%d quads loaded      \n", loader->num_quads  ) ;    
+        // printf("\n\n---------------------------\n"  ) ;
+        // printf("%d vertices loaded   \n", loader->num_pts    ) ;
+        // printf("%d uvs loaded        \n", loader->num_uvs    ) ; 
+        // printf("%d lines loaded      \n", loader->num_lines  ) ;
+        // printf("%d triangles loaded  \n", loader->num_tris   ) ;
+        // printf("%d quads loaded      \n", loader->num_quads  ) ;  
+    }//obj exists   
 }
 
 /*******************************************************************/
