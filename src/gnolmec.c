@@ -115,6 +115,10 @@ using namespace std;
 
 #include "timer.h"
 
+#include "socket.h"
+
+
+
 
 
 #define LEN(arr) ( (int) (sizeof (arr) / sizeof (arr)[0]) ) 
@@ -1665,6 +1669,14 @@ static void keyPressed(unsigned char key, int x, int y)
     usleep(100);
 
 
+    //s key for open socket 
+    if (key == 115) 
+    { 
+        printf("opening socket on port 2864 \n"); 
+        sockettest();                  
+    }
+
+
 
 
     //ESCAPE KEY
@@ -1893,12 +1905,10 @@ static void keyPressed(unsigned char key, int x, int y)
     { 
 
         //char* file2 = "3d_obj/PYCORE.obj";
-
-        strcpy(active_filepath, "3d_obj/PYCORE.obj");
-
+        char* pycorepath = "3d_obj/PYCORE.obj";
         //reset_objfile(pt_model_buffer, pt_obinfo);
 
-        load_objfile(active_filepath, pt_model_buffer );
+        load_objfile(pycorepath, pt_model_buffer );
         calc_normals();
         get_obj_info( pt_model_buffer, pt_obinfo);
 
@@ -2047,6 +2057,9 @@ static void keyPressed(unsigned char key, int x, int y)
     }
 
 }
+
+
+
 
 
 

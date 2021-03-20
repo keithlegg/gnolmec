@@ -23,7 +23,6 @@ void resetPerspectiveProjection();
 void renderBitmapString(float x, float y, void *font,const char *string);
 
 
-
 void software_render(void);
 void python_render(void);
 

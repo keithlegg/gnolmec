@@ -10,6 +10,11 @@ from gnelscript.pygfx.render import *
 from gnelscript.pygfx.kicad_ops import * 
 from gnelscript.pygfx.milling_ops import * 
 
+
+from gnelscript.examples_selection import * 
+
+
+
 mu = math_util() 
 
 """ 
@@ -19,6 +24,67 @@ mu = math_util()
     python3 pycore.py 3d_obj/sphere.obj runcommand 
 
 """
+
+
+import socket
+import binascii
+import struct
+
+def tcp_serve():
+    # create a socket object
+    serversocket = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM) 
+    # get local machine name
+    host = socket.gethostname()                           
+    port = 2864                                           
+    # bind to the port
+    serversocket.bind((host, port))                                  
+    # queue up to 5 requests
+    serversocket.listen(5)                                           
+    while True:
+       # establish a connection
+       clientsocket,addr = serversocket.accept()      
+       print("Got a connection from %s" % str(addr))
+       msg = 'Thank you for connecting'+ "\r\n"
+       clientsocket.send(msg.encode('ascii'))
+       clientsocket.close()
+
+
+
+def tcp_send():
+    # Create a TCP/IP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('localhost', 2864)
+    sock.connect(server_address)
+
+    values = (1, b'ab', 2.7)
+    packer = struct.Struct('I 2s f')
+    packed_data = packer.pack(*values)
+
+    print('values =', values)
+
+    try:
+        print('sending {!r}'.format(binascii.hexlify(packed_data)))
+        sock.sendall(packed_data)
+    
+    finally:
+        pass
+        
+    #     print('closing socket')
+    #     sock.close()
+    #    # create a socket object
+    #    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+    #    # get local machine name
+    #    host = socket.gethostname()                           
+    #    port = 2864
+    #    # connection to hostname on the port.
+    #    s.connect((host, port))                               
+    #    # Receive no more than 1024 bytes
+    #    msg = s.recv(1024)                                     
+    #    s.close()
+    #    print (msg.decode('ascii'))
+
+#tcp_send()
 
 ##***********************************************************##
 
@@ -37,6 +103,8 @@ if __name__=="__main__":
     M44_DISK_FILE = "camera_matrix.olm"
     # print("# PYCORE %s --> %s "% (PYCORE_OBJ_IN, PYCORE_OBJ_OUT) )
 
+    print("\n\n\n\n")
+    print("### PYCORE INPUT %s"% PYCORE_OBJ_IN)
 
 
 """
@@ -331,7 +399,7 @@ def face_extrude():
     #end = len(obj.polygons)
     end = 20
 
-    for i in range(1, 10 ):   
+    for i in range(1, 3 ):   
         obj.extrude_face(i, .5)
     
     #for i in range(1,100 ):   
@@ -700,10 +768,43 @@ obj.save(PYCORE_OBJ_OUT)
 
 
 
+
+## """ lookup and return the polygon indices and points for a single polygon 
+##     reindex - if True  - renumber the new polygon indices startring at 1, 
+##               if False - retain the oringial numbering 
+##     geom - act on a geom obj passed in, or on self
+## """
+
+
+def extract():
+    obj = object3d()
+    obj.load(PYCORE_OBJ_IN)
+
+    obj2 = object3d()
+
+    ## you can use it just with a list of IDs 
+    # geom = obj.get_face_geom( [22,23,1,2,3,4] )
+
+    ## or you can use indexer for more power 
+    pids = obj.indexer( ids=[30],span=[8,10])
+    geom = obj.get_face_geom( pids, reindex=True )
+    obj2.insert(geom)
+
+    pids = obj.indexer( ids=[5,10])
+    geom = obj.get_face_geom( pids, reindex=True )
+    obj2.insert(geom)
+
+    obj2.save(PYCORE_OBJ_OUT)
+    
+
+
 ## parse commands coming in and run them
 def runcommand():
+    #slice_extract_and_makenew(PYCORE_OBJ_OUT)
+    #test_subsel_point_transform(PYCORE_OBJ_OUT)
+    #extract()
 
-    face_extrude()
+    #face_extrude()
 
     #loadgcode()
     #loadkicad()
@@ -733,6 +834,8 @@ def runcommand():
     #object_rotate()
     #copy_sop()
     pass
+
+
 
 
 
