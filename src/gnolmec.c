@@ -354,6 +354,8 @@ void load_scene(char * scenepath)
         cout << "NO FILEPATHS TO LOAD!\n";
     }
 
+    pt_model_buffer->clearall();
+
     for(x=0;x<num_loaded_obj;x++)
     {
 
@@ -2033,7 +2035,7 @@ static void keyPressed(unsigned char key, int x, int y)
         num_loaded_obj = 0;
         clear_scenegeom();
         reset_objfile(pt_loader      , pt_obinfo);// DEBUG why is the same info object here?
-        reset_objfile(pt_model_buffer, pt_obinfo);// DEBUG why is the same info object here?
+        reset_objfile(pt_model_buffer, pt_obinfo);// I think because of a badly designed function that requires you to pass SOMETHING  
 
     }
 

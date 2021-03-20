@@ -135,7 +135,7 @@ class obj_model {
         struct quad quads[num_faces];       // 4 ints   - quad     idx 
 
         //vec3 get_obj_centroid( void );
-
+        void clearall(void);
 };
 
 

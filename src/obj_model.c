@@ -29,6 +29,28 @@ using namespace std;
 int uv_cnt   = 0;  // number of UVs loaded 
  
 
+void obj_model::clearall(void)
+{
+
+    memset(obj_model::uvs,      0, obj_model::num_pts);
+    memset(obj_model::points,   0, obj_model::num_pts);
+    memset(obj_model::vnormals, 0, obj_model::num_pts);
+    memset(obj_model::vtxrgb,   0, obj_model::num_pts);
+    memset(obj_model::fnormals, 0, obj_model::num_pts);
+    memset(obj_model::tris,     0, obj_model::num_tris);
+    memset(obj_model::quads,    0, obj_model::num_quads);
+
+    obj_model::num_pts = 0;
+    obj_model::num_uvs = 0;
+    obj_model::num_lines = 0;
+    obj_model::num_tris = 0;
+    obj_model::num_quads = 0;
+    obj_model::num_vnrmls = 0;
+    obj_model::num_fnrmls = 0;
+    obj_model::num_vtxrgb = 0;
+
+}
+
 /*******************************************************************/
 
 /*
