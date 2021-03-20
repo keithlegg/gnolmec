@@ -15,6 +15,8 @@
 #include <string.h>
 #include <fstream>
 
+#include <algorithm> // for std::find
+
 
 // USE MAKEFILE TO SET THIS 
 #ifdef _ISLINUX
@@ -236,24 +238,22 @@ void read_scenefile( char* filepath )
             if ( strcmp( tok_spacs, "op_loadobj") == 0)
             {
                 strcpy (cmd_str, line);
-
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(NULL, " \t\n");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
                     if(tidx==0)
                     {
                         cout << "object found " << tok_line << "\n";
-                        //strcpy(obj_filepaths[objct], tok_line);  
-                        obj_filepaths.push_back(tok_line);
-                        num_loaded_obj++;
+                        if (find(obj_filepaths.begin(), obj_filepaths.end(), tok_line) == obj_filepaths.end())
+                        {
+                            obj_filepaths.push_back(tok_line);
+                            num_loaded_obj++;
+                        }
                     }
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " \t\n");
-
                 }
             }
             //-------------------------------
@@ -261,46 +261,36 @@ void read_scenefile( char* filepath )
             {
                 strcpy (cmd_str, line);
                 char* tok_line = strtok(0, " ");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
                     if(tidx==0){light_intensity = atof(tok_line);}
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " \t\n");                    
                 }
             }
-
             //-------------------------------
             if ( strcmp( tok_spacs, "light_pos") == 0)
             {
                 strcpy (cmd_str, line);
-
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(0, " ");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
                     if(tidx==0){light_posx = atof(tok_line);}
                     if(tidx==1){light_posy = atof(tok_line);}
                     if(tidx==2){light_posz = atof(tok_line);}
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
-
                 }
             }
-
             //-------------------------------
             if ( strcmp( tok_spacs, "op_draw_vec3") == 0)
             {
                 strcpy (cmd_str, line);
-
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(0, " ");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
@@ -317,21 +307,16 @@ void read_scenefile( char* filepath )
                         scene_drawvecclr.push_back(newvec3(cr,cg,cb)); 
                         num_drawvec3++;                       
                     }
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
-
                 }
             }
-
-            //-------------------------------
+            //------------------------------
             if ( strcmp( tok_spacs, "op_draw_point") == 0)
             {
                 strcpy (cmd_str, line);
-
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(0, " ");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
@@ -339,39 +324,30 @@ void read_scenefile( char* filepath )
                     {
                         cout << "draw point found " << tok_line << "\n";
                     }
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
-
                 }
             }
-           
-
-            //-------------------------------
+            //------------------------------
             if ( strcmp( tok_spacs, "fill_color") == 0)
             {
                 strcpy (cmd_str, line);
-
                 //walk the tokens on the line (a copy of it)
                 char* tok_line = strtok(0, " ");
-                
                 int tidx = 0;
                 while (tok_line) 
                 {
                     if(tidx==0){surfce_clr_r = atoi(tok_line);}
                     if(tidx==1){surfce_clr_g = atoi(tok_line);}
                     if(tidx==2){surfce_clr_b = atoi(tok_line);}
-
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
-
                 }
             }
 
             //-------------------------------
             tok_spacs = strtok(NULL, " ");
         }
-
     }
 
     //strcpy(obj_filepaths[1], "3d_obj/sphere.obj"); 

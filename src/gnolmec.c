@@ -339,23 +339,34 @@ int rectPlotted;
 
 
 //WE ARE DOING VERY BAD STUFF HERE - MIXING C++ AND C 
-void load_scene(char * scenepath){
+void load_scene(char * scenepath)
+{
+    num_loaded_obj = 0;
     read_scenefile( scenepath );
     char char_array[100];
     
     int x = 0;
+    
+    printf("NUM OBJECTS %i \n", num_loaded_obj );
+
+    if(obj_filepaths.empty()) 
+    {
+        cout << "NO FILEPATHS TO LOAD!\n";
+    }
 
     for(x=0;x<num_loaded_obj;x++)
     {
 
-        cout << "paths " << obj_filepaths[x] <<"\n";
-        strcpy(char_array, obj_filepaths[x].c_str()); 
-        load_objfile(char_array , pt_model_buffer );
-
-        get_obj_info( pt_model_buffer, pt_obinfo);
+        if(!obj_filepaths.empty()) {
+            cout << "paths " << obj_filepaths[x] <<"\n";
+            strcpy(char_array, obj_filepaths[x].c_str()); 
+            load_objfile(char_array , pt_model_buffer );
+            get_obj_info( pt_model_buffer, pt_obinfo);
+        };
+         
     }
 
-    calc_normals();
+    //calc_normals();
     strcpy(active_filepath, char_array ); 
 
 }
@@ -801,8 +812,9 @@ static void render_loop()
         glBindTexture(GL_TEXTURE_2D, texture[0]);
 
         glMaterialfv(GL_FRONT, GL_DIFFUSE, emis_off);
-        //glEnable(GL_COLOR_MATERIAL);  
-        //glColor3f(.5, 0, .5);
+        
+        // glEnable(GL_COLOR_MATERIAL);  
+        // glColor3f(.5, 0, .5);
             
         for (p_i=0;p_i<pt_model_buffer->num_lines;p_i++)
         {   

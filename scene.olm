@@ -61,10 +61,10 @@ show_lines false
 
 # render prefs    
 rendermode litshaded
+
 drawlines true 
-drawfaces true 
 drawquads true 
-drawtriangles e 
+drawtriangles true 
 drawpoints true 
 
 

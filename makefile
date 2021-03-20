@@ -17,7 +17,8 @@ UNAME := $(shell uname)
 
 
 # compiling flags  
-CFLAGS   = -I$(INCDIR) -Wall   
+#CFLAGS   = -I$(INCDIR) -Wall   
+CFLAGS   = -I$(INCDIR) -w  
 
 LINKER   = g++
 
