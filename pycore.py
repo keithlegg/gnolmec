@@ -30,6 +30,44 @@ import socket
 import binascii
 import struct
 
+MSGLEN = 2
+
+
+class my_socket:
+    """demonstration class only
+      - coded for clarity, not efficiency
+    """
+
+    def __init__(self, sock=None):
+        if sock is None:
+            self.sock = socket.socket(
+                            socket.AF_INET, socket.SOCK_STREAM)
+        else:
+            self.sock = sock
+
+    def connect(self, host, port):
+        self.sock.connect((host, port))
+
+    def send(self, msg):
+        totalsent = 0
+        while totalsent < MSGLEN:
+            sent = self.sock.send(msg[totalsent:])
+            if sent == 0:
+                raise RuntimeError("socket connection broken")
+            totalsent = totalsent + sent
+
+    def receive(self):
+        chunks = []
+        bytes_recd = 0
+        while bytes_recd < MSGLEN:
+            chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
+            if chunk == b'':
+                raise RuntimeError("socket connection broken")
+            chunks.append(chunk)
+            bytes_recd = bytes_recd + len(chunk)
+        return b''.join(chunks)
+
+
 def tcp_serve():
     # create a socket object
     serversocket = socket.socket(
@@ -57,34 +95,35 @@ def tcp_send():
     server_address = ('localhost', 2864)
     sock.connect(server_address)
 
-    values = (1, b'ab', 2.7)
-    packer = struct.Struct('I 2s f')
-    packed_data = packer.pack(*values)
+    # values = (1, b'ab', 2.7)
+    # packer = struct.Struct('I 2s f')
+    # packed_data = packer.pack(*values)
+    # print('values =', values)
 
-    print('values =', values)
-
-    try:
-        print('sending {!r}'.format(binascii.hexlify(packed_data)))
-        sock.sendall(packed_data)
-    
-    finally:
-        pass
-        
+    #try:
+    #    print('sending {!r}'.format(binascii.hexlify(packed_data)))
+    #    sock.sendall(packed_data)
+    #
+    #finally:
     #     print('closing socket')
     #     sock.close()
-    #    # create a socket object
-    #    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-    #    # get local machine name
-    #    host = socket.gethostname()                           
-    #    port = 2864
-    #    # connection to hostname on the port.
-    #    s.connect((host, port))                               
-    #    # Receive no more than 1024 bytes
-    #    msg = s.recv(1024)                                     
-    #    s.close()
-    #    print (msg.decode('ascii'))
 
-#tcp_send()
+
+    # sock.sendall(b'\xC2\xA9\x20\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
+    
+    sock.sendall(b'\x4b\x69\x73')
+    sock.sendall(b'\x4b\x69\x73')
+    sock.sendall(b'\x4b\x69\x73')
+
+
+
+
+tcp_send()
+
+
+#sock = my_socket()
+#sock.send(b'\x4b\x69\x73')
+#print( sock.receive() )
 
 ##***********************************************************##
 

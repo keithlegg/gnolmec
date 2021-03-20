@@ -1673,7 +1673,8 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 115) 
     { 
         printf("opening socket on port 2864 \n"); 
-        sockettest();                  
+        sockettest3();
+
     }
 
 

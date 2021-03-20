@@ -55,8 +55,14 @@ extern int surfce_clr_b;
 
 extern double light_intensity; 
 
+extern bool draw_points;   
+extern bool draw_lines;  
+extern bool draw_normals;  
+extern bool draw_quads; 
+extern bool draw_triangles; 
 
-//char obj_filepaths[100][100];
+
+char strbuffer[100][100];
 vector<string> obj_filepaths;
 int num_loaded_obj = 0;
 
@@ -120,6 +126,111 @@ void read_scenefile( char* filepath )
         char* tok_spacs = strtok(line, " ");
         while (tok_spacs) 
         {
+
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "drawlines") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_lines = true;
+                    }else{
+                        draw_lines = false;                        
+                    }
+                    printf("DRAW LINES %s\n", draw_lines ? "true" : "false");
+                                                          
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
+            
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "drawquads") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_quads = true;
+                    }else{
+                        draw_quads = false;                        
+                    }
+                    printf("DRAW QUADS %s\n", draw_quads ? "true" : "false");
+                                                          
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
+
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "drawtriangles") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_triangles = true;
+                    }else{
+                        draw_triangles = false;                        
+                    }
+                    printf("DRAW TRIANGLES %s\n", draw_triangles ? "true" : "false");
+                                                          
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
+
+            //-------------------------------             
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "drawpoints") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_points = true;
+                    }else{
+                        draw_points = false;                        
+                    }
+                    printf("DRAW POINTS %s\n", draw_points ? "true" : "false");
+                                                      
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
 
             //-------------------------------             
             if ( strcmp( tok_spacs, "op_loadobj") == 0)

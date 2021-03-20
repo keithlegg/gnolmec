@@ -28,7 +28,7 @@ op_loadobj 3d_obj/sphere.obj
 # 3D vectors 
 
 #op_draw_vec3  1  1  1   0 1 1 
-#op_draw_vec3 -1 -1 -1   0 1 0 
+op_draw_vec3 -1 -1 -1   0 1 0 
 #op_draw_vec3  0  1  1   1 0 0 
 
 #3D points 
@@ -61,6 +61,11 @@ show_lines false
 
 # render prefs    
 rendermode litshaded
+drawlines true 
+drawfaces true 
+drawquads true 
+drawtriangles e 
+drawpoints true 
 
 
 ## Commands to play with someday ##
