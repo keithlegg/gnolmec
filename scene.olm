@@ -22,8 +22,8 @@ op_loadobj 3d_obj/sphere.obj
 #op_loadobj 3d_obj/point_ops2.obj
 
 
-################
-# scene geometry 
+###########################
+# custom scene geometry 
 
 # 3D vectors 
 
@@ -35,7 +35,8 @@ op_draw_vec3 -1 -1 -1   0 1 0
 
 op_draw_pnt 2 2 2    0 0 0 
 
-###############
+
+###########################
 #Scenegraph 
 
 op_xform_node harry 0 0 0 
@@ -59,12 +60,13 @@ vtx_color 200 0 0
 show_vtx true 
 show_lines false 
 
+###########################
 # render prefs    
 rendermode litshaded
 
 drawlines true 
 drawquads true 
-drawtriangles true 
+drawtriangles fftrue 
 drawpoints true 
 
 

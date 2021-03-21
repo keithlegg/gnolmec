@@ -55,6 +55,10 @@ extern int surfce_clr_r;
 extern int surfce_clr_g; 
 extern int surfce_clr_b; 
 
+extern int line_clr_r; 
+extern int line_clr_g; 
+extern int line_clr_b; 
+
 extern double light_intensity; 
 
 extern bool draw_points;   
@@ -147,7 +151,7 @@ void read_scenefile( char* filepath )
                     }else{
                         draw_lines = false;                        
                     }
-                    printf("DRAW LINES %s\n", draw_lines ? "true" : "false");
+                    printf("# draw lines %s\n", draw_lines ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
@@ -173,7 +177,7 @@ void read_scenefile( char* filepath )
                     }else{
                         draw_quads = false;                        
                     }
-                    printf("DRAW QUADS %s\n", draw_quads ? "true" : "false");
+                    printf("# draw quads %s\n", draw_quads ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
@@ -199,7 +203,7 @@ void read_scenefile( char* filepath )
                     }else{
                         draw_triangles = false;                        
                     }
-                    printf("DRAW TRIANGLES %s\n", draw_triangles ? "true" : "false");
+                    printf("# draw triangles %s\n", draw_triangles ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
@@ -226,7 +230,7 @@ void read_scenefile( char* filepath )
                     }else{
                         draw_points = false;                        
                     }
-                    printf("DRAW POINTS %s\n", draw_points ? "true" : "false");
+                    printf("# draw points %s\n", draw_points ? "true" : "false");
                                                       
                     tok_line = strtok(NULL, " \t\n");
 
@@ -245,7 +249,7 @@ void read_scenefile( char* filepath )
                 {
                     if(tidx==0)
                     {
-                        cout << "object found " << tok_line << "\n";
+                        //cout << "#object found " << tok_line << "\n";
                         if (find(obj_filepaths.begin(), obj_filepaths.end(), tok_line) == obj_filepaths.end())
                         {
                             obj_filepaths.push_back(tok_line);
@@ -340,6 +344,23 @@ void read_scenefile( char* filepath )
                     if(tidx==0){surfce_clr_r = atoi(tok_line);}
                     if(tidx==1){surfce_clr_g = atoi(tok_line);}
                     if(tidx==2){surfce_clr_b = atoi(tok_line);}
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+                }
+            }
+
+            //------------------------------
+            if ( strcmp( tok_spacs, "line_color") == 0)
+            {
+                strcpy (cmd_str, line);
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){line_clr_r = atoi(tok_line);}
+                    if(tidx==1){line_clr_g = atoi(tok_line);}
+                    if(tidx==2){line_clr_b = atoi(tok_line);}
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
                 }

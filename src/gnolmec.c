@@ -219,8 +219,8 @@ extern Image* imageloaded_bfr  ;
 RGBType line_color;
 RGBType *pt_linecolor = &line_color;
 
-RGBType line_color2;
-RGBType *pt_linecolor2 = &line_color2;
+// RGBType line_color2;
+// RGBType *pt_linecolor2 = &line_color2;
 
 RGBType grid_color;
 RGBType *pt_gridcolor = &grid_color;
@@ -275,6 +275,11 @@ float light_posz = 0;
 int surfce_clr_r; //read from setup.olm 
 int surfce_clr_g; 
 int surfce_clr_b; 
+
+int line_clr_r; //read from setup.olm 
+int line_clr_g; 
+int line_clr_b; 
+
 
 double light_intensity;
 
@@ -347,7 +352,7 @@ void load_scene(char * scenepath)
     
     int x = 0;
     
-    printf("NUM OBJECTS %i \n", num_loaded_obj );
+    //printf("NUM OBJECTS %i \n", num_loaded_obj );
 
     if(obj_filepaths.empty()) 
     {
@@ -360,7 +365,7 @@ void load_scene(char * scenepath)
     {
 
         if(!obj_filepaths.empty()) {
-            cout << "paths " << obj_filepaths[x] <<"\n";
+            cout << "# loading  " << obj_filepaths[x] <<"\n";
             strcpy(char_array, obj_filepaths[x].c_str()); 
             load_objfile(char_array , pt_model_buffer );
             get_obj_info( pt_model_buffer, pt_obinfo);
@@ -832,11 +837,18 @@ static void render_loop()
                 vec3 c1 = pt_model_buffer->vtxrgb[lin1-1];
                 vec3 c2 = pt_model_buffer->vtxrgb[lin2-1];
 
+                if(c1.x==0){c1.x=line_clr_r;c2.x=line_clr_r;}
+                if(c1.y==0){c1.y=line_clr_g;c2.y=line_clr_g;}
+                if(c1.z==0){c1.z=line_clr_b;c2.z=line_clr_b;}
+
+                //cout << "line color is set to " << c1.x <<" "<< c1.y<< " " << c1.z << "\n";
+
                 glColor3f(c1.x, c1.y, c1.z);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
                 glColor3f(c2.x, c2.y, c2.z);  
                 glVertex3f(pt2.x, pt2.y, pt2.z);
+
             glEnd();
         }
 
