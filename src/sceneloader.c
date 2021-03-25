@@ -18,6 +18,7 @@
 #include <algorithm> // for std::find
 
 #include "obj_model.h"
+#include "gl_setup.h"
 
 // USE MAKEFILE TO SET THIS 
 #ifdef _ISLINUX
@@ -74,6 +75,7 @@ extern bool draw_cntrgrid;
 extern float gridsize;
 extern float gnomonsize;
 
+extern GLfloat clr_linez[];
 
 
 char strbuffer[100][100];
@@ -491,6 +493,13 @@ void read_scenefile( char* filepath )
                     tidx++;                                        
                     tok_line = strtok(NULL, " ");
                 }
+
+                clr_linez[0] = line_clr_r;
+                clr_linez[0] = line_clr_g;
+                clr_linez[0] = line_clr_b;
+                clr_linez[0] = 0;                                
+
+
             }
 
             //-------------------------------

@@ -293,12 +293,17 @@ vec3 orbt_xform_original;
 
 /***************************************/
 
+GLfloat clr_linez[] = { 0, 1., 0, 0};
+
 GLfloat emis_full[] = { 1, 1, 1, 0};
 GLfloat emis_text[] = { .8, .8, .9, 0};
 GLfloat emis_points[] = { 0, .6, .2, 0};
 GLfloat emis_off[] = { 0, 0, 0, 0};
 GLfloat emis_lines[] = { .5, 0, .5, 0};
 GLfloat clr_yellow[] = { 1., 1., 0, 0};
+GLfloat clr_green[] = { 0, 1., 0, 0};
+GLfloat clr_blue[] = { 0, 0, 1., 0};
+
 
 
 void set_colors(void){
@@ -852,7 +857,7 @@ static void render_loop()
                 if(c1.z==0){c1.z=line_clr_b;c2.z=line_clr_b;}
 
                 //cout << "line color is set to " << c1.x <<" "<< c1.y<< " " << c1.z << "\n";
-
+                glMaterialfv(GL_FRONT, GL_EMISSION, clr_linez);
                 glColor3f(c1.x, c1.y, c1.z);   
                 glVertex3f(pt1.x, pt1.y, pt1.z);
 
@@ -1938,7 +1943,7 @@ static void keyPressed(unsigned char key, int x, int y)
             calc_normals();
 
         }
-        cout << "draw normals " << draw_normals << "\n"; 
+        //cout << "draw normals " << draw_normals << "\n"; 
     }
 
     if (key == 111) // o

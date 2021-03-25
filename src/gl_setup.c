@@ -382,6 +382,7 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
                 }
                 if (*draw_grid == 1)
                 {
+                    glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
                     glColor3f(.4,.4,.4);
                     glVertex3f( id, grd_height,   gridsize );
                     glVertex3f( id, grd_height,  -gridsize );  

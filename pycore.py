@@ -100,7 +100,31 @@ def tcp_serve():
 
 
 def tcp_send():
+    """
     # Create a TCP/IP socket
+    Client:
+        Create the socket.
+        connect to it.
+        recv data.
+        If recv returns 0, it means the other end has performed an orderly shutdown. Go to step 7.
+        send response.
+        Go to step 3.
+        Stop.
+
+    Server:
+
+        Create the socket.
+        bind the socket to an address.
+        Mark the socket as listening.
+        accept a connection.
+        If accepted connection is invalid, go to step 4.
+        send data.
+        recv response.
+        If recv returns 0, it means the other end has performed an orderly shutdown. Go to step 4 to accept a new connection.
+        Go to step 6.
+    """
+
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('localhost', 2864)
     sock.connect(server_address)
@@ -119,11 +143,20 @@ def tcp_send():
     #     sock.close()
 
 
-    #sock.sendall(b'\xC2\xA9\x20\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
-    #sock.sendall(b'\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73')
-    sock.sendall(b'\x00')
-
+    sock.sendall(b'\x00\xC2\xA9\x00\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
     sock.close()
+
+    
+    #sock.sendall(b'\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73')
+ 
+
+    ## for x in range(2,5):
+    ##     print(" byte val ", x)
+    ##     sock.sendall( bytes(x) )
+    ##     sock.close()
+
+    #sock.sendall(b'\x00')
+
 
 
 
@@ -850,7 +883,7 @@ def extract():
 
 ## parse commands coming in and run them
 def runcommand():
-    #slice_extract_and_makenew(PYCORE_OBJ_OUT)
+    slice_extract_and_makenew(PYCORE_OBJ_OUT)
     #test_subsel_point_transform(PYCORE_OBJ_OUT)
     #extract()
 
