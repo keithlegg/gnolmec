@@ -28,6 +28,11 @@ mu = math_util()
 
     python3 pycore.py 3d_obj/sphere.obj runcommand 
 
+
+
+    netstat -na | grep 2864
+
+
 """
 
 
@@ -114,16 +119,17 @@ def tcp_send():
     #     sock.close()
 
 
-    # sock.sendall(b'\xC2\xA9\x20\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
-    
-    sock.sendall(b'\x4b\x69\x73')
-    sock.sendall(b'\x4b\x69\x73')
-    sock.sendall(b'\x4b\x69\x73')
+    #sock.sendall(b'\xC2\xA9\x20\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
+    #sock.sendall(b'\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73\x4b\x69\x73')
+    sock.sendall(b'\x00')
+
+    sock.close()
 
 
 
 
-tcp_send()
+
+
 
 
 #sock = my_socket()
@@ -885,6 +891,11 @@ def runcommand():
 
 
 if __name__=="__main__":
+
+
+
+    if sys.argv[2] == 'tcptest':
+        tcp_send()
 
     if sys.argv[2] == 'runcommand':
         runcommand()

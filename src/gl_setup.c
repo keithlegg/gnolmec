@@ -340,6 +340,9 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
     
     float grd_height  = 0.0;
 
+    float arrow_sml = gnomonsize/10;
+    float arrow_med = gnomonsize/8;    
+
     float gspac = gridsize/(grd_num/2);
 
     glBindTexture(GL_TEXTURE_2D, texture[0]);    
@@ -362,18 +365,18 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
                     
                     glMaterialfv(GL_FRONT, GL_EMISSION, emis_red);
                     glColor3f(.5,0,0);    
-                    glVertex3f(  gridsize, grd_height, id );
-                    glVertex3f( -gridsize, grd_height, id ); 
+                    glVertex3f(  gnomonsize, grd_height, id );
+                    glVertex3f( 0          , grd_height, id ); 
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emis_green);
                     glColor3f(0,.5,0); 
-                    glVertex3f( id, gridsize , id );
+                    glVertex3f( id, gnomonsize , id );
                     glVertex3f( id, id       , id ); 
 
                     glMaterialfv(GL_FRONT, GL_EMISSION, emis_blue); 
                     glColor3f(0,0,.5);                    
-                    glVertex3f( id, grd_height,   gridsize );
-                    glVertex3f( id, grd_height,  -gridsize );  
+                    glVertex3f( id, grd_height,   gnomonsize );
+                    glVertex3f( id, grd_height,  0 );  
 
 
                 }
@@ -392,10 +395,12 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
             {
                 glMaterialfv(GL_FRONT, GL_EMISSION, emis_half);
                 glColor3f(.4,.4,.4);
+                
                 glVertex3f(-id, grd_height,  gridsize);
                 glVertex3f(-id, grd_height, -gridsize);  
                 glVertex3f( id, grd_height,  gridsize);
                 glVertex3f( id, grd_height, -gridsize); 
+                
                 glVertex3f(-gridsize, grd_height, -id);
                 glVertex3f( gridsize, grd_height, -id);                
                 glVertex3f(-gridsize, grd_height,  id);
@@ -414,15 +419,16 @@ void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, R
 
             glMaterialfv(GL_FRONT, GL_EMISSION, emis_red); 
             glColor3f(.5,0,0); 
-            glVertex3f(gridsize    , grd_height , -.1 );
-            glVertex3f(gridsize    , grd_height ,  .1 );
-            glVertex3f(gridsize+.3 , grd_height ,   0 );
+  
+            glVertex3f(gnomonsize           , grd_height , -arrow_sml );
+            glVertex3f(gnomonsize           , grd_height ,  arrow_sml );
+            glVertex3f(gnomonsize+arrow_med , grd_height ,   0        );
 
             glMaterialfv(GL_FRONT, GL_EMISSION, emis_blue); 
             glColor3f(0,0,.5); 
-            glVertex3f( -.1, grd_height, gridsize     );
-            glVertex3f(  .1, grd_height, gridsize     );
-            glVertex3f(   0, grd_height, gridsize+.3  );
+            glVertex3f( -arrow_sml, grd_height, gnomonsize            );
+            glVertex3f(  arrow_sml, grd_height, gnomonsize            );
+            glVertex3f(          0, grd_height, gnomonsize+arrow_med  );
 
         glEnd();
     }

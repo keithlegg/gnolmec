@@ -11,7 +11,7 @@ showgrid true
 showgnomon false 
 
 gridsize 2.5 
-gnomonsize 1.0 
+gnomonsize .5 
 
 drawlines true 
 drawquads true 
@@ -22,17 +22,15 @@ drawpoints true
 ################
 # load obj files 
 
-
-#op_loadobj 3d_obj/triangle.obj 
-
-#op_loadobj 3d_obj/PYCORE.obj 
+op_loadobj 3d_obj/cube.obj 
 
 #op_loadobj 3d_obj/sphere.obj 
-
-op_loadobj 3d_obj/teapot.obj 
+#op_loadobj 3d_obj/triangle.obj 
+#op_loadobj 3d_obj/PYCORE.obj 
+#op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 
-#op_loadobj 3d_obj/cube.obj 
+
 #op_loadobj 3d_obj/monkey.obj 
 #op_loadobj 3d_obj/arcspiral.obj 
 #op_loadobj 3d_obj/point_ops.obj 
