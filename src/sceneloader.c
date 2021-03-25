@@ -17,6 +17,7 @@
 
 #include <algorithm> // for std::find
 
+#include "obj_model.h"
 
 // USE MAKEFILE TO SET THIS 
 #ifdef _ISLINUX
@@ -67,6 +68,13 @@ extern bool draw_normals;
 extern bool draw_quads; 
 extern bool draw_triangles; 
 
+extern bool draw_grid;
+extern bool draw_cntrgrid;
+
+extern float gridsize;
+extern float gnomonsize;
+
+
 
 char strbuffer[100][100];
 vector<string> obj_filepaths;
@@ -77,11 +85,16 @@ vector<vec3> scene_drawvecclr;
 int num_drawvec3 = 0;
 
 vector<vec3> scene_drawpoints;
+vector<vec3> scene_drawpointsclr;
+vector<vec3>* pt_scene_drawpoints = &scene_drawpoints;
 int num_drawpoints = 0;
 
 
 const int MAX_CHARS_PER_LINE = 512;
 const int MAX_TOKENS_PER_LINE = 20;
+
+extern obj_model pt_model_buffer;
+
 
 /*
 
@@ -150,15 +163,98 @@ void read_scenefile( char* filepath )
                         draw_lines = true;
                     }else{
                         draw_lines = false;                        
+                        printf("# draw lines %s\n", draw_lines ? "true" : "false");
                     }
-                    printf("# draw lines %s\n", draw_lines ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
                 }
           
             }
-            
+
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "gridsize") == 0)
+            {
+                strcpy (cmd_str, line);
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){gridsize = atof(tok_line);}
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " \t\n");                    
+                }
+            }
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "gnomonsize") == 0)
+            {
+                strcpy (cmd_str, line);
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){gnomonsize = atof(tok_line);}
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " \t\n");                    
+                }
+            }
+
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "showgnomon") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_cntrgrid = true;
+                    }
+                    if(strcmp( tok_line, "false")==0){
+                        draw_cntrgrid = false;                        
+                        printf("# draw_cntrgrid %s\n", draw_cntrgrid ? "true" : "false");
+                    }
+                                                          
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
+           
+            //-------------------------------             
+            if ( strcmp( tok_spacs, "showgrid") == 0)
+            {
+                strcpy (cmd_str, line);
+
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(NULL, " \t\n");
+                
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    char* check_token = strtok(NULL, " \t\n");
+                    if(strcmp( tok_line, "true")==0)
+                    {
+                        draw_grid = true;
+                    };
+                    if(strcmp( tok_line, "false")==0){
+                        draw_grid = false;                        
+                        printf("# draw_grid %s\n", draw_grid ? "true" : "false");
+                    }
+                                                          
+                    tok_line = strtok(NULL, " \t\n");
+
+                }
+          
+            }
+
             //-------------------------------             
             if ( strcmp( tok_spacs, "drawquads") == 0)
             {
@@ -176,8 +272,8 @@ void read_scenefile( char* filepath )
                         draw_quads = true;
                     }else{
                         draw_quads = false;                        
+                        printf("# draw quads %s\n", draw_quads ? "true" : "false");
                     }
-                    printf("# draw quads %s\n", draw_quads ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
@@ -202,8 +298,8 @@ void read_scenefile( char* filepath )
                         draw_triangles = true;
                     }else{
                         draw_triangles = false;                        
+                        printf("# draw triangles %s\n", draw_triangles ? "true" : "false");
                     }
-                    printf("# draw triangles %s\n", draw_triangles ? "true" : "false");
                                                           
                     tok_line = strtok(NULL, " \t\n");
 
@@ -229,9 +325,9 @@ void read_scenefile( char* filepath )
                         draw_points = true;
                     }else{
                         draw_points = false;                        
+                        printf("# draw points %s\n", draw_points ? "true" : "false");
                     }
-                    printf("# draw points %s\n", draw_points ? "true" : "false");
-                                                      
+                                                     
                     tok_line = strtok(NULL, " \t\n");
 
                 }
@@ -290,6 +386,37 @@ void read_scenefile( char* filepath )
                 }
             }
             //-------------------------------
+            if ( strcmp( tok_spacs, "op_draw_pnt") == 0)
+            {
+                strcpy (cmd_str, line);
+                //walk the tokens on the line (a copy of it)
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){vx = atof(tok_line);}
+                    if(tidx==1){vy = atof(tok_line);}
+                    if(tidx==2){vz = atof(tok_line);}
+                    if(tidx==3){cr = atoi(tok_line);}
+                    if(tidx==4){cg = atoi(tok_line);}
+                    if(tidx==5)                                                           
+                    {
+                        cb = atoi(tok_line); 
+                        cout << "draw point found " << vx <<" "<< vy << " "<< vz <<" RGB  " << cr <<" "<< cg <<" "<< cb <<"\n";
+                        scene_drawpoints.push_back(newvec3(vx,vy,vz));
+                        scene_drawpointsclr.push_back(newvec3(cr,cg,cb)); 
+                        num_drawpoints++;
+
+                        //obj has no point geom type without polygon - should we do it that way?
+                        //pt_model_buffer->num_pts;
+
+                    }
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " ");
+                }
+            }
+
+            //-------------------------------
             if ( strcmp( tok_spacs, "op_draw_vec3") == 0)
             {
                 strcpy (cmd_str, line);
@@ -315,23 +442,23 @@ void read_scenefile( char* filepath )
                     tok_line = strtok(NULL, " ");
                 }
             }
-            //------------------------------
-            if ( strcmp( tok_spacs, "op_draw_point") == 0)
-            {
-                strcpy (cmd_str, line);
-                //walk the tokens on the line (a copy of it)
-                char* tok_line = strtok(0, " ");
-                int tidx = 0;
-                while (tok_line) 
-                {
-                    if(tidx==0)
-                    {
-                        cout << "draw point found " << tok_line << "\n";
-                    }
-                    tidx++;                                        
-                    tok_line = strtok(NULL, " ");
-                }
-            }
+            // //------------------------------
+            // if ( strcmp( tok_spacs, "op_draw_point") == 0)
+            // {
+            //     strcpy (cmd_str, line);
+            //     //walk the tokens on the line (a copy of it)
+            //     char* tok_line = strtok(0, " ");
+            //     int tidx = 0;
+            //     while (tok_line) 
+            //     {
+            //         if(tidx==0)
+            //         {
+            //             cout << "draw point found " << tok_line << "\n";
+            //         }
+            //         tidx++;                                        
+            //         tok_line = strtok(NULL, " ");
+            //     }
+            // }
             //------------------------------
             if ( strcmp( tok_spacs, "fill_color") == 0)
             {
@@ -394,9 +521,22 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
     fprintf(fp, "cam_matrix_path %s \n"     , cammatrixpath                              );
     fprintf(fp, "cam_pos %f %f %f \n"       , cam_posx, cam_posy, cam_posz               );
     fprintf(fp, "op_loadobj %s \n"          , objpath                                    );
+
+    fprintf(fp, "\n# render prefs   \n"                                                  );
+    fprintf(fp, "rendermode %s \n"          , "litshaded"                                ); 
+    fprintf(fp, "showgrid true       \n"                                                   );
+    fprintf(fp, "showgnomon false    \n"                                                   ); 
+    fprintf(fp, "gridsize 2.5        \n"                                                   );
+    fprintf(fp, "gnomonsize 1.0      \n"                                                   ); 
+    fprintf(fp, "drawlines true      \n"                                                   );
+    fprintf(fp, "drawquads true      \n"                                                   ); 
+    fprintf(fp, "drawtriangles true  \n"                                                   );
+    fprintf(fp, "drawpoints true      \n"                                                   ); 
+
     fprintf(fp, "\n# light setup \n"                                                     );
     fprintf(fp, "light_pos %f %f %f \n"     , light_posx, light_posy, light_posz         );
     fprintf(fp, "light_intensity %f \n"     , light_intensity                            );
+
     fprintf(fp, "\n# colors      \n"                                                     );
     fprintf(fp, "bg_color %s \n"            , "20 15 15"                                 ); 
     fprintf(fp, "line_color %s \n"          , "0 0 100"                                  ); 
@@ -404,13 +544,12 @@ void write_scenefile(char*objpath, char*cammatrixpath, char* scenefilepath )
     fprintf(fp, "vtx_color %s \n"           , "200 0 0"                                  ); 
     fprintf(fp, "show_vtx %s \n"            , "false"                                    ); 
     fprintf(fp, "show_lines %s \n"          , "false"                                    ); 
-    fprintf(fp, "\n# render prefs   \n"                                                  );
-    fprintf(fp, "rendermode %s \n"          , "litshaded"                                ); 
+ 
  
     // 
 
 
-    fprintf(fp, "\n\n## Commands to play with someday ##\n\n"     );
+    //fprintf(fp, "\n\n## Commands to play with someday ##\n\n"     );
     //fprintf(fp, "#op_loadobj #\n"                                 );
    
 

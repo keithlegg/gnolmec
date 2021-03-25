@@ -231,6 +231,7 @@ int main(int argc, char **argv)
     strcpy(runmode, "-v");
     if( strcmp(argv[1], runmode) == 0)
     {
+
         glutInit(&argc, argv);
         glutCreateWindow("GLUT");
         printf("#OpenGL version %s \n", glGetString(GL_VERSION) ) ;

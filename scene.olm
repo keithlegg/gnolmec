@@ -3,16 +3,33 @@
 # obj_path setup.olm                   # used by gnorender  
 # cam_matrix_path camera_matrix.olm    # used by gnorender 
 
+###########################
+# render prefs    
+rendermode litshaded
+
+showgrid true 
+showgnomon false 
+
+gridsize 2.5 
+gnomonsize 1.0 
+
+drawlines true 
+drawquads true 
+drawtriangles true 
+drawpoints true 
+
+
 ################
 # load obj files 
 
-op_loadobj 3d_obj/sphere.obj 
+
+#op_loadobj 3d_obj/triangle.obj 
 
 #op_loadobj 3d_obj/PYCORE.obj 
 
+op_loadobj 3d_obj/sphere.obj 
 
 #op_loadobj 3d_obj/teapot.obj 
-#op_loadobj 3d_obj/triangle.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 
 #op_loadobj 3d_obj/cube.obj 
@@ -27,22 +44,19 @@ op_loadobj 3d_obj/sphere.obj
 
 # 3D vectors 
 
-#op_draw_vec3  1  1  1   0 1 1 
-op_draw_vec3 -1 -1 -1   0 1 0 
-#op_draw_vec3  0  1  1   1 0 0 
+#op_draw_vec3 -1 -1 -1   0 1 0 
+ 
 
 #3D points 
-
-op_draw_pnt 2 2 2    0 0 0 
+#op_draw_pnt 2 2 2    0 0 0 
 
 
 ###########################
 #Scenegraph 
 
-op_xform_node harry 0 0 0 
-op_xform_node sally 0 0 0 
-
-op_xfrom_parent harry sally 
+# op_xform_node harry 0 0 0 
+# op_xform_node sally 0 0 0 
+# op_xfrom_parent harry sally 
 
 
 # light setup 
@@ -60,15 +74,5 @@ vtx_color 200 0 0
 show_vtx true 
 show_lines false 
 
-###########################
-# render prefs    
-rendermode litshaded
 
-drawlines true 
-drawquads true 
-drawtriangles fftrue 
-drawpoints true 
-
-
-## Commands to play with someday ##
 

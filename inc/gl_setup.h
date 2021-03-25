@@ -5,6 +5,8 @@
 #define TRUE 1
 #define FALSE 0
 
+
+
 #include "math_op.h"
 #include "framebuffer.h"
 #include "obj_model.h"
@@ -63,6 +65,9 @@ void drawViewVolume (GLfloat x1, GLfloat x2, GLfloat y1,
 void InitGL(int Width, int Height);
 
 void dump_points_GLfloat( GLfloat* verts, obj_model* pt_object, int numpts);
+void dump_points_GLfloat( GLfloat* verts, vector<vec3>* pt_vecarray, int numpts);
+
+
 
 void set_screen_square(int* sx, int* sy);
 void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, RGBType *pt_gridcolor2 );

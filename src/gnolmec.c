@@ -172,7 +172,12 @@ extern vector<vec3> scene_drawvecclr;
 extern int num_drawvec3;
 
 extern vector<vec3> scene_drawpoints;
+extern vector<vec3> scene_drawpointsclr;
+extern vector<vec3>* pt_scene_drawpoints;
+
+
 extern int num_drawpoints;
+
 
 
 
@@ -183,20 +188,8 @@ char *proj_matrix_filepath = "projection_matrix.olm";
 
 extern GLuint texture[3];
 
-
-
 char active_filepath[300];
 
-// OLD STACK WAY - MOVED TO HEAP 
-// struct obj_model model_buffer;
-// struct obj_model *pt_model_buffer = &model_buffer;
-// struct obj_info obj_info;
-// struct obj_info* pt_obinfo = &obj_info;
-// struct obj_info loader_info;
-// struct obj_info *pt_loadernfo = &loader_info;
-// OLD STACK WAY - MOVED TO HEAP 
-
-//my mind is blown... C++ Class with structs in it seems to work!
 obj_model * pt_model_buffer = new(obj_model);
 obj_model * pt_loader       = new(obj_model);
 
@@ -266,6 +259,9 @@ float cam_posx = 0; // camera location
 float cam_posy = 0;
 float cam_posz = 0;
 
+
+float gridsize = 2.5;
+float gnomonsize = 1;
 
 float light_posx = 0; 
 float light_posy = 3.14;
@@ -750,6 +746,10 @@ static void render_loop()
 
     /******************************************/
 
+    //num_drawpoints
+
+    //if (draw_points) {    }
+
 
     if (draw_points_vbo)
     {
@@ -771,9 +771,16 @@ static void render_loop()
         // KEEP THIS CODE - 
         // dump to GLFloats 
         num_pts_drw = pt_model_buffer->num_pts;
+
+
         GLfloat vertices[num_pts_drw*4];
         GLfloat* pt_vert = vertices;
         dump_points_GLfloat( pt_vert, pt_model_buffer, num_pts_drw );
+        
+        // add in custom points loaded from scene.olm  
+        //dump_points_GLfloat( pt_vert, pt_scene_drawpoints, num_drawpoints );
+
+
 
         //-------------------------
 
@@ -788,7 +795,10 @@ static void render_loop()
 
         // "Enable a port" to the shader pipeline
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        
+        //DEBUG COMMENTED OUT
+        //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
         // pass information about how vertex array is composed
         glVertexAttribPointer(0, // same as in glEnableVertexAttribArray(0)
                               4, // # of coordinates that build a vertex
@@ -1931,6 +1941,9 @@ static void keyPressed(unsigned char key, int x, int y)
     if (key == 111) // o
     { 
 
+        clear_scenegeom();
+        reset_objfile(pt_model_buffer, pt_obinfo);  
+
         //char* file2 = "3d_obj/PYCORE.obj";
         char* pycorepath = "3d_obj/PYCORE.obj";
         //reset_objfile(pt_model_buffer, pt_obinfo);
@@ -2046,8 +2059,9 @@ static void keyPressed(unsigned char key, int x, int y)
         //cout << "PATHS " << obj_filepaths.clear() << "\n";
         num_loaded_obj = 0;
         clear_scenegeom();
-        reset_objfile(pt_loader      , pt_obinfo);// DEBUG why is the same info object here?
-        reset_objfile(pt_model_buffer, pt_obinfo);// I think because of a badly designed function that requires you to pass SOMETHING  
+        //reset_objfile uses a stupid design - thats why objinfo is passed/passed twice here 
+        reset_objfile(pt_loader      , pt_obinfo); 
+        reset_objfile(pt_model_buffer, pt_obinfo);  
 
     }
 
@@ -2060,7 +2074,8 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 102) //f
     { 
-        //TODO - set orbit_dist to X2 model size  
+        //TODO - set orbit_dist to X2 model size 
+        set_screen_square(&scr_size_x, &scr_size_y);
         reset_view();
     }
 

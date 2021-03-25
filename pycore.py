@@ -7,11 +7,16 @@ from gnelscript.pygfx.point_ops import *
 from gnelscript.pygfx.obj3d import  *
 from gnelscript.pygfx.render import *
 
-from gnelscript.pygfx.kicad_ops import * 
-from gnelscript.pygfx.milling_ops import * 
+# from gnelscript.pygfx.kicad_ops import * 
+# from gnelscript.pygfx.milling_ops import * 
 
 
 from gnelscript.examples_selection import * 
+#from gnelscript.examples_milling import *
+#from gnelscript.examples_raster import *
+#from gnelscript.examples_render import *
+#from gnelscript.examples_vector import *
+#from gnelscript.examples_wip import *
 
 
 
