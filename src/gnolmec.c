@@ -1260,7 +1260,7 @@ void olmec(int *argc, char** argv){
     glutInitWindowSize(scr_size_x, scr_size_y);  //window size
     glutInitWindowPosition(0, 0);  
     
-    window_id = glutCreateWindow("Olmec v.b0002.80"); //create an opengl window 
+    window_id = glutCreateWindow("Olmec v.b0002.96"); //create an opengl window 
 
     /***********/
     reset_view();
@@ -1912,6 +1912,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 105) //i - draw bbox
     { 
+        cout << "\n\n\n"; 
         get_obj_info( pt_model_buffer, pt_obinfo);        
         if (draw_bbox == TRUE){
             draw_bbox = FALSE;
@@ -1934,8 +1935,10 @@ static void keyPressed(unsigned char key, int x, int y)
             draw_normals = FALSE;
         }else{
             draw_normals = TRUE;
-              
+            calc_normals();
+
         }
+        cout << "draw normals " << draw_normals << "\n"; 
     }
 
     if (key == 111) // o
