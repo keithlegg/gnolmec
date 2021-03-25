@@ -63,7 +63,7 @@
       (space)  - toggle fullscreen 
 
 
-          i    - obhj info / draw bounding box (bbox) 
+          i    - obj info in console / draw bounding box (bbox) 
     shift i    - object deep info to terminal 
           n    - toggle normal display 
           t    - dump camera matrix file to disk based on view 
@@ -75,7 +75,7 @@
 
     -----------------------------------------
 
-    -- wacky copmmands 
+    -- wacky commands 
           r    -  load scene 0 ONLY AFTER CLEARING OR IT BLOWS UP!
     shift r    - Reset/ clear scene 
 
@@ -1822,8 +1822,6 @@ static void keyPressed(unsigned char key, int x, int y)
             glEnable(GL_LIGHTING);
             toglr_flatshaded = TRUE;
         }
-
-
 
     } 
 

@@ -37,17 +37,20 @@ mu = math_util()
 
 
 import socket
+
+"""
 import binascii
 import struct
-
 MSGLEN = 2
 
 
-class my_socket:
-    """demonstration class only
-      - coded for clarity, not efficiency
-    """
+//GO LOOK AT 
+//http://www.verajankorva.com/cms/?p=57
 
+class my_socket:
+    ##demonstration class only
+    ##  - coded for clarity, not efficiency
+    
     def __init__(self, sock=None):
         if sock is None:
             self.sock = socket.socket(
@@ -96,10 +99,10 @@ def tcp_serve():
        msg = 'Thank you for connecting'+ "\r\n"
        clientsocket.send(msg.encode('ascii'))
        clientsocket.close()
+"""
 
 
-
-def tcp_send():
+def tcp_send(msgbytes):
     """
     # Create a TCP/IP socket
     Client:
@@ -142,8 +145,9 @@ def tcp_send():
     #     print('closing socket')
     #     sock.close()
 
+    sock.sendall(msgbytes)
 
-    sock.sendall(b'\x00\xC2\xA9\x00\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
+    #sock.sendall(b'\x00\xC2\xA9\x00\xF0\x9D\x8C\x86\x20\xE2\x98\x83')
     sock.close()
 
     
@@ -928,7 +932,11 @@ if __name__=="__main__":
 
 
     if sys.argv[2] == 'tcptest':
-        tcp_send()
+        
+        if sys.argv[1] =='close':
+            tcp_send(0x00)
+        else:
+            tcp_send(bytes(sys.argv[1], 'utf-8'))
 
     if sys.argv[2] == 'runcommand':
         runcommand()
