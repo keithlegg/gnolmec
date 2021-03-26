@@ -789,53 +789,7 @@ def runcommand():
     pass
 
 
-#####################################################
 
-
-class tcpviz(vizbridge):
-    """ experimental bridge to gnolmec via tcp port 
-        this inherits the soscket class that handles all the boilerplate socket stuff in python
-        someday it will be bidriectional, for now just one way 
-
-        methods that start with vz_ are visualization methods that "draw something" in gnolmec 
-        methods that start with vp_ are view prefs to control a setting in gnolmec 
-
-    """
-
-    def __init__(self):
-        self.debug_msg = True 
-        self.debug_com = True 
-
-        self.locators  = []
-        self.vectors   = []
-        self.geom_objs = []
-    
-    def run(self, command):
-        if self.debug_com:
-            print("#debug run: %s"%command)
-            self.send_str(command)
-        else:
-            self.send_str(command)
-    
-    ##def open(self)
-    def log(self, msg):
-        if self.debug_msg:
-            print( '# ', msg)
-
-    def vp_set_grid(self, val):
-        #self.log("vp_view_grid   \n"  )
-        com = 'vpfgrd_%s'%val
-        self.run(com) 
-
-
-    def vp_move_cam(self, pos=(0,0,0) ):
-        self.log("vp_move_cam %s %s %s \n"%(pos[0], pos[1], pos[2]) )
-        
-    def vz_locator(self, pos=(0,0,0) ):
-        self.log("viz locator %s %s %s \n"%(pos[0], pos[1], pos[2]) )
-
-    def vz_vector(self, pos=(0,0,0) ):
-        self.log("vz_vector %s %s %s \n"%(pos[0], pos[1], pos[2]) )
 
 
 
@@ -850,14 +804,14 @@ if __name__=="__main__":
     if sys.argv[2] == 'tcptest':
         tcpviz = tcpviz()
         #tcpviz.send_str('abcdefg')
+        #tcpviz.close()
 
         #tcpviz.vz_locator() 
-        tcpviz.vp_set_grid('1')
+        tcpviz.vp_set_grid('0')
+
+    if sys.argv[2] == 'tcpclose':
+        tcpviz = tcpviz()
         tcpviz.close()
-
-
-
-
 
         #if sys.argv[1] =='close':
         #    tcp_send(0x00)

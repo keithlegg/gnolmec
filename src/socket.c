@@ -17,6 +17,8 @@
 int TCP_PORT = 0; 
 
 
+extern bool draw_grid;
+
 /*
 Client:
     Create the socket.
@@ -92,11 +94,25 @@ void sockettest3(void)
 
          if (strncmp(buffer, "vpfgrd_", 7) == 0)  
          {
-             printf("vpfgrd_ command received!!\n ");            
-               
+             char subbuff[5];
+             memcpy( subbuff, &buffer[7], 1 ); //copy from position 7 one more 
+             subbuff[1] = '\0'; //add null byte terminator to sub buffer
+             //printf("sub buffer %s\n ", subbuff);  
+
+             if (strncmp(subbuff, "1", 1) == 0)
+             {
+                draw_grid = true;
+                printf("vpfgrd_ 1 command received!! %s\n ", buffer);            
+             }
+             if (strncmp(subbuff, "0", 1) == 0)
+             {
+                draw_grid = false;
+                printf("vpfgrd_ 0 command received!! %s\n ", buffer);            
+             }
+
+
          }
 
-         
 
 
     }
