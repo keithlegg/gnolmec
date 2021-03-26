@@ -1,4 +1,5 @@
 
+import os 
 import sys
 
 
@@ -44,9 +45,15 @@ mu = math_util()
 ## print(sys.argv, len(sys.argv))
 
 if __name__=="__main__":
-
-    # print( sys.argv )
-
+    
+    if len(sys.argv) <2:
+        print("no arguments to command line pycore\n")
+        exit()
+    
+    if len(sys.argv) > 2:
+        if not os.path.exists(sys.argv[1]):
+            print(sys.argv[1] +" does not exist \n"  )
+            #exit() 
 
     PYCORE_OBJ_IN   = sys.argv[1]
     PYCORE_GEOMPATH = "3d_obj"
@@ -753,7 +760,10 @@ def extract():
 
 ## parse commands coming in and run them
 def runcommand():
-    slice_extract_and_makenew(PYCORE_OBJ_OUT)
+    #slice_extract_and_makenew(PYCORE_OBJ_OUT)
+    select_polygons_spatially(  PYCORE_OBJ_OUT, (.25,.21,1), 5 )
+
+
     #test_subsel_point_transform(PYCORE_OBJ_OUT)
     #extract()
 
@@ -807,7 +817,7 @@ if __name__=="__main__":
         #tcpviz.close()
 
         #tcpviz.vz_locator() 
-        tcpviz.vp_set_grid('0')
+        tcpviz.vp_set_grid('1')
 
     if sys.argv[2] == 'tcpclose':
         tcpviz = tcpviz()

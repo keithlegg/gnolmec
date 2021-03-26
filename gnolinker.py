@@ -86,6 +86,9 @@ class tcpviz(vizbridge):
             print( '# ', msg)
 
     def vp_set_grid(self, val):
+        """ first working example of a command 
+            many things are broken - but this shows it will work 
+        """
         #self.log("vp_view_grid   \n"  )
         com = 'vpfgrd_%s'%val
         self.run(com) 
