@@ -3,6 +3,12 @@
 # obj_path setup.olm                   # used by gnorender  
 # cam_matrix_path camera_matrix.olm    # used by gnorender 
 
+
+###########################
+#system prefs 
+
+tcp_port 2864
+
 ###########################
 # render prefs    
 rendermode litshaded

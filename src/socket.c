@@ -12,8 +12,9 @@
 #include <sys/types.h> 
 #include <netinet/in.h>
 
-#define PORT 2864 
  
+
+int TCP_PORT = 0; 
 
 
 /*
@@ -57,7 +58,7 @@ void sockettest3(void)
 
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY;
-     serv_addr.sin_port = htons(PORT);
+     serv_addr.sin_port = htons(TCP_PORT);
      if (bind(sockfd, (struct sockaddr *) &serv_addr,
               sizeof(serv_addr)) < 0) 
               printf("ERROR on binding");
@@ -77,8 +78,9 @@ void sockettest3(void)
          bzero(buffer,256);
 
          n = read(newsockfd,buffer,255);
+         
          //if (n < 0) printf("ERROR reading from socket");
-         printf("Here is the message: %s\n",buffer);
+         //printf("%i bytes received, message is %s\n", n, buffer);
      
          if(buffer[0]==0x00)
          {
@@ -87,6 +89,15 @@ void sockettest3(void)
              close(sockfd);
              stayopen = false;
          }
+
+         if (strncmp(buffer, "vpfgrd_", 7) == 0)  
+         {
+             printf("vpfgrd_ command received!!\n ");            
+               
+         }
+
+         
+
 
     }
 

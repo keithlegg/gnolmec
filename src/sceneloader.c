@@ -77,6 +77,8 @@ extern float gnomonsize;
 
 extern GLfloat clr_linez[];
 
+extern int TCP_PORT;
+
 
 char strbuffer[100][100];
 vector<string> obj_filepaths;
@@ -147,6 +149,21 @@ void read_scenefile( char* filepath )
         char* tok_spacs = strtok(line, " ");
         while (tok_spacs) 
         {
+            //------------------------------- 
+            if ( strcmp( tok_spacs, "tcp_port") == 0)
+            {
+                strcpy (cmd_str, line);
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){TCP_PORT = atoi(tok_line);}
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " \t\n");      
+
+                }
+                printf("TCP PORT SET TO %u \n", TCP_PORT );
+            }
 
             //-------------------------------             
             if ( strcmp( tok_spacs, "drawlines") == 0)

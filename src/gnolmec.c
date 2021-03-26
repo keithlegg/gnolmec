@@ -178,6 +178,7 @@ extern vector<vec3>* pt_scene_drawpoints;
 
 extern int num_drawpoints;
 
+extern int TCP_PORT;
 
 
 
@@ -1709,17 +1710,14 @@ static void keyPressed(unsigned char key, int x, int y)
 
     usleep(100);
 
+    //if (key == 115) //s key 
 
-    //s key for open socket 
-    if (key == 115) 
+    if (key == 83) //shift s key - open socket  
     { 
-        printf("opening socket on port 2864 \n"); 
+        printf("opening socket on port %i \n", TCP_PORT); 
         sockettest3();
 
     }
-
-
-
 
     //ESCAPE KEY
     if (key == 27) 
