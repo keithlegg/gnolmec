@@ -13,10 +13,11 @@ from gnelscript.pygfx.render import *
 
 
 from gnelscript.examples_selection import * 
+from gnelscript.examples_vector import *
+
 #from gnelscript.examples_milling import *
 #from gnelscript.examples_raster import *
 #from gnelscript.examples_render import *
-#from gnelscript.examples_vector import *
 #from gnelscript.examples_wip import *
 
 from gnolinker import * 
@@ -146,7 +147,7 @@ def copy_sop():
 
     obj = object3d() 
     obj.load(PYCORE_OBJ_IN)
-    obj.copy_sop(slice=(1,10), offset=(0,1,0), num=3, distance=.5)
+    obj.copy_sop(span=(1,10), offset=(0,1,0), num=3, distance=.5)
     obj.save(PYCORE_OBJ_OUT)
 
 
@@ -159,7 +160,7 @@ def modify_partial():
     obj = object3d()
     obj.load(PYCORE_OBJ_IN)
     
-    geom = obj.sub_select_geom( slice=(40,120) )
+    geom = obj.sub_select_geom( span=(40,120) )
 
 
     newpts = obj.points
@@ -703,7 +704,7 @@ def test_pointgen():
     #print( obj.get_grid_column(grid, 3) )
     #print( obj.get_grid_row(grid, 3) )
     
-    #print( obj.indexer( ids=ids, slice=None, unique=True, nth=None) )
+    #print( obj.indexer( ids=ids, span=None, unique=True, nth=None) )
 
     obj.show()
 
@@ -760,11 +761,25 @@ def extract():
 
 ## parse commands coming in and run them
 def runcommand():
+    #SELECTION EXAMPLES 
     #slice_extract_and_makenew(PYCORE_OBJ_OUT)
-    select_polygons_spatially(  PYCORE_OBJ_OUT, (.25,.21,1), 5 )
-
-
+    #extract_by_copy_hack(PYCORE_OBJ_OUT)
     #test_subsel_point_transform(PYCORE_OBJ_OUT)
+    ## modify_a_subselect(PYCORE_OBJ_OUT) ##BROKEN 
+    #select_polygons_spatially(  PYCORE_OBJ_OUT, (.25,.21,1), 5 )
+
+    #VECTOR EXAMPLES 
+    #rotate_around_vec(PYCORE_OBJ_OUT)
+    #m33  = matrix33();render_m33_as_vec3s(m33, PYCORE_OBJ_OUT, transpose=False, vlist=None)
+    #numpy_m33_fromvec(PYCORE_OBJ_OUT)
+    #make_right_triangle(PYCORE_OBJ_OUT, 71.61)
+    # unit_circle_viewer(PYCORE_OBJ_OUT) ##BROKEN 
+    #visualize_cross_product( PYCORE_OBJ_OUT )
+    #offset_between_2vecs( PYCORE_OBJ_OUT )
+    build_orthogonal_vector(PYCORE_OBJ_OUT)
+
+
+
     #extract()
 
     #face_extrude()
@@ -846,39 +861,4 @@ if __name__=="__main__":
 
 
 
-###########################################################################
-###########################################################################
 
-
-def build_orthogonal_vector():
-
-    obj = object3d()
-    com = vec3() #container for commands
-
-    # the point we are "looking" from 
-    pt1 = vec3(-1,1,-4)
-    obj.prim_cube(pos=pt1,size=.05,linecolor=(255,0,0),rot=(0,0,0),pivot='world')
-
-    # the point of the line origin
-    pt2 = vec3(10,-5, 17)
-    obj.prim_cube(pos=pt2,size=.1,linecolor=(255,0,0),rot=(0,0,0),pivot='world')    
-    
-    # the line, needs to be normalized for the math to work  
-    display_unitvec = vec3(0,1,0)
-    unitvec = display_unitvec.normal
-    
-    #render it as full size, not unit length 
-    obj.one_vec_to_obj( display_unitvec , pos=pt2) 
-    #make a negative version as well, to really get the idea of the size 
-    display_unitvec = display_unitvec * -1
-    obj.one_vec_to_obj( display_unitvec , pos=pt2) 
-
-    d = com.orthogonal_vec_from_pt(pt2, unitvec, pt1)
-
-    #obj.one_vec_to_obj( d*-1 )   
-    obj.one_vec_to_obj( d , pt1 )   
-
-    obj.save('3d_obj/normals.obj')
-
-
-#build_orthogonal_vector() 

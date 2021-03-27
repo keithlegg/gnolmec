@@ -19,10 +19,10 @@ showgnomon false
 gridsize 2.5 
 gnomonsize .5 
 
-drawlines true 
 drawquads true 
 drawtriangles true 
-drawpoints true 
+show_vtx true 
+show_lines true 
 
 
 ################
@@ -78,8 +78,7 @@ fill_color 170 170 50
 #fill_color 1 1 1
 
 vtx_color 200 0 0 
-show_vtx true 
-show_lines false 
+
 
 
 

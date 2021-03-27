@@ -7,7 +7,12 @@
 
    Copyright (C) 2019 Keith Legg - keithlegg23@gmail.com
 
+   TODO 
+       - folder loader 
+       - animation keyframes 
+   
 */
+
 /*************************************************************/
 
 #include <vector>
@@ -166,7 +171,7 @@ void read_scenefile( char* filepath )
             }
 
             //-------------------------------             
-            if ( strcmp( tok_spacs, "drawlines") == 0)
+            if ( strcmp( tok_spacs, "show_lines") == 0)
             {
                 strcpy (cmd_str, line);
 
@@ -238,7 +243,7 @@ void read_scenefile( char* filepath )
                     }
                     if(strcmp( tok_line, "false")==0){
                         draw_cntrgrid = false;                        
-                        printf("# draw_cntrgrid %s\n", draw_cntrgrid ? "true" : "false");
+                        //printf("# draw_cntrgrid %s\n", draw_cntrgrid ? "true" : "false");
                     }
                                                           
                     tok_line = strtok(NULL, " \t\n");
@@ -265,7 +270,7 @@ void read_scenefile( char* filepath )
                     };
                     if(strcmp( tok_line, "false")==0){
                         draw_grid = false;                        
-                        printf("# draw_grid %s\n", draw_grid ? "true" : "false");
+                        //printf("# draw_grid %s\n", draw_grid ? "true" : "false");
                     }
                                                           
                     tok_line = strtok(NULL, " \t\n");
@@ -328,7 +333,7 @@ void read_scenefile( char* filepath )
 
             //-------------------------------             
             //-------------------------------             
-            if ( strcmp( tok_spacs, "drawpoints") == 0)
+            if ( strcmp( tok_spacs, "show_vtx") == 0)
             {
                 strcpy (cmd_str, line);
 
