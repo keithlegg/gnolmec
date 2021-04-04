@@ -375,7 +375,7 @@ void load_scene(char * scenepath)
          
     }
 
-    //calc_normals();
+    //pt_model_buffer->calc_normals();
     strcpy(active_filepath, char_array ); 
 
 }
@@ -527,80 +527,8 @@ void reset_view(void){
 }
 
 
-void calc_normals(void)
-{
-    int  p_i = 0;
-    vec3 tri_cntr;
-
-    //debug - clear any loaded normals 
-    pt_model_buffer->num_fnrmls = 0;
-
-    //calc normals for quads 
-    for (p_i=0;p_i<pt_model_buffer->num_quads;p_i++)
-    {   
-            
-        // fetch the pts for a triangle
-        vec3 p1 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt1-1];
-        vec3 p2 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt2-1];
-        vec3 p3 = pt_model_buffer->points[pt_model_buffer->quads[p_i].pt3-1];
-
-        // calculate the face normal  
-        vec3 a = sub(p1,p2);
-        vec3 b = sub(p1,p3);
-        vec3 n = normalize(cross(a,b));
-
-        pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
-        pt_model_buffer->num_fnrmls++;
 
 
-    }
-
-    // calc normals for triangles 
-    for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
-    {   
-            
-        // fetch the pts for a triangle
-        vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
-        vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
-        vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
-
-        // calculate the face normal  
-        vec3 a = sub(p1,p2);
-        vec3 b = sub(p1,p3);
-        vec3 n = normalize(cross(a,b));
-
-        pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
-        pt_model_buffer->num_fnrmls++;
-    }
-
-    // broken experiment to put face normals in vertex normals
-    // only do so if nothing was loaded from the model 
-    // DEBUG - its wrong !
-    if (pt_model_buffer->num_vnrmls==0)
-    {
-        for (p_i=0;p_i<pt_model_buffer->num_tris;p_i++)
-        {    
-            // fetch the pts for a triangle
-            vec3 p1 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt1-1];
-            vec3 p2 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt2-1];
-            vec3 p3 = pt_model_buffer->points[pt_model_buffer->tris[p_i].pt3-1];
-
-            // calculate the face normal  
-            vec3 a = sub(p1,p2);
-            vec3 b = sub(p1,p3);
-            vec3 n = normalize(cross(a,b));
-            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt1-1]= n;
-            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt2-1]= n;
-            pt_model_buffer->vnormals[pt_model_buffer->tris[p_i].pt3-1]= n;      
-            pt_model_buffer->num_vnrmls++;
-            pt_model_buffer->num_vnrmls++;
-            pt_model_buffer->num_vnrmls++;
-    
-        }
-
-    }
-
-}
 
 /***************************************/
 
@@ -1936,7 +1864,7 @@ static void keyPressed(unsigned char key, int x, int y)
             draw_normals = FALSE;
         }else{
             draw_normals = TRUE;
-            calc_normals();
+            pt_model_buffer->calc_normals();
 
         }
         //cout << "draw normals " << draw_normals << "\n"; 
@@ -1953,7 +1881,7 @@ static void keyPressed(unsigned char key, int x, int y)
         //reset_objfile(pt_model_buffer, pt_obinfo);
 
         load_objfile(pycorepath, pt_model_buffer );
-        calc_normals();
+        pt_model_buffer->calc_normals();
         get_obj_info( pt_model_buffer, pt_obinfo);
 
 
@@ -1977,6 +1905,7 @@ static void keyPressed(unsigned char key, int x, int y)
 
     if (key == 116) // t key 
     { 
+        /*
         m44 cam_matrix = identity44();
         grab_camera_matrix(&cam_matrix);
         //transpose(&foo);
@@ -1996,6 +1925,8 @@ static void keyPressed(unsigned char key, int x, int y)
         m44 proj_matrix = identity44();
         grab_projection_matrix(&proj_matrix );
         save_matrix44( proj_matrix_filepath, &cam_matrix );
+        */
+        pt_model_buffer->triangulate();
 
     }
   

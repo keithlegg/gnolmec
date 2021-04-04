@@ -136,7 +136,13 @@ class obj_model {
 
         //vec3 get_obj_centroid( void );
         void clearall(void);
+        void calc_normals(void);
+        void add_triangle(vec3 pt1, vec3 pt2, vec3 pt3);
+        void triangulate(void);
+
+
 };
+
 
 
 class obj_info {

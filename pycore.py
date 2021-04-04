@@ -14,11 +14,12 @@ from gnelscript.pygfx.render import *
 
 from gnelscript.examples_selection import * 
 from gnelscript.examples_vector import *
+from gnelscript.examples_wip import *
+from gnelscript.examples_milling import *
 
-#from gnelscript.examples_milling import *
 #from gnelscript.examples_raster import *
 #from gnelscript.examples_render import *
-#from gnelscript.examples_wip import *
+
 
 from gnolinker import * 
 
@@ -531,22 +532,20 @@ def scratch_obj2():
     """
     obj = object3d()
  
-    obj.load(PYCORE_OBJ_IN)
+    #obj.load(PYCORE_OBJ_IN)
 
     #add new geom and auto increment the ids
     polys = [(1,2,3,4) ]
     pts = [(10,1,1),(0,11,1),(-1,-5,1),(2,-2,1)]
-    obj.insert_polygons([], pts) 
+    obj.insert_polygons(polys, pts) 
 
-    #add new geom and auto increment the ids
-    pts = [(0,-3,-1),(2,-2,1),(3,-1,1)]
-    obj.insert_polygons([], pts)
-
-    #add polys without new points into same "shell"
-    obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, asnew_shell=False)
-
-    #add new polygon in a new "shell" 
-    obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
+    # #add new geom and auto increment the ids
+    # pts = [(0,-3,-1),(2,-2,1),(3,-1,1)]
+    # obj.insert_polygons([], pts)
+    # #add polys without new points into same "shell"
+    # obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, asnew_shell=False)
+    # #add new polygon in a new "shell" 
+    # obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -759,6 +758,22 @@ def extract():
     
 
 
+def cam_test():
+    kicadproj = '/Users/klegg/serv/camtest'
+    tokens = kicadproj.split(os.sep) 
+    projname = tokens[len(tokens)-1]
+    pcbname = projname+'.kicad_pcb'
+
+    kiparser = pcbfile()
+
+    #kiparser.load_gcode('gcode/ngc/3D_Chips.ngc')
+    kiparser.load_kicadpcb(kicadproj+os.sep+pcbname)
+
+    kiparser.show_geom()
+    kiparser.save_3d_obj(PYCORE_OBJ_OUT)
+    #print(kiparser.points)
+
+
 ## parse commands coming in and run them
 def runcommand():
     #SELECTION EXAMPLES 
@@ -776,7 +791,13 @@ def runcommand():
     # unit_circle_viewer(PYCORE_OBJ_OUT) ##BROKEN 
     #visualize_cross_product( PYCORE_OBJ_OUT )
     #offset_between_2vecs( PYCORE_OBJ_OUT )
-    build_orthogonal_vector(PYCORE_OBJ_OUT)
+    #build_orthogonal_vector(PYCORE_OBJ_OUT)
+
+    #WIP EXAMPLES 
+    #place_obect_on_vector(PYCORE_OBJ_OUT)
+    
+    cam_test()
+    #scratch_obj2()
 
 
 
@@ -789,7 +810,7 @@ def runcommand():
     #test_pointgen()
 
     #scratch_obj1()
-    #scratch_obj2()
+
     #bezier3d()
     #lathe()
     

@@ -51,6 +51,204 @@ void obj_model::clearall(void)
 
 }
 
+
+
+void obj_model::add_triangle(vec3 pt1, vec3 pt2, vec3 pt3)
+{
+    //vector<int> newtri;
+    int vertex_count = 0;
+
+
+    // int num_pts;
+    // int num_vtxrgb;
+    // int num_vnrmls;    
+    // int num_fnrmls;
+    // int num_uvs;
+    // int num_lines;
+    // int num_tris;
+    // int num_quads; 
+    // pt_model_buffer->num_tris
+    // pt_model_buffer->num_quads
+
+    obj_model::points[obj_model::num_pts] = pt1;
+    //newtri.push_back(pt_model_buffer->num_pts+1);
+    obj_model::num_pts++;
+    
+    obj_model::points[obj_model::num_pts] = pt2;
+    //newtri.push_back(pt_model_buffer->num_pts+1);
+    obj_model::num_pts++;
+    
+    obj_model::points[ obj_model::num_pts ] = pt3;
+    //newtri.push_back(pt_model_buffer->num_pts+1);
+    obj_model::num_pts++;
+
+    //triangles[ triangle_count ] = newtri;  
+    //triangle_count++;
+
+}
+
+
+/*
+
+
+    void model::op_triangulate(void)
+    {
+        reset_buffers();
+
+        //cout << "begin triangulate \n";
+       
+        int i,j = 0;
+
+        // bfr_faces[MAX_NUM_FACES];  // faces of work area 
+        // bfr_pts[MAX_NUM_VERTICES]; // vertices of work area
+        // i vtx_cnt;
+        // i fac_cnt;
+        // <> vtx_tmp;
+        // <> fac_tmp;  
+
+        if (quad_count>0)
+        {
+            // walk the faces, assume there are ALWAYS 4 indices (quad) 
+            for (int i=0; i<quad_count; i++) 
+            {
+                //cout << quads[i][0]-1 <<" "<< quads[i][1]-1 <<" "<< quads[i][2]-1 << "\n";
+      
+                add_tri(quads[i][0],quads[i][1],quads[i][2]);
+                add_tri(quads[i][2],quads[i][3],quads[i][0]);           
+            }
+        }
+
+       // cout << "end triangulate \n";
+    }
+
+*/
+
+
+/*******************************************************************/
+
+
+// UNTESTED  NOT WORKING YET 
+//     turn a single 4 sided polygon into two 3 sided 
+//     
+//     +--+              +--+ 
+//     |  |              | /|  
+//     |  |   Becomes    |/ |  
+//     +--+              +--+  
+
+void obj_model::triangulate(void)
+{
+
+    int  p_i = 0;
+    vec3 tri_cntr;
+
+    //debug - clear any loaded normals 
+    //pt_model_buffer->num_fnrmls = 0;
+
+    printf("#number of quads %d\n", obj_model::num_quads );
+
+
+
+    //calc normals for quads 
+    for (p_i=0;p_i<obj_model::num_quads;p_i++)
+    {   
+           
+        // fetch the pts for a triangle
+        vec3 p1 = obj_model::points[obj_model::quads[p_i].pt1-1];
+        vec3 p2 = obj_model::points[obj_model::quads[p_i].pt2-1];
+        vec3 p3 = obj_model::points[obj_model::quads[p_i].pt3-1];
+
+        // // calculate the face normal  
+        // vec3 a = sub(p1,p2);
+        // vec3 b = sub(p1,p3);
+        // vec3 n = normalize(cross(a,b));
+        // pt_model_buffer->fnormals[pt_model_buffer->num_fnrmls]=n;
+        // pt_model_buffer->num_fnrmls++;
+
+    }
+
+}
+
+
+/*******************************************************************/
+
+void obj_model::calc_normals(void)
+{
+    //Ported from raw gnolmec function - seems to work fine 
+
+    int  p_i = 0;
+    vec3 tri_cntr;
+
+    //debug - clear any loaded normals 
+    obj_model::num_fnrmls = 0;
+
+    //calc normals for quads 
+    for (p_i=0;p_i<obj_model::num_quads;p_i++)
+    {   
+            
+        // fetch the pts for a triangle
+        vec3 p1 = obj_model::points[obj_model::quads[p_i].pt1-1];
+        vec3 p2 = obj_model::points[obj_model::quads[p_i].pt2-1];
+        vec3 p3 = obj_model::points[obj_model::quads[p_i].pt3-1];
+
+        // calculate the face normal  
+        vec3 a = sub(p1,p2);
+        vec3 b = sub(p1,p3);
+        vec3 n = normalize(cross(a,b));
+
+        obj_model::fnormals[obj_model::num_fnrmls]=n;
+        obj_model::num_fnrmls++;
+
+
+    }
+
+    // calc normals for triangles 
+    for (p_i=0;p_i<obj_model::num_tris;p_i++)
+    {   
+            
+        // fetch the pts for a triangle
+        vec3 p1 = obj_model::points[obj_model::tris[p_i].pt1-1];
+        vec3 p2 = obj_model::points[obj_model::tris[p_i].pt2-1];
+        vec3 p3 = obj_model::points[obj_model::tris[p_i].pt3-1];
+
+        // calculate the face normal  
+        vec3 a = sub(p1,p2);
+        vec3 b = sub(p1,p3);
+        vec3 n = normalize(cross(a,b));
+
+        obj_model::fnormals[obj_model::num_fnrmls]=n;
+        obj_model::num_fnrmls++;
+    }
+
+    // broken experiment to put face normals in vertex normals
+    // only do so if nothing was loaded from the model 
+    // DEBUG - its wrong !
+    if (obj_model::num_vnrmls==0)
+    {
+        for (p_i=0;p_i<obj_model::num_tris;p_i++)
+        {    
+            // fetch the pts for a triangle
+            vec3 p1 = obj_model::points[obj_model::tris[p_i].pt1-1];
+            vec3 p2 = obj_model::points[obj_model::tris[p_i].pt2-1];
+            vec3 p3 = obj_model::points[obj_model::tris[p_i].pt3-1];
+
+            // calculate the face normal  
+            vec3 a = sub(p1,p2);
+            vec3 b = sub(p1,p3);
+            vec3 n = normalize(cross(a,b));
+            obj_model::vnormals[obj_model::tris[p_i].pt1-1]= n;
+            obj_model::vnormals[obj_model::tris[p_i].pt2-1]= n;
+            obj_model::vnormals[obj_model::tris[p_i].pt3-1]= n;      
+            obj_model::num_vnrmls++;
+            obj_model::num_vnrmls++;
+            obj_model::num_vnrmls++;
+    
+        }
+
+    }
+
+}
+
+
 /*******************************************************************/
 
 /*
