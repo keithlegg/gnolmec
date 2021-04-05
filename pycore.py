@@ -54,7 +54,7 @@ if __name__=="__main__":
     
     if len(sys.argv) > 2:
         if not os.path.exists(sys.argv[1]):
-            print(sys.argv[1] +" does not exist \n"  )
+            print("pycore warn: "+sys.argv[1] +" does not exist \n"  )
             #exit() 
 
     PYCORE_OBJ_IN   = sys.argv[1]
@@ -758,8 +758,11 @@ def extract():
     
 
 
-def cam_test():
+def kicad_test():
+    
     kicadproj = '/Users/klegg/serv/camtest'
+    #kicadproj = '/Users/klegg/serv/SID_DUINO3'
+
     tokens = kicadproj.split(os.sep) 
     projname = tokens[len(tokens)-1]
     pcbname = projname+'.kicad_pcb'
@@ -769,10 +772,39 @@ def cam_test():
     #kiparser.load_gcode('gcode/ngc/3D_Chips.ngc')
     kiparser.load_kicadpcb(kicadproj+os.sep+pcbname)
 
-    kiparser.show_geom()
-    kiparser.save_3d_obj(PYCORE_OBJ_OUT)
-    #print(kiparser.points)
 
+    #kiparser.bufferinfo()
+    kiparser.showbuffers()
+
+
+    #kiparser.show_geom()
+    #kiparser.save_3d_obj(PYCORE_OBJ_OUT)
+    kiparser.export_ngc('cineballz.ngc')
+
+
+
+def linuxcnctest():
+    print("####### foo")
+    gc_poly = gcode()
+ 
+    cwd = os.getcwd()
+    path = cwd+'/gnelscript/gcode/ngc/arcspiral.ngc'
+    gc_poly.load_gcode(path)
+
+    #gc_poly.load_gcode('gcode/ngc/arcspiral.ngc')
+    #gc_poly.load_gcode('gcode/ngc/calibrate_5X1.ngc')
+    #gc_poly.load_gcode('gcode/ngc/3D_Chips.ngc')
+
+    gc_poly.show_data()
+
+
+
+def linuxcnctest2():
+    gcode = generate_gcode()
+    gcode.lineartest()
+    
+    #print( gcode.outfile )
+    gcode.savengc("cineballs.ngc")
 
 ## parse commands coming in and run them
 def runcommand():
@@ -796,8 +828,11 @@ def runcommand():
     #WIP EXAMPLES 
     #place_obect_on_vector(PYCORE_OBJ_OUT)
     
-    cam_test()
+    kicad_test()
     #scratch_obj2()
+    #linuxcnctest()
+    #linuxcnctest2()
+
 
 
 
@@ -846,6 +881,7 @@ def runcommand():
 
 if __name__=="__main__":
 
+    print("############ ", sys.argv )
 
     if sys.argv[2] == 'tcptest':
         tcpviz = tcpviz()

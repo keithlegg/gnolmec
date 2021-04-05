@@ -2087,6 +2087,16 @@ void init_pycore(void){
     char* pycore_cmd = "runcommand";    
     char buffer[256];
 
+    if (active_filepath[0]=='\0')
+    {
+        printf("## active fp %s is blank!!\n", active_filepath );
+        strcpy(active_filepath, "foo" ); 
+
+    }
+
+    printf("command: python3 pycore.py %s %s\n", active_filepath, pycore_cmd);
+
+    //there is a bug here - it demands an "active_filepath" , which wont be there if scene.olm is blank 
     snprintf(buffer, sizeof(buffer), "python3 pycore.py %s %s", active_filepath, pycore_cmd);
     int ret = system(buffer);
 
