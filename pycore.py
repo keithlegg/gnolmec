@@ -772,14 +772,17 @@ def kicad_test():
     #kiparser.load_gcode('gcode/ngc/3D_Chips.ngc')
     kiparser.load_kicadpcb(kicadproj+os.sep+pcbname)
 
+    # pts = kiparser.calc_circle(pos=(-2,5,0), dia=30, spokes=5)
+    # kiparser.filled_polys.append(pts) 
+    # pts = kiparser.calc_circle(pos=(1,1,0), dia=60, spokes=11)
+    # kiparser.gr_polys.append(pts) 
 
     #kiparser.bufferinfo()
-    kiparser.showbuffers()
-
-
+    #kiparser.showbuffers()
     #kiparser.show_geom()
-    #kiparser.save_3d_obj(PYCORE_OBJ_OUT)
+
     kiparser.export_ngc('cineballz.ngc')
+    kiparser.save_3d_obj(PYCORE_OBJ_OUT)
 
 
 
