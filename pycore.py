@@ -759,7 +759,7 @@ def extract():
 
 
 def kicad_test():
-    
+    """ experiment to parse a kicad pcb file and export it to gcode """
     kicadproj = '/Users/klegg/serv/camtest'
     #kicadproj = '/Users/klegg/serv/SID_DUINO3'
 
@@ -787,6 +787,7 @@ def kicad_test():
 
 
 def linuxcnctest():
+    """ experiment to parse a gcode file """
     print("####### foo")
     gc_poly = gcode()
  
@@ -803,11 +804,26 @@ def linuxcnctest():
 
 
 def linuxcnctest2():
+    """ standalone gcode experiment """
     gcode = generate_gcode()
     gcode.lineartest()
     
     #print( gcode.outfile )
     gcode.savengc("cineballs.ngc")
+
+
+
+def gear_test():
+    """ experiment to generate some gears """
+    gearz = gear_generator()
+    
+    # build( shaftdia, dia, teeth_height, numteeth ):
+
+    pts =  gearz.build(1, 2,.5, 12) 
+    gearz.linegeom_fr_points(pts, color=(100,0,100), periodic=False )
+    gearz.save(PYCORE_OBJ_OUT)
+
+################################################
 
 ## parse commands coming in and run them
 def runcommand():
@@ -835,7 +851,7 @@ def runcommand():
     #scratch_obj2()
     #linuxcnctest()
     #linuxcnctest2()
-
+    #gear_test()
 
 
 
