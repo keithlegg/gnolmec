@@ -21,6 +21,7 @@
 
 extern GLuint texture[3];
 
+extern float gridsquares;
 extern float gridsize;
 extern float gnomonsize;
 
@@ -336,14 +337,18 @@ void swimbag_tile(void)
 void graticulate( bool *draw_grid, bool *draw_cntrgrid, RGBType *pt_gridcolor, RGBType *pt_gridcolor2 )
 {
  
-    int grd_num       = 10;
+    //int grd_num       = 10;
     
     float grd_height  = 0.0;
 
     float arrow_sml = gnomonsize/10;
     float arrow_med = gnomonsize/8;    
 
-    float gspac = gridsize/(grd_num/2);
+    float gspac = gridsize/(gridsquares/2);
+
+    // printf("### %f \n",gridsquares);
+    // printf("%f \n",gridsize);
+    // printf("%f \n",gspac);
 
     glBindTexture(GL_TEXTURE_2D, texture[0]);    
 

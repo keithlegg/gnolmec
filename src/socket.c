@@ -21,9 +21,7 @@
 #define BACKLOG 10     /* how many pending connections queue will hold */
 
 
-int TCP_PORT = 0; 
-
-
+extern int TCP_PORT; 
 extern bool draw_grid;
 
 /*
@@ -302,7 +300,7 @@ void sockettest3(void)
                 draw_grid = false;
                 printf("vpfgrd_ 0 command received!! %s\n ", buffer);            
              }
-
+             stayopen = false; 
 
          }
 

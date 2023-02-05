@@ -9,14 +9,18 @@
 
 tcp_port 2864
 
+
 ###########################
 # render prefs    
 rendermode litshaded
 
-showgrid true 
+showgrid false 
 showgnomon false 
 
-gridsize 2.5 
+
+gridsquares 10 
+gridsize 1 
+
 gnomonsize .5 
 
 drawquads true 
@@ -29,20 +33,26 @@ show_lines true
 
 # load obj files 
 
+
+#op_loadobj 3d_obj/vec_buffer.obj
+
+op_loadobj 3d_obj/teapot.obj
+
+
+#op_loadobj 3d_obj/BYCORE.obj
+#op_loadobj 3d_obj/output.obj
+#op_loadobj 3d_obj/monkey.obj
+#op_loadobj 3d_obj/vec_buffer.obj
+#op_loadobj 3d_obj/a.obj
+#op_loadobj 3d_obj/c.obj
 #op_loadobj 3d_obj/PYCORE.obj
 #op_loadobj 3d_obj/moi.obj
-
 #op_loadobj 3d_obj/cube.obj 
-
 #op_loadobj 3d_obj/sphere.obj 
 #op_loadobj 3d_obj/triangle.obj 
- 
 #op_loadobj 3d_obj/teapot.obj 
 #op_loadobj 3d_obj/cone.obj 
 #op_loadobj 3d_obj/testvectors.obj 
-
-#op_loadobj 3d_obj/monkey.obj 
-
 #op_loadobj 3d_obj/arcspiral.obj 
 #op_loadobj 3d_obj/point_ops.obj 
 #op_loadobj 3d_obj/point_ops2.obj
@@ -69,8 +79,8 @@ show_lines true
 
 
 # light setup 
-light_pos 0 0 1 
-light_intensity -1.8 
+light_pos 0 1 1 
+light_intensity -3.8 
 
 # colors      
 bg_color 20 15 15 

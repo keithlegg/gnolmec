@@ -160,6 +160,9 @@ bool render_text     = TRUE;
 bool show_textures   = TRUE;
 
 
+int TCP_PORT = 0;
+
+
 /***************************************/
 // object related 
 
@@ -261,7 +264,8 @@ float cam_posy = 0;
 float cam_posz = 0;
 
 
-float gridsize = 2.5;
+float gridsquares = 10;
+float gridsize = 5;
 float gnomonsize = 1;
 
 float light_posx = 0; 

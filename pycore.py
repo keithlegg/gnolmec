@@ -8,20 +8,27 @@ from gnelscript.pygfx.point_ops import *
 from gnelscript.pygfx.obj3d import  *
 from gnelscript.pygfx.render import *
 
+#from gnelscript.pygfx.gis_vector_ops import *
+
 # from gnelscript.pygfx.kicad_ops import * 
 # from gnelscript.pygfx.milling_ops import * 
 
 
-from gnelscript.examples_selection import * 
-from gnelscript.examples_vector import *
-from gnelscript.examples_wip import *
-from gnelscript.examples_milling import *
 
-#from gnelscript.examples_raster import *
-#from gnelscript.examples_render import *
+from gnelscript.examples.selection import * 
+from gnelscript.examples.vector import *
+from gnelscript.examples.wip import *
+from gnelscript.examples.milling import *
+#from gnelscript.examples.raster import *
+#from gnelscript.examples.render import *
+
+
+
+from gnelscript.tools.imagecam import * 
 
 
 from gnolinker import * 
+
 
 
 mu = math_util() 
@@ -77,6 +84,31 @@ print("## PYCORE_OBJ_OUT  ", PYCORE_OBJ_OUT )
 print("## PYCORE_BMP_OUT  ", PYCORE_BMP_OUT )
 print("## M44_DISK_FILE   ", M44_DISK_FILE )
 """
+
+
+
+##----------------------------------------------------
+##   /usr/local/opt/python@3.10/bin/python3.10 ./imagecam.py  
+
+#firstpass_bw(10, 1.5, 1.5, 1, 250, "images/in/art.jpg", "images/out", "output")
+
+## (iteration , blur , contrast, bright, scaling(divs) , in, out )
+#firstpass(10, 0, 1, 1, 250, "images/in/oil.png", "images/out", "output")
+
+#firstpass(10, 1.5, 1.2, 1, 250, "images/in/er.jpg", "images/out", "output")
+
+##----------------------------------------------------
+##   /usr/local/opt/python@3.10/bin/python3.10 ./imagecam.py  
+#secondpass("images/out/art.bmp", "images/out" , 8, False)
+
+##----------------------------------------------------
+#set the RGB values from last tool and run this 
+#thirdpass( "images/out/commonbands.png", "images/out", "dxf" )
+#thirdpass( "images/out/commonbands.png",  "images/out" , "geojson")
+
+#thirdpass( "images/out/commonbands.png",  "images/out" , "dxf")
+#thirdpass( "images/out/art.bmp",  "images/out" , "dxf", po_invert=True)
+
 
 
 ##***********************************************************##
@@ -170,6 +202,7 @@ def modify_partial():
     obj2.insert_polygons(geom[0], newpts  )      
     obj2.rotate_pts((0,45,0))
     obj2.save(PYCORE_OBJ_OUT)    
+
 
 
 
@@ -282,49 +315,49 @@ def primitive(primtype):
     # obj.prim_line( axis=axis, pos=position, rot=rotation, size=size)
     # obj.save(PYCORE_OBJ_OUT)
     # if do_flush:
-    #     obj.flush()
+    #     obj._flush()
 
     if primtype == 'triangle':
         obj.prim_triangle( axis=axis, pos=position, rot=rotation, size=size)
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'quad':
         obj.prim_quad( axis=axis, pos=position, rot=rotation, size=size)
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'circle':
         obj.prim_circle( axis=axis, pos=position, dia=size) #rot=rotation
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'sphere':
         obj.prim_sphere(  pos=position, rot=rotation, size=size)
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'locator':
         obj.prim_locator(  pos=position, rot=rotation, size=size)
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'locatorxyz':
         obj.prim_locator_xyz(  pos=position, rot=rotation, size=size)
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
     if primtype == 'cone':
         obj.prim_cone( axis=axis, pos=position, dia=size) #rot=rotation
         obj.save(PYCORE_OBJ_OUT)
         if do_flush:
-            obj.flush()
+            obj._flush()
 
 
 ##------------------
@@ -543,9 +576,9 @@ def scratch_obj2():
     # pts = [(0,-3,-1),(2,-2,1),(3,-1,1)]
     # obj.insert_polygons([], pts)
     # #add polys without new points into same "shell"
-    # obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, asnew_shell=False)
+    # obj.insert_polygons( [(1,2,3,4,5,6,7),(1,7,2)], None, ans=False)
     # #add new polygon in a new "shell" 
-    # obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], asnew_shell=True)
+    # obj.insert_polygons( [(1,2,3,4)], [(3,3,3), (3,-4,5), (-4,-2.5,3.1), (6.2,-2.7,8)], ans=True)
 
     obj.save(PYCORE_OBJ_OUT)
 
@@ -574,7 +607,7 @@ def pyrender_ogl():
 
     # ropr.render_obj((100,0,255), 1, 1, 1, 1, 1000/abs(persp_m44.m[14]), object3d=obj)
 
-    img_op = PixelOp()   
+    img_op = pixel_op()   
     img_op.load('textures/generated2.bmp') 
     #img_op.load('render_thing/images/uvmap.bmp') 
 
@@ -626,22 +659,26 @@ def bezier3d():
 
 
 def lathe():
-    """ needs to have the same num U and V to work """
+    """ needs to have the same num U and V to work  
+
+        usage:
+            # simplest possible lathe example (must be square , num pts == num revolutions)
+            pts = [(.1,.1,0),(1,1,0),(2,2,0),(3,3,0)]
+            obj.lathe(pts, 4)
+
+
+            # using bezier curve function 
+            num = 23
+            start = (1 ,  0, 0)
+            ctrl1 = (.5,  0, 0)
+            ctrl2 = ( 0, .5, 0)
+            end   = (0 ,  1, 0)
+            curve = obj.cubic_bezier(num, start, ctrl1, ctrl2, end)
+            obj.lathe(curve, num)
+    
+    """ 
+    
     obj = object3d()
-
-    # # simplest possible lathe example (must be square , num pts == num revolutions)
-    # pts = [(.1,.1,0),(1,1,0),(2,2,0),(3,3,0)]
-    # obj.lathe(pts, 4)
-
-
-    # # using bezier curve function 
-    # num = 23
-    # start = (1 ,  0, 0)
-    # ctrl1 = (.5,  0, 0)
-    # ctrl2 = ( 0, .5, 0)
-    # end   = (0 ,  1, 0)
-    # curve = obj.cubic_bezier(num, start, ctrl1, ctrl2, end)
-    # obj.lathe(curve, num)
 
     #------ 
 

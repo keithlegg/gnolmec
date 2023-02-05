@@ -12,15 +12,12 @@ from gnelscript.pygfx.render import *
 # from gnelscript.pygfx.milling_ops import * 
 
 
-from gnelscript.examples_selection import * 
-#from gnelscript.examples_milling import *
-#from gnelscript.examples_raster import *
-#from gnelscript.examples_render import *
-#from gnelscript.examples_vector import *
-#from gnelscript.examples_wip import *
-
-from gnolinker import * 
-
+from gnelscript.examples.selection import * 
+#from gnelscript.examples.milling import *
+#from gnelscript.examples.raster import *
+#from gnelscript.examples.render import *
+#from gnelscript.examples.vector import *
+#from gnelscript.examples.wip import *
 
 
 class vizbridge(object):
@@ -102,6 +99,13 @@ class tcpviz(vizbridge):
 
     def vz_vector(self, pos=(0,0,0) ):
         self.log("vz_vector %s %s %s \n"%(pos[0], pos[1], pos[2]) )
+
+
+
+
+#tv = tcpviz()
+#tv.vp_move_cam((1,1,1))
+#tv.run(0)
 
 
 

@@ -77,6 +77,7 @@ extern bool draw_triangles;
 extern bool draw_grid;
 extern bool draw_cntrgrid;
 
+extern float gridsquares;
 extern float gridsize;
 extern float gnomonsize;
 
@@ -194,6 +195,21 @@ void read_scenefile( char* filepath )
 
                 }
           
+            }
+
+
+            //-------------------------------
+            if ( strcmp( tok_spacs, "gridsquares") == 0)
+            {
+                strcpy (cmd_str, line);
+                char* tok_line = strtok(0, " ");
+                int tidx = 0;
+                while (tok_line) 
+                {
+                    if(tidx==0){gridsquares = atof(tok_line);}
+                    tidx++;                                        
+                    tok_line = strtok(NULL, " \t\n");                    
+                }
             }
 
 

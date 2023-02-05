@@ -44,6 +44,7 @@
 #include "sceneloader.h"  
 
 #include "timer.h"  
+#include "socket.h" 
 
 //#include "select.h"  
 
@@ -221,8 +222,16 @@ int main(int argc, char **argv)
 
     
     //selectmain(argc, argv);
+    
+    //if you want to short ciruit and just test sockets 
+    //if you do this you cant get tcp_port from scene.olm
+    //start up gnolmec and press "shift s"  
+    //sockettest3();
+    
 
-    ///////////////////////////////////////////////////
+    /********************************************/
+    /********************************************/
+
     //printf("# test # %s %s \n", argv[0], argv[1], argv[2] ); 
     if( argc == 1 ) {    
         spinningCubeDemo(&argc, argv);
